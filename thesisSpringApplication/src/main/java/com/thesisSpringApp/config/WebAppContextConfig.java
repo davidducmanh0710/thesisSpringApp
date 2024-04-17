@@ -25,7 +25,7 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan({
 		"com.thesisSpringApp.controller",
 		"com.thesisSpringApp.repository",
-		"com.thesisSpringApp.service"
+		"com.thesisSpringApp.service",
 
 })
 public class WebAppContextConfig implements WebMvcConfigurer {

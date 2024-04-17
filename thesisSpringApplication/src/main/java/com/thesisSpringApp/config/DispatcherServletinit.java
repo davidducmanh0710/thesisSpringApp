@@ -4,6 +4,9 @@
  */
 package com.thesisSpringApp.config;
 
+import javax.servlet.Filter;
+
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
@@ -17,6 +20,8 @@ public class DispatcherServletinit extends AbstractAnnotationConfigDispatcherSer
 		return new Class[] {
 				HibernateConfig.class,
 				TilesConfig.class,
+				BeanConfig.class,
+				MailConfig.class,
 		};
 	}
 
@@ -33,6 +38,14 @@ public class DispatcherServletinit extends AbstractAnnotationConfigDispatcherSer
 		return new String[] {
 				"/"
 		};
+	}
+
+	@Override
+	protected Filter[] getServletFilters() {
+		CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+		encodingFilter.setEncoding("UTF-8");
+		encodingFilter.setForceEncoding(true);
+		return new Filter[] { encodingFilter };
 	}
 
 }

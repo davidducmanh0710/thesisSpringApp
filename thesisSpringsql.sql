@@ -12,15 +12,19 @@ create table faculty(
 
 CREATE TABLE user (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    avatar VARCHAR(255),
     username VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     firstName VARCHAR(40),
     lastName VARCHAR(40),
+    gender VARCHAR(10) ,
     email VARCHAR(50) NOT NULL UNIQUE,
-    active TINYINT(1),
-	role_id INT,
+    phone VARCHAR(10) unique ,
+    address varchar(255),
+    active BIT default 0,
+	role_id INT not null,
 	FOREIGN KEY (role_id) REFERENCES role(id),
-    faculty_id INT , 
+    faculty_id INT not null , 
     FOREIGN KEY (faculty_id) REFERENCES faculty(id)
 );
 

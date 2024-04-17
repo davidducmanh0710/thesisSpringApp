@@ -11,9 +11,30 @@
 		<put-attribute name="footer"
 			value="/WEB-INF/layout/footer.jsp" />
 	</definition>
+	
+	<definition name="baseLayoutAdmin"
+		template="/WEB-INF/layout/baseAdmin.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="headerAdmin"
+			value="/WEB-INF/layout/headerAdmin.jsp" />
+		<put-attribute name="contentAdmin" value="" />
+		<put-attribute name="footerAdmin"
+			value="/WEB-INF/layout/footer.jsp" />
+	</definition>
+	
 	<definition name="index" extends="baseLayout">
 		<put-attribute name="title" value="Trang chủ" />
 		<put-attribute name="content"
 			value="/WEB-INF/pages/index.jsp" />
+	</definition>
+	<definition name="admin" extends="baseLayoutAdmin">
+		<put-attribute name="title" value="Trang chủ quản trị" />
+		<put-attribute name="contentAdmin"
+			value="/WEB-INF/pages/admin.jsp" />
+	</definition>
+	<definition name="addUser" extends="baseLayoutAdmin">
+		<put-attribute name="title" value="Thêm mới 1 người dùng" />
+		<put-attribute name="contentAdmin"
+			value="/WEB-INF/pages/addUser.jsp" />
 	</definition>
 </tiles-definitions>

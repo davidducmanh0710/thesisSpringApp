@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
 <title><tiles:insertAttribute name="title" /></title>
 
-<link href="<c:url value="/css/main.css"/>" rel="stylesheet" />
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
 	rel="stylesheet"
@@ -23,9 +22,9 @@
 </head>
 <body>
 
-	<tiles:insertAttribute name="header" />
-	<tiles:insertAttribute name="content" />
-	<tiles:insertAttribute name="footer" />
+	<tiles:insertAttribute name="headerAdmin" />
+	<tiles:insertAttribute name="contentAdmin" />
+	<tiles:insertAttribute name="footerAdmin" />
 
 
 </body>

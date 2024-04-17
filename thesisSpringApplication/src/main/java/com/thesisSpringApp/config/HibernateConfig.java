@@ -5,7 +5,9 @@
 package com.thesisSpringApp.config;
 
 import java.util.Properties;
+
 import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +33,11 @@ public class HibernateConfig {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setPackagesToScan(new String[] {
 				"com.thesisSpringApp.pojo",
+
 		});
 		sessionFactory.setDataSource(dataSource());
 		sessionFactory.setHibernateProperties(hibernateProperties());
+
 		return sessionFactory;
 	}
 
@@ -64,6 +68,8 @@ public class HibernateConfig {
 				getSessionFactory().getObject());
 		return transactionManager;
 	}
+
+
 
 }
 
