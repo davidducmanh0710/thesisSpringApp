@@ -5,6 +5,8 @@
 package com.thesisSpringApp.pojo;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,9 +18,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -31,6 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
     @NamedQuery(name = "User.findById", query = "SELECT u FROM User u WHERE u.id = :id"),
     @NamedQuery(name = "User.findByAvatar", query = "SELECT u FROM User u WHERE u.avatar = :avatar"),
+    @NamedQuery(name = "User.findByUseruniversityid", query = "SELECT u FROM User u WHERE u.useruniversityid = :useruniversityid"),
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByFirstName", query = "SELECT u FROM User u WHERE u.firstName = :firstName"),
@@ -38,7 +47,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findByGender", query = "SELECT u FROM User u WHERE u.gender = :gender"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
     @NamedQuery(name = "User.findByPhone", query = "SELECT u FROM User u WHERE u.phone = :phone"),
-    @NamedQuery(name = "User.findByAddress", query = "SELECT u FROM User u WHERE u.address = :address"),
+    @NamedQuery(name = "User.findByBirthday", query = "SELECT u FROM User u WHERE u.birthday = :birthday"),
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
 
@@ -51,6 +60,11 @@ public class User implements Serializable {
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 10)
+    @Column(name = "useruniversityid")
+    private String useruniversityid;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -80,16 +94,19 @@ public class User implements Serializable {
     @Size(max = 10)
     @Column(name = "phone")
     private String phone;
-    @Size(max = 255)
-    @Column(name = "address")
-    private String address;
+    @Column(name = "birthday")
+	@DateTimeFormat(pattern = "MM-dd-yyyy")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date birthday;
     @Column(name = "active")
     private Boolean active;
     @JoinColumn(name = "faculty_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+	@JsonIgnore
     private Faculty facultyId;
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
+	@JsonIgnore
     private Role roleId;
 
     public User() {
@@ -99,8 +116,9 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String username, String password, String email) {
+    public User(Integer id, String useruniversityid, String username, String password, String email) {
         this.id = id;
+        this.useruniversityid = useruniversityid;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -120,6 +138,14 @@ public class User implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public String getUseruniversityid() {
+        return useruniversityid;
+    }
+
+    public void setUseruniversityid(String useruniversityid) {
+        this.useruniversityid = useruniversityid;
     }
 
     public String getUsername() {
@@ -178,12 +204,12 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
+    public Date getBirthday() {
+        return birthday;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
     public Boolean getActive() {

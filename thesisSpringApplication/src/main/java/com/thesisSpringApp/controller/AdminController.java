@@ -1,7 +1,6 @@
 package com.thesisSpringApp.controller;
 
 import java.util.List;
-import java.util.Random;
 
 import javax.mail.MessagingException;
 
@@ -67,48 +66,21 @@ public class AdminController {
 		return "addUser";
 	}
 
-	public static String generateRandomString(int length) {
-		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		Random random = new Random();
-		StringBuilder stringBuilder = new StringBuilder(length);
-		for (int i = 0; i < length; i++) {
-			int randomIndex = random.nextInt(characters.length());
-			char randomChar = characters.charAt(randomIndex);
-			stringBuilder.append(randomChar);
-		}
-		return stringBuilder.toString();
-	}
 
 	@PostMapping(value = "/admin/add/user")
 	public String adminAddUser(Model model, @ModelAttribute(value = "user") User user,
+//			@RequestParam("birthdayName") Date birthday ,
 			@RequestParam("roleIdName") int roleId, @RequestParam("facultyIdName") int facultyId)
 			throws MessagingException {
 
+//		user.setBirthday(birthday);
 
 		Role role = roleService.findRoleById(roleId);
 		user.setRoleId(role);
 		Faculty faculty = facultyService.findFacultyById(facultyId);
 		user.setFacultyId(faculty);
 
-
-		user.setAvatar(env.getProperty("user.avatar.default"));
-
-		String userName = user.getRoleId().getName();
-		userName = userName.startsWith("ROLE_") ? userName.substring(5) : userName;
-
-		user.setUsername(userName);
-
-		user.setPassword(generateRandomString(7));
-
-		user.setActive(false);
-
-		userService.saveUser(user); // save để lấy id
-
-
-		userName = "THESIS" + userName + user.getId();
-		user.setUsername(userName);
-
-		userService.saveUser(user);
+		userService.saveInitUser(user);
 
 		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
 

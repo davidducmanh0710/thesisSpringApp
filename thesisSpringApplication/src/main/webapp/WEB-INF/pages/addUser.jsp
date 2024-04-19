@@ -3,6 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
 
 <style>
 body {
@@ -39,6 +41,19 @@ h1 {
 
 				<form:form method="post" action="${actionAddUser}"
 					modelAttribute="user">
+
+					<div class="row g-3">
+						<div class="col">
+							<div class="form-floating">
+								<form:input path="useruniversityid" type="text"
+									class="form-control" id="useruniversityidId"
+									placeholder="User university id" required="true" />
+								<label for="useruniversityidId">User university id <span
+									class="text-danger">*</span></label>
+							</div>
+						</div>
+
+					</div>
 
 					<div class="row g-3">
 						<div class="col">
@@ -80,12 +95,13 @@ h1 {
 					</div>
 					<div class="row g-3">
 						<div class="col">
-							<div class="form-floating">
-								<form:input path="address" type="text" class="form-control"
-									id="address" placeholder="Address" required="true" />
-								<label for="address">Address <span class="text-danger">*</span>
+
+							<!-- <div class="form-floating">
+								<input type="date" class="form-control"
+									id="birthday" placeholder="Birthday" required name="birthdayName" />
+								<label for="birthday">birthday <span class="text-danger">*</span>
 								</label>
-							</div>
+							</div> -->
 						</div>
 						<div class="col">
 							<div class="form-floating">
@@ -103,7 +119,8 @@ h1 {
 					<div class="row g-3">
 						<div class="col">
 							<div class="form-floating">
-								<select class="form-select" name="roleIdName" id="roleId" required>
+								<select class="form-select" name="roleIdName" id="roleId"
+									required>
 									<c:forEach items="${roles}" var="r">
 										<option value="${r.id}">${r.name}</option>
 									</c:forEach>
@@ -112,11 +129,13 @@ h1 {
 						</div>
 						<div class="col">
 							<div class="form-floating">
-								<select class="form-select" name="facultyIdName" id="facultyId" required>
+								<select class="form-select" name="facultyIdName" id="facultyId"
+									required>
 									<c:forEach items="${faculties}" var="f">
 										<option value="${f.id}">${f.name}</option>
 									</c:forEach>
-								</select> <label for="facultyId">FACULTY ID <span class="text-danger">*</span></label>
+								</select> <label for="facultyId">FACULTY ID <span
+									class="text-danger">*</span></label>
 							</div>
 						</div>
 					</div>
