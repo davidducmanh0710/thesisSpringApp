@@ -23,6 +23,7 @@ public class DispatcherServletinit extends AbstractAnnotationConfigDispatcherSer
 				BeanConfig.class,
 				MailConfig.class,
 				SecurityConfig.class,
+				CloudinaryConfig.class,
 		};
 	}
 

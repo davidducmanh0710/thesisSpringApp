@@ -30,10 +30,18 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public void saveUser(User user) {
 		Session session = factory.getObject().getCurrentSession();
-		if (user.getId() != null)
+		if (user.getId() != null && user.getId() > 0)
 			session.update(user);
 		else
 			session.save(user);
+	}
+
+	@Override
+	public User getUserById(int id) {
+		Session session = factory.getObject().getCurrentSession();
+		Query query = session.getNamedQuery("User.findById");
+		query.setParameter("id", id);
+		return (User) query.getSingleResult();
 	}
 
 }
