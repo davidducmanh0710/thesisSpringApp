@@ -12,5 +12,10 @@
     <class>com.thesisSpringApp.pojo.Criteria</class>
     <class>com.thesisSpringApp.pojo.User</class>
     <class>com.thesisSpringApp.pojo.Faculty</class>
+    <class>com.thesisSpringApp.pojo.ThesisUser</class>
+    <class>com.thesisSpringApp.pojo.Faculty_1</class>
+    <class>com.thesisSpringApp.pojo.Thesis_1</class>
+    <class>com.thesisSpringApp.pojo.User_1</class>
+    <class>com.thesisSpringApp.pojo.Role_1</class>
   </persistence-unit>
 </persistence>

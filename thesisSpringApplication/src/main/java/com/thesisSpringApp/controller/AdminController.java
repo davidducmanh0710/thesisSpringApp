@@ -5,7 +5,6 @@ import java.util.List;
 import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ import com.thesisSpringApp.formatter.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
 import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
-import com.thesisSpringApp.service.MailSenderService;
 import com.thesisSpringApp.service.RoleService;
 import com.thesisSpringApp.service.UserService;
 import com.thesisSpringApp.service.serviceimpl.FacultyService;
@@ -29,19 +27,15 @@ public class AdminController {
 	private RoleService roleService;
 	private User user;
 	private FacultyService facultyService;
-	private MailSenderService mailSenderService;
-	private Environment env;
 
 	@Autowired
 	public AdminController(UserService userService, RoleService roleService, User user,
-			FacultyService facultyService, MailSenderService mailSenderService, Environment env) {
+			FacultyService facultyService) {
 		super();
 		this.userService = userService;
 		this.roleService = roleService;
 		this.user = user;
 		this.facultyService = facultyService;
-		this.mailSenderService = mailSenderService;
-		this.env = env;
 	}
 
 	@ModelAttribute("formatterColumn")
@@ -80,9 +74,7 @@ public class AdminController {
 		Faculty faculty = facultyService.findFacultyById(facultyId);
 		user.setFacultyId(faculty);
 
-		userService.saveInitUser(user);
-
-		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
+		userService.saveInitUserAndSendMail(user);
 
 		return "redirect:/admin";
 	}

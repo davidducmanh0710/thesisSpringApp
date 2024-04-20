@@ -36,10 +36,10 @@ create table thesis(
     create_date DATETIME,
     update_date DATETIME,
     score float ,
-    active TINYINT(1)
+    active BIT default 0
 );
 
-create table thetis_user(
+create table thesis_user(
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	thesis_id INT ,
 	FOREIGN KEY (thesis_id) REFERENCES thesis(id),
@@ -73,7 +73,7 @@ create table member(
 create table criteria(
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100),
-    active TINYINT(1)
+    active BIT default 0
 );
 
 create table score( 

@@ -23,18 +23,18 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author ADMIN
  */
 @Entity
-@Table(name = "thetis_user")
+@Table(name = "thesis_user")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ThetisUser.findAll", query = "SELECT t FROM ThetisUser t"),
-    @NamedQuery(name = "ThetisUser.findById", query = "SELECT t FROM ThetisUser t WHERE t.id = :id")})
-public class ThetisUser implements Serializable {
+    @NamedQuery(name = "ThesisUser.findAll", query = "SELECT t FROM ThesisUser t"),
+    @NamedQuery(name = "ThesisUser.findById", query = "SELECT t FROM ThesisUser t WHERE t.id = :id")})
+public class ThesisUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne
@@ -43,10 +43,10 @@ public class ThetisUser implements Serializable {
     @ManyToOne
     private User userId;
 
-    public ThetisUser() {
+    public ThesisUser() {
     }
 
-    public ThetisUser(Integer id) {
+    public ThesisUser(Integer id) {
         this.id = id;
     }
 
@@ -84,10 +84,10 @@ public class ThetisUser implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ThetisUser)) {
+        if (!(object instanceof ThesisUser)) {
             return false;
         }
-        ThetisUser other = (ThetisUser) object;
+        ThesisUser other = (ThesisUser) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -96,7 +96,7 @@ public class ThetisUser implements Serializable {
 
     @Override
     public String toString() {
-        return "com.thesisSpringApp.pojo.ThetisUser[ id=" + id + " ]";
+        return "com.thesisSpringApp.pojo.ThesisUser[ id=" + id + " ]";
     }
     
 }

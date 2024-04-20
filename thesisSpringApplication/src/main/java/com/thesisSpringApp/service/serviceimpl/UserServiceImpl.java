@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +20,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.repository.UserRepository;
+import com.thesisSpringApp.service.MailSenderService;
 import com.thesisSpringApp.service.UserService;
 
 @Service
@@ -28,15 +31,18 @@ public class UserServiceImpl implements UserService {
 	private Environment env;
 	private PasswordEncoder passwordEncoder;
 	private Cloudinary cloudinary;
+	private MailSenderService mailSenderService;
 
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, Environment env,
-			PasswordEncoder passwordEncoder, Cloudinary cloudinary) {
+			PasswordEncoder passwordEncoder, Cloudinary cloudinary,
+			MailSenderService mailSenderService) {
 		super();
 		this.userRepository = userRepository;
 		this.env = env;
 		this.passwordEncoder = passwordEncoder;
 		this.cloudinary = cloudinary;
+		this.mailSenderService = mailSenderService;
 	}
 
 	@Override
@@ -62,19 +68,23 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void saveInitUser(User user) {
+	public void saveInitUserAndSendMail(User user) throws MessagingException {
 
 		user.setAvatar(env.getProperty("user.avatar.default"));
 
 		String userName = user.getRoleId().getName();
 		userName = userName.startsWith("ROLE_") ? userName.substring(5) : userName;
+		userName = "THESIS" + userName + user.getUseruniversityid();
+		user.setUsername(userName);
 
-		user.setPassword(passwordEncoder.encode((generateRandomString(7))));
+		String password = generateRandomString(7);
+		user.setPassword(password);
 
 		user.setActive(false);
 
-		userName = "THESIS" + userName + user.getUseruniversityid();
-		user.setUsername(userName);
+		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
+		
+		user.setPassword(passwordEncoder.encode(password));
 
 		userRepository.saveUser(user);
 	}

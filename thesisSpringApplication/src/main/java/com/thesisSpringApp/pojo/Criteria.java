@@ -38,10 +38,10 @@ public class Criteria implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
     @Size(max = 100)
-    @Column(name = "name")
+    @Column(name = "name", length = 100)
     private String name;
     @Column(name = "active")
     private Boolean active;

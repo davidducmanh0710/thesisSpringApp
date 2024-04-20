@@ -39,10 +39,10 @@ public class Member1 implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
     @Size(max = 50)
-    @Column(name = "role")
+    @Column(name = "role", length = 50)
     private String role;
     @OneToMany(mappedBy = "userId")
     private List<Score> scoreList;

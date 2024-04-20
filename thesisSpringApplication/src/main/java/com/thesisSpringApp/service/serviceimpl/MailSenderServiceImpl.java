@@ -106,7 +106,10 @@ public class MailSenderServiceImpl implements MailSenderService {
 				+ "          <p> Nhà trường đã triển khai thành công hệ thống quản lý khóa luận tốt nghiệp."
 				+ "          Vì vậy , quản trị viên đã cấp tài khoản cho người dùng tên :"
 				+ user.getFirstName() + " " + user.getLastName()
-				+ " để đăng nhập vào hệ thống</p>\r\n"
+				+ " để đăng nhập vào hệ thống : </p> "
+				+ " <p>Tài khoản : " + user.getUsername() + "</p>\r\n"
+				+ " <p>Mật khẩu  : " + user.getPassword() + "</p>\r\n"
+
 				+ "          <p>\r\n"
 				+ "            Tuy nhiên , bạn phải đổi mật khẩu và upload hình ảnh lên hệ thống để có thể tham gia hoạt phần mềm quản lý khóa luận tốt nghiệp này !"
 				+ "          </p>\r\n"

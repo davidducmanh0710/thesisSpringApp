@@ -44,10 +44,10 @@ public class Thesis implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
     @Size(max = 255)
-    @Column(name = "name")
+    @Column(name = "name", length = 255)
     private String name;
     @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
@@ -56,14 +56,14 @@ public class Thesis implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "score")
+    @Column(name = "score", precision = 12, scale = 0)
     private Float score;
     @Column(name = "active")
     private Boolean active;
     @OneToMany(mappedBy = "thesisId")
     private List<Score> scoreList;
     @OneToMany(mappedBy = "thesisId")
-    private List<ThetisUser> thetisUserList;
+    private List<ThesisUser> thesisUserList;
     @OneToMany(mappedBy = "thesisId")
     private List<ThesisCommitteeRate> thesisCommitteeRateList;
 
@@ -132,12 +132,12 @@ public class Thesis implements Serializable {
     }
 
     @XmlTransient
-    public List<ThetisUser> getThetisUserList() {
-        return thetisUserList;
+    public List<ThesisUser> getThesisUserList() {
+        return thesisUserList;
     }
 
-    public void setThetisUserList(List<ThetisUser> thetisUserList) {
-        this.thetisUserList = thetisUserList;
+    public void setThesisUserList(List<ThesisUser> thesisUserList) {
+        this.thesisUserList = thesisUserList;
     }
 
     @XmlTransient

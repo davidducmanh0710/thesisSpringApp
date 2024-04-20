@@ -35,4 +35,12 @@ public class RoleRepositoryImpl implements RoleRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public Role findRoleByName(String name) {
+		Session session = factoryBean.getObject().getCurrentSession();
+		Query query = session.getNamedQuery("Role.findByName");
+		query.setParameter("name", name);
+		return (Role) query.getSingleResult();
+	}
+
 }

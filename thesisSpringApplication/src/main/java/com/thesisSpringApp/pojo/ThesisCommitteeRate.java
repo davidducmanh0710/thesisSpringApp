@@ -36,10 +36,10 @@ public class ThesisCommitteeRate implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Integer id;
     @Size(max = 50)
-    @Column(name = "status")
+    @Column(name = "status", length = 50)
     private String status;
     @JoinColumn(name = "committee_id", referencedColumnName = "id")
     @ManyToOne
