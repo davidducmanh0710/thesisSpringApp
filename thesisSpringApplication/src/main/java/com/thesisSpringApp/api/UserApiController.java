@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,33 +16,54 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thesisSpringApp.Dto.UserListsByRoleDTO;
+import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
+import com.thesisSpringApp.service.RoleService;
 import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserApiController {
 
 	private UserService userService;
 	private PasswordEncoder passwordEncoder;
+	private RoleService roleService;
 
 	@Autowired
-	public UserApiController(UserService userService, PasswordEncoder passwordEncoder) {
+	public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
+			RoleService roleService) {
 		super();
 		this.userService = userService;
 		this.passwordEncoder = passwordEncoder;
+		this.roleService = roleService;
 	}
 
-	@PostMapping(path = "/users", consumes = {
-			MediaType.APPLICATION_JSON_VALUE,
-			MediaType.MULTIPART_FORM_DATA_VALUE
-	})
+//	@PostMapping(path = "/users/", consumes = {
+//			MediaType.APPLICATION_JSON_VALUE,
+//			MediaType.MULTIPART_FORM_DATA_VALUE
+//	})
 
 	@GetMapping("/all")
-	@CrossOrigin
 	public ResponseEntity<List<User>> getUsers() {
 		return new ResponseEntity<>(
 				this.userService.getAllUsers(),
+				HttpStatus.OK);
+	}
+
+	@GetMapping("/role/get2RoleList")
+	@CrossOrigin
+	public ResponseEntity<UserListsByRoleDTO> getUsersByRoleNameApi() {
+		Role role1 = roleService.getRoleByName("ROLE_GIANGVIEN");
+		Role role2 = roleService.getRoleByName("ROLE_SINHVIEN");
+
+		UserListsByRoleDTO dto = new UserListsByRoleDTO();
+		dto.setUsersGiangVien(userService.getUserByRoleName(role1));
+		dto.setUsersSinhVien(userService.getUserByRoleName(role2));
+
+		return new ResponseEntity<>(
+				dto,
 				HttpStatus.OK);
 	}
 

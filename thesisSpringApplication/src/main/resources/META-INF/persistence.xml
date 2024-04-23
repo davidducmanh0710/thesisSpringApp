@@ -17,5 +17,7 @@
     <class>com.thesisSpringApp.pojo.Thesis_1</class>
     <class>com.thesisSpringApp.pojo.User_1</class>
     <class>com.thesisSpringApp.pojo.Role_1</class>
+    <class>com.thesisSpringApp.pojo.CommitteeUser</class>
+    <class>com.thesisSpringApp.pojo.ThesisStatus</class>
   </persistence-unit>
 </persistence>

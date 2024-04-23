@@ -40,15 +40,16 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Thesis.findByActive", query = "SELECT t FROM Thesis t WHERE t.active = :active")})
 public class Thesis implements Serializable {
 
+    @Size(max = 255)
+    @Column(name = "name")
+    private String name;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
-    @Size(max = 255)
-    @Column(name = "name", length = 255)
-    private String name;
     @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
@@ -56,7 +57,7 @@ public class Thesis implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "score", precision = 12, scale = 0)
+    @Column(name = "score")
     private Float score;
     @Column(name = "active")
     private Boolean active;
@@ -82,13 +83,6 @@ public class Thesis implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public Date getCreateDate() {
         return createDate;
@@ -172,6 +166,14 @@ public class Thesis implements Serializable {
     @Override
     public String toString() {
         return "com.thesisSpringApp.pojo.Thesis[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

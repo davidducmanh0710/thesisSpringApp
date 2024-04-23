@@ -16,9 +16,9 @@ import com.thesisSpringApp.formatter.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
 import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
+import com.thesisSpringApp.service.FacultyService;
 import com.thesisSpringApp.service.RoleService;
 import com.thesisSpringApp.service.UserService;
-import com.thesisSpringApp.service.serviceimpl.FacultyService;
 
 @Controller
 public class AdminController {
@@ -52,7 +52,7 @@ public class AdminController {
 
 	@GetMapping("/admin/addUser")
 	public String adminAddUserView(Model model) {
-		List<Role> roles = roleService.findAllRoles();
+		List<Role> roles = roleService.getAllRoles();
 		List<Faculty> faculties = facultyService.findAllFaculties();
 		model.addAttribute("user", this.user);
 		model.addAttribute("roles", roles);
@@ -69,7 +69,7 @@ public class AdminController {
 
 //		user.setBirthday(birthday);
 
-		Role role = roleService.findRoleById(roleId);
+		Role role = roleService.getRoleById(roleId);
 		user.setRoleId(role);
 		Faculty faculty = facultyService.findFacultyById(facultyId);
 		user.setFacultyId(faculty);

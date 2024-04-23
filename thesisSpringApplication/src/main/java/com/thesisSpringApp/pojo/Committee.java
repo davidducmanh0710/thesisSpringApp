@@ -33,21 +33,20 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Committee.findByName", query = "SELECT c FROM Committee c WHERE c.name = :name")})
 public class Committee implements Serializable {
 
+    @Size(max = 50)
+    @Column(name = "name")
+    private String name;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
-    @Size(max = 50)
-    @Column(name = "name", length = 50)
-    private String name;
-    @OneToMany(mappedBy = "committeeId")
-    private List<Score> scoreList;
-    @OneToMany(mappedBy = "committeeId")
-    private List<Member1> member1List;
     @OneToMany(mappedBy = "committeeId")
     private List<ThesisCommitteeRate> thesisCommitteeRateList;
+    @OneToMany(mappedBy = "committeeId")
+    private List<CommitteeUser> committeeUserList;
 
     public Committee() {
     }
@@ -64,31 +63,6 @@ public class Committee implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @XmlTransient
-    public List<Score> getScoreList() {
-        return scoreList;
-    }
-
-    public void setScoreList(List<Score> scoreList) {
-        this.scoreList = scoreList;
-    }
-
-    @XmlTransient
-    public List<Member1> getMember1List() {
-        return member1List;
-    }
-
-    public void setMember1List(List<Member1> member1List) {
-        this.member1List = member1List;
-    }
 
     @XmlTransient
     public List<ThesisCommitteeRate> getThesisCommitteeRateList() {
@@ -97,6 +71,15 @@ public class Committee implements Serializable {
 
     public void setThesisCommitteeRateList(List<ThesisCommitteeRate> thesisCommitteeRateList) {
         this.thesisCommitteeRateList = thesisCommitteeRateList;
+    }
+
+    @XmlTransient
+    public List<CommitteeUser> getCommitteeUserList() {
+        return committeeUserList;
+    }
+
+    public void setCommitteeUserList(List<CommitteeUser> committeeUserList) {
+        this.committeeUserList = committeeUserList;
     }
 
     @Override
@@ -122,6 +105,14 @@ public class Committee implements Serializable {
     @Override
     public String toString() {
         return "com.thesisSpringApp.pojo.Committee[ id=" + id + " ]";
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
     
 }

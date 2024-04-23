@@ -21,7 +21,7 @@ public class RoleRepositoryImpl implements RoleRepository {
 	private LocalSessionFactoryBean factoryBean;
 
 	@Override
-	public Role findRoleById(int id) {
+	public Role getRoleById(int id) {
 		Session session = factoryBean.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("Role.findById");
 		query.setParameter("id", id);
@@ -29,14 +29,14 @@ public class RoleRepositoryImpl implements RoleRepository {
 	}
 
 	@Override
-	public List<Role> findAllRoles() {
+	public List<Role> getAllRoles() {
 		Session session = factoryBean.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("Role.findAll");
 		return query.getResultList();
 	}
 
 	@Override
-	public Role findRoleByName(String name) {
+	public Role getRoleByName(String name) {
 		Session session = factoryBean.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("Role.findByName");
 		query.setParameter("name", name);

@@ -1,5 +1,10 @@
 USE thesisspringapp;
 
+create table thesis_status(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+	status_name varchar(20) not null
+);
+
 CREATE TABLE role (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE
@@ -58,10 +63,11 @@ create table thesis_committee_rate(
 	FOREIGN KEY (thesis_id) REFERENCES thesis(id),
     committee_id INT,
 	FOREIGN KEY (committee_id) REFERENCES committee(id),
-    status VARCHAR(50)
+    status_id int,
+    foreign key (status_id) references thesis_status(id)
 );
 
-create table member(
+create table committee_user(
 	id INT AUTO_INCREMENT PRIMARY KEY,
 	role VARCHAR(50),
     user_id INT ,
@@ -78,12 +84,11 @@ create table criteria(
 
 create table score( 
 	id INT AUTO_INCREMENT PRIMARY KEY,
+    score float not null,
     thesis_id INT,
 	FOREIGN KEY (thesis_id) REFERENCES thesis(id),
     criteria_id INT,
 	FOREIGN KEY (criteria_id) REFERENCES criteria(id),
-    user_id INT,
-	FOREIGN KEY (user_id) REFERENCES member(user_id),
-    committee_id INT,
-	FOREIGN KEY (committee_id) REFERENCES committee(id)
-);
+    committee_user_id int,
+    Foreign key (committee_user_id) References committee_user(id)
+    )

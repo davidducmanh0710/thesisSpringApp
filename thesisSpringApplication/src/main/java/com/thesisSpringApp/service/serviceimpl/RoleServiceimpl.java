@@ -16,13 +16,18 @@ public class RoleServiceimpl implements RoleService {
 	private RoleRepository roleRepository;
 
 	@Override
-	public Role findRoleById(int id) {
-		return roleRepository.findRoleById(id);
+	public Role getRoleById(int id) {
+		return roleRepository.getRoleById(id);
 	}
 
 	@Override
-	public List<Role> findAllRoles() {
-		return roleRepository.findAllRoles();
+	public List<Role> getAllRoles() {
+		return roleRepository.getAllRoles();
+	}
+
+	@Override
+	public Role getRoleByName(String name) {
+		return roleRepository.getRoleByName(name);
 	}
 
 }

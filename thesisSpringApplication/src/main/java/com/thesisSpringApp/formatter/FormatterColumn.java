@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.thesisSpringApp.pojo.Role;
+import com.thesisSpringApp.service.FacultyService;
 import com.thesisSpringApp.service.RoleService;
-import com.thesisSpringApp.service.serviceimpl.FacultyService;
 
 @Controller
 public class FormatterColumn {
@@ -21,7 +21,7 @@ public class FormatterColumn {
 
 	public String roleParentIdFormatter(int id) {
 		if (id > 0) {
-			Role role = roleService.findRoleById(id);
+			Role role = roleService.getRoleById(id);
 			return role.getName();
 		}
 		return "None Parent";

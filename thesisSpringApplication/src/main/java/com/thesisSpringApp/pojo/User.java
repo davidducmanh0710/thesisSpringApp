@@ -23,7 +23,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -42,11 +41,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "user", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"phone"}),
-    @UniqueConstraint(columnNames = {"email"}),
-    @UniqueConstraint(columnNames = {"username"}),
-    @UniqueConstraint(columnNames = {"useruniversityid"})})
+@Table(name = "user")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
@@ -68,44 +63,45 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
     @Size(max = 255)
-    @Column(name = "avatar", length = 255)
+    @Column(name = "avatar")
     private String avatar;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 10)
-    @Column(name = "useruniversityid", nullable = false, length = 10)
+    @Column(name = "useruniversityid")
     private String useruniversityid;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "username", nullable = false, length = 255)
+    @Column(name = "username")
     private String username;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(name = "password")
+	@JsonIgnore
     private String password;
     @Size(max = 40)
-    @Column(name = "firstName", length = 40)
+    @Column(name = "firstName")
     private String firstName;
     @Size(max = 40)
-    @Column(name = "lastName", length = 40)
+    @Column(name = "lastName")
     private String lastName;
     @Size(max = 10)
-    @Column(name = "gender", length = 10)
+    @Column(name = "gender")
     private String gender;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 50)
-    @Column(name = "email", nullable = false, length = 50)
+    @Column(name = "email")
     private String email;
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
     @Size(max = 10)
-    @Column(name = "phone", length = 10)
+    @Column(name = "phone")
     private String phone;
     @Column(name = "birthday")
     @Temporal(TemporalType.TIMESTAMP)
@@ -113,19 +109,22 @@ public class User implements Serializable {
     @Column(name = "active")
     private Boolean active;
     @OneToMany(mappedBy = "userId")
+	@JsonIgnore
     private List<ThesisUser> thesisUserList;
-    @OneToMany(mappedBy = "userId")
-    private List<Member1> member1List;
-    @JoinColumn(name = "faculty_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "faculty_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
 	@JsonIgnore
     private Faculty facultyId;
-    @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
 	@JsonIgnore
     private Role roleId;
+    @OneToMany(mappedBy = "userId")
+	@JsonIgnore
+    private List<CommitteeUser> committeeUserList;
 
-	@Transient
+	@Transient // trường trung gian , get file của api
+	@JsonIgnore
 	private MultipartFile file;
 
     public User() {
@@ -143,13 +142,6 @@ public class User implements Serializable {
         this.email = email;
     }
 
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
 
     @Override
     public boolean equals(Object object) {

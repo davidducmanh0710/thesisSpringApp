@@ -1,4 +1,4 @@
-package com.thesisSpringApp.service.serviceimpl;
+package com.thesisSpringApp.service;
 
 import java.util.List;
 

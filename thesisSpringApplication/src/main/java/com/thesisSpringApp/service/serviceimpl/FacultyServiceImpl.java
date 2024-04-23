@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.thesisSpringApp.pojo.Faculty;
 import com.thesisSpringApp.repository.FacultyRepository;
+import com.thesisSpringApp.service.FacultyService;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {

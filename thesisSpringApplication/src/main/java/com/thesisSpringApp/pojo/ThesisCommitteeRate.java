@@ -16,7 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -28,25 +27,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "ThesisCommitteeRate.findAll", query = "SELECT t FROM ThesisCommitteeRate t"),
-    @NamedQuery(name = "ThesisCommitteeRate.findById", query = "SELECT t FROM ThesisCommitteeRate t WHERE t.id = :id"),
-    @NamedQuery(name = "ThesisCommitteeRate.findByStatus", query = "SELECT t FROM ThesisCommitteeRate t WHERE t.status = :status")})
+    @NamedQuery(name = "ThesisCommitteeRate.findById", query = "SELECT t FROM ThesisCommitteeRate t WHERE t.id = :id")})
 public class ThesisCommitteeRate implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
-    @Size(max = 50)
-    @Column(name = "status", length = 50)
-    private String status;
     @JoinColumn(name = "committee_id", referencedColumnName = "id")
     @ManyToOne
     private Committee committeeId;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne
     private Thesis thesisId;
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
+    @ManyToOne
+    private ThesisStatus statusId;
 
     public ThesisCommitteeRate() {
     }
@@ -63,14 +61,6 @@ public class ThesisCommitteeRate implements Serializable {
         this.id = id;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Committee getCommitteeId() {
         return committeeId;
     }
@@ -85,6 +75,14 @@ public class ThesisCommitteeRate implements Serializable {
 
     public void setThesisId(Thesis thesisId) {
         this.thesisId = thesisId;
+    }
+
+    public ThesisStatus getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(ThesisStatus statusId) {
+        this.statusId = statusId;
     }
 
     @Override

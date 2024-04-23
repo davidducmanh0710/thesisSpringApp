@@ -6,7 +6,9 @@ import com.thesisSpringApp.pojo.Role;
 
 public interface RoleService {
 
-	Role findRoleById(int id);
+	Role getRoleById(int id);
 
-	List<Role> findAllRoles();
+	List<Role> getAllRoles();
+
+	Role getRoleByName(String name);
 }

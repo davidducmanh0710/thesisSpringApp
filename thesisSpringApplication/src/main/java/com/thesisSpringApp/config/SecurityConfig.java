@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 		"com.thesisSpringApp.repository",
 		"com.thesisSpringApp.service",
 		"com.thesisSpringApp.api",
+		"com.thesisSpringApp.config",
+
 })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -28,8 +30,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+		http.cors().and().authorizeRequests()
 				.antMatchers("/**").permitAll()
 				.and().csrf().disable(); // Tắt CSRF (Cross-Site Request Forgery) protection
 	}
+
+
 }

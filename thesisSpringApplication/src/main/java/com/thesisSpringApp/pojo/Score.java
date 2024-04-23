@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,24 +28,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Score.findAll", query = "SELECT s FROM Score s"),
-    @NamedQuery(name = "Score.findById", query = "SELECT s FROM Score s WHERE s.id = :id")})
+    @NamedQuery(name = "Score.findById", query = "SELECT s FROM Score s WHERE s.id = :id"),
+    @NamedQuery(name = "Score.findByScore", query = "SELECT s FROM Score s WHERE s.score = :score")})
 public class Score implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
-    @JoinColumn(name = "committee_id", referencedColumnName = "id")
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "score")
+    private float score;
+    @JoinColumn(name = "committee_user_id", referencedColumnName = "id")
     @ManyToOne
-    private Committee committeeId;
+    private CommitteeUser committeeUserId;
     @JoinColumn(name = "criteria_id", referencedColumnName = "id")
     @ManyToOne
     private Criteria criteriaId;
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    @ManyToOne
-    private Member1 userId;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne
     private Thesis thesisId;
@@ -56,6 +59,11 @@ public class Score implements Serializable {
         this.id = id;
     }
 
+    public Score(Integer id, float score) {
+        this.id = id;
+        this.score = score;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -64,12 +72,20 @@ public class Score implements Serializable {
         this.id = id;
     }
 
-    public Committee getCommitteeId() {
-        return committeeId;
+    public float getScore() {
+        return score;
     }
 
-    public void setCommitteeId(Committee committeeId) {
-        this.committeeId = committeeId;
+    public void setScore(float score) {
+        this.score = score;
+    }
+
+    public CommitteeUser getCommitteeUserId() {
+        return committeeUserId;
+    }
+
+    public void setCommitteeUserId(CommitteeUser committeeUserId) {
+        this.committeeUserId = committeeUserId;
     }
 
     public Criteria getCriteriaId() {
@@ -78,14 +94,6 @@ public class Score implements Serializable {
 
     public void setCriteriaId(Criteria criteriaId) {
         this.criteriaId = criteriaId;
-    }
-
-    public Member1 getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Member1 userId) {
-        this.userId = userId;
     }
 
     public Thesis getThesisId() {

@@ -6,6 +6,7 @@ import javax.mail.MessagingException;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 
 public interface UserService extends UserDetails {
@@ -18,4 +19,6 @@ public interface UserService extends UserDetails {
 	User getUserById(int id);
 
 	void setCloudinaryField(User user);
+
+	List<User> getUserByRoleName(Role role);
 }

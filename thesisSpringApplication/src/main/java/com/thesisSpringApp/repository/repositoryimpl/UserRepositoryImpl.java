@@ -62,14 +62,12 @@ public class UserRepositoryImpl implements UserRepository {
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (role != null) {
-			predicates.add(criteriaBuilder.equal(rUser.get("roleId").get("id"), role.getId()));
+			predicates.add(criteriaBuilder.equal(rUser.get("roleId"), role.getId()));
 		}
 
 		criteriaQuery.where(predicates.toArray(Predicate[]::new)); // nhung dieu kien where
 
 		Query query = session.createQuery(criteriaQuery);
-
-		session.close();
 
 		return query.getResultList();
 

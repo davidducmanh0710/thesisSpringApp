@@ -27,24 +27,24 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author ADMIN
  */
 @Entity
-@Table(name = "member")
+@Table(name = "committee_user")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Member1.findAll", query = "SELECT m FROM Member1 m"),
-    @NamedQuery(name = "Member1.findById", query = "SELECT m FROM Member1 m WHERE m.id = :id"),
-    @NamedQuery(name = "Member1.findByRole", query = "SELECT m FROM Member1 m WHERE m.role = :role")})
-public class Member1 implements Serializable {
+    @NamedQuery(name = "CommitteeUser.findAll", query = "SELECT c FROM CommitteeUser c"),
+    @NamedQuery(name = "CommitteeUser.findById", query = "SELECT c FROM CommitteeUser c WHERE c.id = :id"),
+    @NamedQuery(name = "CommitteeUser.findByRole", query = "SELECT c FROM CommitteeUser c WHERE c.role = :role")})
+public class CommitteeUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
     @Size(max = 50)
-    @Column(name = "role", length = 50)
+    @Column(name = "role")
     private String role;
-    @OneToMany(mappedBy = "userId")
+    @OneToMany(mappedBy = "committeeUserId")
     private List<Score> scoreList;
     @JoinColumn(name = "committee_id", referencedColumnName = "id")
     @ManyToOne
@@ -53,10 +53,10 @@ public class Member1 implements Serializable {
     @ManyToOne
     private User userId;
 
-    public Member1() {
+    public CommitteeUser() {
     }
 
-    public Member1(Integer id) {
+    public CommitteeUser(Integer id) {
         this.id = id;
     }
 
@@ -111,10 +111,10 @@ public class Member1 implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Member1)) {
+        if (!(object instanceof CommitteeUser)) {
             return false;
         }
-        Member1 other = (Member1) object;
+        CommitteeUser other = (CommitteeUser) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -123,7 +123,7 @@ public class Member1 implements Serializable {
 
     @Override
     public String toString() {
-        return "com.thesisSpringApp.pojo.Member1[ id=" + id + " ]";
+        return "com.thesisSpringApp.pojo.CommitteeUser[ id=" + id + " ]";
     }
     
 }

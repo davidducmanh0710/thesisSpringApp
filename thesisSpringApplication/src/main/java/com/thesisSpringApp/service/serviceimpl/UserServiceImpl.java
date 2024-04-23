@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.repository.UserRepository;
 import com.thesisSpringApp.service.MailSenderService;
@@ -80,7 +81,7 @@ public class UserServiceImpl implements UserService {
 		String password = generateRandomString(7);
 		user.setPassword(password);
 
-		user.setActive(false);
+		user.setActive(true);
 
 		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
 		
@@ -107,6 +108,12 @@ public class UserServiceImpl implements UserService {
 			}
 			userRepository.saveUser(user);
 		}
+	}
+
+	@Override
+	public List<User> getUserByRoleName(Role role) {
+
+		return userRepository.getUserByRole(role);
 	}
 
 	@Override
@@ -150,5 +157,6 @@ public class UserServiceImpl implements UserService {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 
 }

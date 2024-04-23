@@ -16,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -25,14 +26,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author ADMIN
  */
 @Entity
-@Table(name = "criteria")
+@Table(name = "thesis_status")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Criteria.findAll", query = "SELECT c FROM Criteria c"),
-    @NamedQuery(name = "Criteria.findById", query = "SELECT c FROM Criteria c WHERE c.id = :id"),
-    @NamedQuery(name = "Criteria.findByName", query = "SELECT c FROM Criteria c WHERE c.name = :name"),
-    @NamedQuery(name = "Criteria.findByActive", query = "SELECT c FROM Criteria c WHERE c.active = :active")})
-public class Criteria implements Serializable {
+    @NamedQuery(name = "ThesisStatus.findAll", query = "SELECT t FROM ThesisStatus t"),
+    @NamedQuery(name = "ThesisStatus.findById", query = "SELECT t FROM ThesisStatus t WHERE t.id = :id"),
+    @NamedQuery(name = "ThesisStatus.findByStatusName", query = "SELECT t FROM ThesisStatus t WHERE t.statusName = :statusName")})
+public class ThesisStatus implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -40,19 +40,24 @@ public class Criteria implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Size(max = 100)
-    @Column(name = "name")
-    private String name;
-    @Column(name = "active")
-    private Boolean active;
-    @OneToMany(mappedBy = "criteriaId")
-    private List<Score> scoreList;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "status_name")
+    private String statusName;
+    @OneToMany(mappedBy = "statusId")
+    private List<ThesisCommitteeRate> thesisCommitteeRateList;
 
-    public Criteria() {
+    public ThesisStatus() {
     }
 
-    public Criteria(Integer id) {
+    public ThesisStatus(Integer id) {
         this.id = id;
+    }
+
+    public ThesisStatus(Integer id, String statusName) {
+        this.id = id;
+        this.statusName = statusName;
     }
 
     public Integer getId() {
@@ -63,29 +68,21 @@ public class Criteria implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getStatusName() {
+        return statusName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
     }
 
     @XmlTransient
-    public List<Score> getScoreList() {
-        return scoreList;
+    public List<ThesisCommitteeRate> getThesisCommitteeRateList() {
+        return thesisCommitteeRateList;
     }
 
-    public void setScoreList(List<Score> scoreList) {
-        this.scoreList = scoreList;
+    public void setThesisCommitteeRateList(List<ThesisCommitteeRate> thesisCommitteeRateList) {
+        this.thesisCommitteeRateList = thesisCommitteeRateList;
     }
 
     @Override
@@ -98,10 +95,10 @@ public class Criteria implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Criteria)) {
+        if (!(object instanceof ThesisStatus)) {
             return false;
         }
-        Criteria other = (Criteria) object;
+        ThesisStatus other = (ThesisStatus) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -110,7 +107,7 @@ public class Criteria implements Serializable {
 
     @Override
     public String toString() {
-        return "com.thesisSpringApp.pojo.Criteria[ id=" + id + " ]";
+        return "com.thesisSpringApp.pojo.ThesisStatus[ id=" + id + " ]";
     }
     
 }

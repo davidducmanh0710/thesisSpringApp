@@ -34,7 +34,7 @@ public class ThesisUser implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Integer id;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne

@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.view.JstlView;
 		"com.thesisSpringApp.repository",
 		"com.thesisSpringApp.service",
 		"com.thesisSpringApp.api",
+		"com.thesisSpringApp.config",
 
 })
 public class WebAppContextConfig implements WebMvcConfigurer {
@@ -63,4 +65,14 @@ public class WebAppContextConfig implements WebMvcConfigurer {
 
 		return resolver;
 	}
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**") // Áp dụng CORS cho tất cả các URL
+				.allowedOrigins("*") // Cho phép truy cập từ tất cả các domain
+				.allowedMethods("GET", "POST", "PUT", "DELETE") // Cho phép các phương thức HTTP
+				.allowedHeaders("*"); // Cho phép tất cả các header
+	}
+
+
 }
