@@ -4,12 +4,12 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 
-public interface UserService extends UserDetails {
+public interface UserService extends UserDetailsService {
 	List<User> getAllUsers();
 
 	void saveUser(User user);

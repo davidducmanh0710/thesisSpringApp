@@ -1,10 +1,11 @@
 package com.thesisSpringApp.service.serviceimpl;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,9 @@ import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +88,7 @@ public class UserServiceImpl implements UserService {
 		user.setActive(true);
 
 		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
-		
+
 		user.setPassword(passwordEncoder.encode(password));
 
 		userRepository.saveUser(user);
@@ -117,46 +121,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = userRepository.getUserByUsername(username);
+		if (user == null)
+			throw new UsernameNotFoundException("Không tồn tại!");
+		Set<GrantedAuthority> authorities = new HashSet<>();
+		authorities.add(new SimpleGrantedAuthority(user.getRoleId().getName()));
+
+		return new org.springframework.security.core.userdetails.User(user.getUsername(),
+				user.getPassword(), authorities);
 	}
-
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
 }

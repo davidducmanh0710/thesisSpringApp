@@ -13,4 +13,6 @@ public interface UserRepository {
 	User getUserById(int id);
 
 	List<User> getUserByRole(Role role);
+
+	User getUserByUsername(String username);
 }

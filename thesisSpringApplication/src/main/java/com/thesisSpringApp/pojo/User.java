@@ -59,7 +59,9 @@ import lombok.Setter;
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    
+
+	private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -141,6 +143,7 @@ public class User implements Serializable {
         this.password = password;
         this.email = email;
     }
+    
 
 
     @Override

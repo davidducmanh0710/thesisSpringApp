@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,7 +25,6 @@ import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserApiController {
 
 	private UserService userService;
@@ -40,10 +40,7 @@ public class UserApiController {
 		this.roleService = roleService;
 	}
 
-//	@PostMapping(path = "/users/", consumes = {
-//			MediaType.APPLICATION_JSON_VALUE,
-//			MediaType.MULTIPART_FORM_DATA_VALUE
-//	})
+
 
 	@GetMapping("/all")
 	public ResponseEntity<List<User>> getUsers() {
@@ -67,16 +64,18 @@ public class UserApiController {
 				HttpStatus.OK);
 	}
 
-	@PostMapping("/{userId}/setInitAcc")
+	@PostMapping(path = "/{userId}/setInitAcc", consumes = { MediaType.APPLICATION_JSON_VALUE,
+			MediaType.MULTIPART_FORM_DATA_VALUE })
 	@CrossOrigin
 	public ResponseEntity<User> changePassAndUploadAvatar(
 			@PathVariable int userId,
 			@RequestParam("password") String password,
-			@RequestPart("avatar") MultipartFile file) {
+			@RequestPart("avatar") MultipartFile[] files) {
 		User user = userService.getUserById(userId);
 
 		user.setPassword(passwordEncoder.encode(password));
-		user.setFile(file);
+		if (files.length > 0)
+			user.setFile(files[0]);
 		userService.saveUser(user);
 		userService.setCloudinaryField(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);

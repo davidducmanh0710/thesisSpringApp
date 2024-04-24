@@ -36,7 +36,7 @@ public class ThesisApiController {
 	}
 
 	
-	@PostMapping("/add")
+	@PostMapping(path = "/add")
 	@CrossOrigin
 	public ResponseEntity<Thesis> addNewThesis(@RequestBody ThesisDTO thesisDTO) {
 		Thesis thesis = new Thesis();
