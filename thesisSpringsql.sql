@@ -8,12 +8,12 @@ USE `thesisspringapp`;
 
 CREATE TABLE `role` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL UNIQUE
+    `name` VARCHAR(255) NOT NULL
 );
 
 create table `faculty`(
 	`id` INT AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL UNIQUE
+    `name` VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE `user` (

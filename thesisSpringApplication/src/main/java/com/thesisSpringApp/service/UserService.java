@@ -16,6 +16,7 @@ public interface UserService extends UserDetailsService {
 
 	void saveInitUserAndSendMail(User user) throws MessagingException;
 
+
 	User getUserByUsername(String username);
 
 	User getUserById(int id);

@@ -21,7 +21,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -67,18 +66,19 @@ public class User implements Serializable {
     @Column(name = "avatar")
     private String avatar;
     @Basic(optional = false)
-    @NotNull
+	// @NotNull
 	@Size(min = 1, max = 10, message = "{user.useruniversityid.minMaxLenErr}")
     @Column(name = "useruniversityid")
     private String useruniversityid;
     @Basic(optional = false)
-    @NotNull
+	// @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
     @Basic(optional = false)
-    @NotNull
+	// @NotNull
     @Size(min = 1, max = 255)
+	@JsonIgnore
     @Column(name = "password")
     private String password;
     @Size(max = 40)
@@ -92,7 +92,7 @@ public class User implements Serializable {
     private String gender;
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
-    @NotNull
+	// @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "email")
     private String email;
@@ -101,7 +101,7 @@ public class User implements Serializable {
     @Column(name = "phone")
     private String phone;
     @Basic(optional = false)
-    @NotNull
+	// @NotNull
     @Column(name = "birthday")
 //  @Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

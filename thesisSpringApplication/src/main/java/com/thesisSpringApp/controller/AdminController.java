@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.thesisSpringApp.formatters.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
@@ -23,6 +23,7 @@ import com.thesisSpringApp.service.RoleService;
 import com.thesisSpringApp.service.UserService;
 
 @Controller
+@ControllerAdvice
 public class AdminController {
 
 	private UserService userService;
@@ -65,21 +66,17 @@ public class AdminController {
 	}
 
 	@PostMapping(value = "/admin/add/user")
-	public String adminAddUser(Model model, @RequestParam("roleId") int roleId,
-			@RequestParam("facultyId") int facultyId,
-			@ModelAttribute(value = "user") @Valid User user,
+	public String adminAddUser(Model model, @ModelAttribute(value = "user") @Valid User user,
 			BindingResult result)
 			throws MessagingException {
 
 		if (!result.hasErrors()) {
 			try {
-//				User existingUserEmail = userService.getUserByEmail(user.getEmail());
-//				User existingUserName = userService.getUserByUsername(user.getUsername());
 
-				Role role = roleService.getRoleById(roleId);
-				user.setRoleId(role);
-				Faculty faculty = facultyService.findFacultyById(facultyId);
+				Role role = roleService.getRoleById(user.getRoleId().getId());
+				Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());
 				user.setFacultyId(faculty);
+				user.setRoleId(role);
 				userService.saveInitUserAndSendMail(user);
 
 				return "redirect:/admin";
