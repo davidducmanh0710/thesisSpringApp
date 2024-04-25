@@ -51,6 +51,9 @@ public class Score implements Serializable {
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne
     private Thesis thesisId;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @ManyToOne
+    private User userId;
 
     public Score() {
     }
@@ -102,6 +105,14 @@ public class Score implements Serializable {
 
     public void setThesisId(Thesis thesisId) {
         this.thesisId = thesisId;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     @Override

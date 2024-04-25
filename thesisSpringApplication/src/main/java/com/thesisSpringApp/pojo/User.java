@@ -20,26 +20,24 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  *
  * @author ADMIN
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "user")
 @XmlRootElement
@@ -59,9 +57,7 @@ import lombok.Setter;
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
 
-    
-
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -72,7 +68,7 @@ public class User implements Serializable {
     private String avatar;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 10)
+	@Size(min = 1, max = 10, message = "{user.useruniversityid.minMaxLenErr}")
     @Column(name = "useruniversityid")
     private String useruniversityid;
     @Basic(optional = false)
@@ -84,7 +80,6 @@ public class User implements Serializable {
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "password")
-	@JsonIgnore
     private String password;
     @Size(max = 40)
     @Column(name = "firstName")
@@ -102,14 +97,21 @@ public class User implements Serializable {
     @Column(name = "email")
     private String email;
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
-    @Size(max = 10)
+	@Size(max = 10, message = "{user.phone.minMaxLenErr}")
     @Column(name = "phone")
     private String phone;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "birthday")
-    @Temporal(TemporalType.TIMESTAMP)
+//  @Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@Past(message = "{user.birthday.past}")
     private Date birthday;
     @Column(name = "active")
     private Boolean active;
+    @OneToMany(mappedBy = "userId")
+	@JsonIgnore
+    private List<Score> scoreList;
     @OneToMany(mappedBy = "userId")
 	@JsonIgnore
     private List<ThesisUser> thesisUserList;
@@ -125,7 +127,7 @@ public class User implements Serializable {
 	@JsonIgnore
     private List<CommitteeUser> committeeUserList;
 
-	@Transient // trường trung gian , get file của api
+	@Transient
 	@JsonIgnore
 	private MultipartFile file;
 
@@ -136,15 +138,13 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public User(Integer id, String useruniversityid, String username, String password, String email) {
-        this.id = id;
-        this.useruniversityid = useruniversityid;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
-    
 
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
 
     @Override
     public boolean equals(Object object) {

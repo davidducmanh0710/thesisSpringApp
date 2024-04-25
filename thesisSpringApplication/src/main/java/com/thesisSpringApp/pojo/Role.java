@@ -6,6 +6,7 @@ package com.thesisSpringApp.pojo;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -21,6 +22,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -42,11 +45,12 @@ public class Role implements Serializable {
     @Column(name = "id")
     private Integer id;
     @Basic(optional = false)
-    @NotNull
+	@NotNull(message = "Ko dc null")
     @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "roleId")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "roleId")
+	@JsonIgnore
     private List<User> userList;
 
     public Role() {

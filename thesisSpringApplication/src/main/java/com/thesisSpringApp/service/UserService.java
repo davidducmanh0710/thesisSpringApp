@@ -16,9 +16,15 @@ public interface UserService extends UserDetailsService {
 
 	void saveInitUserAndSendMail(User user) throws MessagingException;
 
+	User getUserByUsername(String username);
+
 	User getUserById(int id);
 
 	void setCloudinaryField(User user);
 
 	List<User> getUserByRoleName(Role role);
+
+	User getUserByEmail(String email);
+
+	User getUserByUniversityId(String uId);
 }

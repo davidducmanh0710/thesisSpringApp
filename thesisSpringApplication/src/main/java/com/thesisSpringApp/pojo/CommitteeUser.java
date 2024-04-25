@@ -6,6 +6,7 @@ package com.thesisSpringApp.pojo;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,6 +22,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -45,12 +48,15 @@ public class CommitteeUser implements Serializable {
     @Column(name = "role")
     private String role;
     @OneToMany(mappedBy = "committeeUserId")
+	@JsonIgnore
     private List<Score> scoreList;
     @JoinColumn(name = "committee_id", referencedColumnName = "id")
     @ManyToOne
+	@JsonIgnore
     private Committee committeeId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
+	@JsonIgnore
     private User userId;
 
     public CommitteeUser() {

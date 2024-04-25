@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
 		String password = generateRandomString(7);
 		user.setPassword(password);
 
-		user.setActive(true);
+		user.setActive(false);
 
 		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
 
@@ -115,6 +115,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getUserByUsername(String username) {
+		return userRepository.getUserByUsername(username);
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		return userRepository.getUserByEmail(email);
+	}
+
+	@Override
+	public User getUserByUniversityId(String uId) {
+		return userRepository.getUserByUniversityId(uId);
+	}
+
+	@Override
 	public List<User> getUserByRoleName(Role role) {
 
 		return userRepository.getUserByRole(role);
@@ -131,4 +146,6 @@ public class UserServiceImpl implements UserService {
 		return new org.springframework.security.core.userdetails.User(user.getUsername(),
 				user.getPassword(), authorities);
 	}
+
+
 }

@@ -37,17 +37,23 @@ h1 {
 		<h1 class="text-center">Add User</h1>
 		<div class="row justify-content-center">
 			<div class="col-md-6">
+
+				<c:if test="${errMsg != null}">
+					<div class="alert alert-danger">${errMsg}</div>
+				</c:if>
+
 				<c:url value="/admin/add/user" var="actionAddUser" />
 
 				<form:form method="post" action="${actionAddUser}"
 					modelAttribute="user">
+					<form:errors path="*" element="div" cssClass="alert alert-danger" />
 
 					<div class="row g-3">
 						<div class="col">
 							<div class="form-floating">
 								<form:input path="useruniversityid" type="text"
 									class="form-control" id="useruniversityidId"
-									placeholder="User university id" required="true" />
+									placeholder="User university id" />
 								<label for="useruniversityidId">User university id <span
 									class="text-danger">*</span></label>
 							</div>
@@ -78,9 +84,10 @@ h1 {
 						<div class="col">
 							<div class="form-floating">
 								<form:input path="email" type="email" class="form-control"
-									id="email" placeholder="Email" required="true" name="email" />
+									id="email" placeholder="Email" name="email" required="true" />
 								<label for="email">Email <span class="text-danger">*</span>
 								</label>
+
 							</div>
 
 						</div>
@@ -95,20 +102,17 @@ h1 {
 					</div>
 					<div class="row g-3">
 						<div class="col">
-
-							<!-- <div class="form-floating">
-								<input type="date" class="form-control"
-									id="birthday" placeholder="Birthday" required name="birthdayName" />
-								<label for="birthday">birthday <span class="text-danger">*</span>
+							<div class="form-floating">
+								<form:input type="date" path="birthday" class="form-control"
+									id="birthday" placeholder="Birthday" name="birthday" />
+								<label for="birthday">Birthday <span class="text-danger">*</span>
 								</label>
-							</div> -->
+							</div>
 						</div>
 						<div class="col">
 							<div class="form-floating">
-								<form:select path="gender" class="form-select" id="gender"
-									required="true">
-									<option value="">Choose Gender...</option>
-									<option value="male">Male</option>
+								<form:select path="gender" class="form-select" id="gender">
+									<option value="male" selected>Male</option>
 									<option value="female">Female</option>
 								</form:select>
 								<label for="gender">Gender <span class="text-danger">*</span></label>
@@ -119,22 +123,31 @@ h1 {
 					<div class="row g-3">
 						<div class="col">
 							<div class="form-floating">
-								<select class="form-select" name="roleIdName" id="roleId"
-									required>
+								<form:select class="form-select" name="roleId" id="roleId"
+									path="roleId">
 									<c:forEach items="${roles}" var="r">
-										<option value="${r.id}">${r.name}</option>
+										<c:choose>
+											<c:when test="${r.id == user.roleId.id}">
+												<option value="${r.id}" selected>${r.name}</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${r.id}">${r.name}</option>
+											</c:otherwise>
+										</c:choose>
 									</c:forEach>
-								</select> <label for="roleId">ROLE ID <span class="text-danger">*</span></label>
+								</form:select>
+								<label for="roleId">ROLE ID <span class="text-danger">*</span></label>
 							</div>
 						</div>
 						<div class="col">
 							<div class="form-floating">
-								<select class="form-select" name="facultyIdName" id="facultyId"
-									required>
-									<c:forEach items="${faculties}" var="f">
-										<option value="${f.id}">${f.name}</option>
+								<form:select class="form-select" name="facultyId" id="facultyId"
+									path="facultyId">
+									<c:forEach items="${faculties}" var="fa">
+										<option value="${fa.id}">${fa.name}</option>
 									</c:forEach>
-								</select> <label for="facultyId">FACULTY ID <span
+								</form:select>
+								<label for="facultyId">FACULTY ID <span
 									class="text-danger">*</span></label>
 							</div>
 						</div>

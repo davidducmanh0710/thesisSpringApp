@@ -4,10 +4,15 @@
  */
 package com.thesisSpringApp.config;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -16,6 +21,9 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import com.thesisSpringApp.formatters.FacultyFormatter;
+import com.thesisSpringApp.formatters.RoleFormatter;
 
 /**
  *
@@ -28,9 +36,6 @@ import org.springframework.web.servlet.view.JstlView;
 		"com.thesisSpringApp.controller",
 		"com.thesisSpringApp.repository",
 		"com.thesisSpringApp.service",
-		"com.thesisSpringApp.api",
-		"com.thesisSpringApp.config",
-
 })
 public class WebAppContextConfig implements WebMvcConfigurer {
 
@@ -72,6 +77,32 @@ public class WebAppContextConfig implements WebMvcConfigurer {
 				.allowedOrigins("*") // Cho phép truy cập từ tất cả các domain
 				.allowedMethods("GET", "POST", "PUT", "DELETE") // Cho phép các phương thức HTTP
 				.allowedHeaders("*"); // Cho phép tất cả các header
+	}
+
+	@Bean
+	public MessageSource messageSource() {
+		ResourceBundleMessageSource resource = new ResourceBundleMessageSource();
+		resource.setBasename("messages"); // đọc tập tin có tên là messages.properties
+		resource.setDefaultEncoding("UTF-8");
+		return resource;
+	}
+
+	@Bean(name = "validator")
+	public LocalValidatorFactoryBean validator() {
+		LocalValidatorFactoryBean bean = new LocalValidatorFactoryBean();
+		bean.setValidationMessageSource(messageSource());
+		return bean;
+	}
+
+	@Override
+	public Validator getValidator() {
+		return validator();
+	}
+	
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		registry.addFormatter(new RoleFormatter());
+		registry.addFormatter(new FacultyFormatter());
 	}
 
 

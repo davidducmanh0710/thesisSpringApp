@@ -16,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -33,16 +34,17 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Committee.findByName", query = "SELECT c FROM Committee c WHERE c.name = :name")})
 public class Committee implements Serializable {
 
-    @Size(max = 50)
-    @Column(name = "name")
-    private String name;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "name")
+    private String name;
     @OneToMany(mappedBy = "committeeId")
     private List<ThesisCommitteeRate> thesisCommitteeRateList;
     @OneToMany(mappedBy = "committeeId")
@@ -55,6 +57,11 @@ public class Committee implements Serializable {
         this.id = id;
     }
 
+    public Committee(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -63,6 +70,13 @@ public class Committee implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @XmlTransient
     public List<ThesisCommitteeRate> getThesisCommitteeRateList() {
@@ -105,14 +119,6 @@ public class Committee implements Serializable {
     @Override
     public String toString() {
         return "com.thesisSpringApp.pojo.Committee[ id=" + id + " ]";
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
     
 }

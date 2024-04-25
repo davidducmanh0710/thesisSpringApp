@@ -15,4 +15,8 @@ public interface UserRepository {
 	List<User> getUserByRole(Role role);
 
 	User getUserByUsername(String username);
+
+	User getUserByEmail(String email);
+
+	User getUserByUniversityId(String uId);
 }

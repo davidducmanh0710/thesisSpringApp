@@ -3,16 +3,18 @@ package com.thesisSpringApp.controller;
 import java.util.List;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.thesisSpringApp.formatter.FormatterColumn;
+import com.thesisSpringApp.formatters.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
 import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
@@ -25,16 +27,14 @@ public class AdminController {
 
 	private UserService userService;
 	private RoleService roleService;
-	private User user;
 	private FacultyService facultyService;
 
 	@Autowired
-	public AdminController(UserService userService, RoleService roleService, User user,
+	public AdminController(UserService userService, RoleService roleService,
 			FacultyService facultyService) {
 		super();
 		this.userService = userService;
 		this.roleService = roleService;
-		this.user = user;
 		this.facultyService = facultyService;
 	}
 
@@ -50,33 +50,47 @@ public class AdminController {
 		return "admin";
 	}
 
+	@ModelAttribute
+	public void commonAttr(Model model) {
+		model.addAttribute("roles", roleService.getAllRoles());
+		model.addAttribute("faculties", facultyService.findAllFaculties());
+	}
+
 	@GetMapping("/admin/addUser")
 	public String adminAddUserView(Model model) {
-		List<Role> roles = roleService.getAllRoles();
-		List<Faculty> faculties = facultyService.findAllFaculties();
-		model.addAttribute("user", this.user);
-		model.addAttribute("roles", roles);
-		model.addAttribute("faculties", faculties);
+
+		model.addAttribute("user", new User());
+
 		return "addUser";
 	}
 
-
 	@PostMapping(value = "/admin/add/user")
-	public String adminAddUser(Model model, @ModelAttribute(value = "user") User user,
-//			@RequestParam("birthdayName") Date birthday ,
-			@RequestParam("roleIdName") int roleId, @RequestParam("facultyIdName") int facultyId)
+	public String adminAddUser(Model model, @RequestParam("roleId") int roleId,
+			@RequestParam("facultyId") int facultyId,
+			@ModelAttribute(value = "user") @Valid User user,
+			BindingResult result)
 			throws MessagingException {
 
-//		user.setBirthday(birthday);
+		if (!result.hasErrors()) {
+			try {
+//				User existingUserEmail = userService.getUserByEmail(user.getEmail());
+//				User existingUserName = userService.getUserByUsername(user.getUsername());
 
-		Role role = roleService.getRoleById(roleId);
-		user.setRoleId(role);
-		Faculty faculty = facultyService.findFacultyById(facultyId);
-		user.setFacultyId(faculty);
+				Role role = roleService.getRoleById(roleId);
+				user.setRoleId(role);
+				Faculty faculty = facultyService.findFacultyById(facultyId);
+				user.setFacultyId(faculty);
+				userService.saveInitUserAndSendMail(user);
 
-		userService.saveInitUserAndSendMail(user);
+				return "redirect:/admin";
 
-		return "redirect:/admin";
+			} catch (Exception ex) {
+				model.addAttribute("errMsg", ex.toString());
+			}
+
+		}
+		return "addUser";
+
 	}
 
 }

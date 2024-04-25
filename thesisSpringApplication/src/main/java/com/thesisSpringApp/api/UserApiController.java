@@ -76,6 +76,7 @@ public class UserApiController {
 		user.setPassword(passwordEncoder.encode(password));
 		if (files.length > 0)
 			user.setFile(files[0]);
+		user.setActive(true);
 		userService.saveUser(user);
 		userService.setCloudinaryField(user);
 		return new ResponseEntity<>(user, HttpStatus.OK);

@@ -5,6 +5,7 @@
 package com.thesisSpringApp.pojo;
 
 import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,6 +18,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -38,9 +41,11 @@ public class ThesisUser implements Serializable {
     private Integer id;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne
+	@JsonIgnore
     private Thesis thesisId;
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne
+	@JsonIgnore
     private User userId;
 
     public ThesisUser() {

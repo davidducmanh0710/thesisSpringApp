@@ -40,16 +40,15 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Thesis.findByActive", query = "SELECT t FROM Thesis t WHERE t.active = :active")})
 public class Thesis implements Serializable {
 
-    @Size(max = 255)
-    @Column(name = "name")
-    private String name;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Size(max = 255)
+    @Column(name = "name")
+    private String name;
     @Column(name = "create_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
@@ -83,6 +82,13 @@ public class Thesis implements Serializable {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Date getCreateDate() {
         return createDate;
@@ -166,14 +172,6 @@ public class Thesis implements Serializable {
     @Override
     public String toString() {
         return "com.thesisSpringApp.pojo.Thesis[ id=" + id + " ]";
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
     
 }
