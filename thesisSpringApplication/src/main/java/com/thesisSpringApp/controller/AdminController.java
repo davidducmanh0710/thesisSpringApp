@@ -72,7 +72,6 @@ public class AdminController {
 
 		if (!result.hasErrors()) {
 			try {
-
 				Role role = roleService.getRoleById(user.getRoleId().getId());
 				Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());
 				user.setFacultyId(faculty);
