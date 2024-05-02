@@ -27,60 +27,64 @@ import com.thesisSpringApp.service.UserService;
 @RequestMapping("/api/users")
 public class UserApiController {
 
-	private UserService userService;
-	private PasswordEncoder passwordEncoder;
-	private RoleService roleService;
+    private UserService userService;
+    private PasswordEncoder passwordEncoder;
+    private RoleService roleService;
 
-	@Autowired
-	public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
-			RoleService roleService) {
-		super();
-		this.userService = userService;
-		this.passwordEncoder = passwordEncoder;
-		this.roleService = roleService;
-	}
+    @Autowired
+    public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
+                             RoleService roleService) {
+        super();
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
+    }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getUsers() {
+        return new ResponseEntity<>(
+                this.userService.getAllUsers(),
+                HttpStatus.OK);
+    }
 
+    @GetMapping("/role/get2RoleList")
+    @CrossOrigin
+    public ResponseEntity<UserListsByRoleDTO> getUsersByRoleNameApi() {
+        Role role1 = roleService.getRoleByName("ROLE_GIANGVIEN");
+        Role role2 = roleService.getRoleByName("ROLE_SINHVIEN");
 
-	@GetMapping("/all")
-	public ResponseEntity<List<User>> getUsers() {
-		return new ResponseEntity<>(
-				this.userService.getAllUsers(),
-				HttpStatus.OK);
-	}
+        UserListsByRoleDTO dto = new UserListsByRoleDTO();
+        dto.setUsersGiangVien(userService.getUserByRoleName(role1));
+        dto.setUsersSinhVien(userService.getUserByRoleName(role2));
 
-	@GetMapping("/role/get2RoleList")
-	@CrossOrigin
-	public ResponseEntity<UserListsByRoleDTO> getUsersByRoleNameApi() {
-		Role role1 = roleService.getRoleByName("ROLE_GIANGVIEN");
-		Role role2 = roleService.getRoleByName("ROLE_SINHVIEN");
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 
-		UserListsByRoleDTO dto = new UserListsByRoleDTO();
-		dto.setUsersGiangVien(userService.getUserByRoleName(role1));
-		dto.setUsersSinhVien(userService.getUserByRoleName(role2));
+	@GetMapping("role/lecturer")
+    @CrossOrigin
+    public ResponseEntity<List<User>> getLecturers() {
+        Role role = roleService.getRoleByName("ROLE_GIANGVIEN");
 
-		return new ResponseEntity<>(
-				dto,
-				HttpStatus.OK);
-	}
+       List<User> users = userService.getUserByRoleName(role);
 
-	@PostMapping(path = "/{userId}/setInitAcc", consumes = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.MULTIPART_FORM_DATA_VALUE })
-	@CrossOrigin
-	public ResponseEntity<User> changePassAndUploadAvatar(
-			@PathVariable int userId,
-			@RequestParam("password") String password,
-			@RequestPart("avatar") MultipartFile[] files) {
-		User user = userService.getUserById(userId);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 
-		user.setPassword(passwordEncoder.encode(password));
-		if (files.length > 0)
-			user.setFile(files[0]);
-		user.setActive(true);
-		userService.saveUser(user);
-		userService.setCloudinaryField(user);
-		return new ResponseEntity<>(user, HttpStatus.OK);
-	}
+    @PostMapping(path = "/{userId}/setInitAcc", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    @CrossOrigin
+    public ResponseEntity<User> changePassAndUploadAvatar(
+            @PathVariable int userId,
+            @RequestParam("password") String password,
+            @RequestPart("avatar") MultipartFile[] files) {
+        User user = userService.getUserById(userId);
 
-
+        user.setPassword(passwordEncoder.encode(password));
+        if (files.length > 0)
+            user.setFile(files[0]);
+        user.setActive(true);
+        userService.saveUser(user);
+        userService.setCloudinaryField(user);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 }

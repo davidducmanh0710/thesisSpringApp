@@ -19,7 +19,7 @@ function App() {
 			<Container>
 				<Routes>
 					<Route path="/" element={<Thesis />} />
-					<Route path="/committee/add-thesis" element={<AddThesis />} />
+					<Route path="/add-thesis" element={<AddThesis />} />
 					<Route path="/committee" element={<Committee />} />
 					<Route path="/add-committee" element={<AddCommittee />} />
 					<Route path="/login" element={<Login />} />
