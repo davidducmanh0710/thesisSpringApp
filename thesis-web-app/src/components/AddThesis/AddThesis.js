@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
 
@@ -17,6 +17,10 @@ function AddThesis() {
 
 	const students = useRef();
 	const lecturers = useRef();
+
+	useEffect(() => {
+		document.title = "Thêm khóa luận";
+	}, []);
 
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
