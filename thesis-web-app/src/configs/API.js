@@ -1,11 +1,15 @@
 import axios from "axios";
 
-const appContext = "thesisSpringApplication_war";
+const SERVER_CONTEXT = "/thesisSpringApplication_war";
+const SERVER = "http://localhost:8080";
 
 export let endpoints = {
-	initAccount: (userId) => `${appContext}/api/users/${userId}/setInitAcc`,
+	initAccount: (userId) => `${SERVER_CONTEXT}/api/users/${userId}/setInitAcc`,
+	lecturers: `${SERVER_CONTEXT}/api/users/role/lecturer`,
+	getTwoRoleList: `${SERVER_CONTEXT}/api/users/role/get2RoleList`,
+	theses: `${SERVER_CONTEXT}/api/theses/`,
 };
 
 export default axios.create({
-	baseURL: "http://localhost:8080/",
+	baseURL: SERVER,
 });

@@ -1,10 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import API, { endpoints } from "../../configs/API";
 
 function InitAccount() {
 	const [password, setPassword] = useState();
 	const avatar = useRef();
+
+	useEffect(() => {
+		document.title = "Kích hoạt tài khoản";
+	}, []);
 
 	const init = (event) => {
 		event.preventDefault();

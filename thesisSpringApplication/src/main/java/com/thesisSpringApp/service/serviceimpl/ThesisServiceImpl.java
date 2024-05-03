@@ -1,6 +1,7 @@
 package com.thesisSpringApp.service.serviceimpl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,4 +26,8 @@ public class ThesisServiceImpl implements ThesisService {
 		thesisRepository.saveThesis(thesis);
 	}
 
+	@Override
+	public List<Thesis> getAllThesis() {
+		return this.thesisRepository.getAllThesis();
+	}
 }

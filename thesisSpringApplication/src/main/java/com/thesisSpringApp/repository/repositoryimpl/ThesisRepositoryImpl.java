@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.thesisSpringApp.pojo.Thesis;
 import com.thesisSpringApp.repository.ThesisRepository;
 
+import java.util.List;
+
 @Repository
 @Transactional
 public class ThesisRepositoryImpl implements ThesisRepository {
@@ -37,4 +39,10 @@ public class ThesisRepositoryImpl implements ThesisRepository {
 		return (Thesis) query.getSingleResult();
 	}
 
+	@Override
+	public List<Thesis> getAllThesis() {
+		Session session = factory.getObject().getCurrentSession();
+		Query query = session.getNamedQuery("Thesis.findAll");
+		return query.getResultList();
+	}
 }

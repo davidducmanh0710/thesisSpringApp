@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
 import "../AddCommittee/AddCommittee.css";
@@ -11,6 +11,10 @@ function AddCommittee() {
 	]);
 	const [hidden, setHidden] = useState(true);
 	// const [data, setData] = useState();
+
+	useEffect(() => {
+		document.title = "Thêm hội đồng";
+	}, []);
 
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
@@ -58,6 +62,7 @@ function AddCommittee() {
 							onChange={addData}
 						/>
 					</Form.Group>
+
 					<Form.Group className="mb-3">
 						<Form.Label>Thư kí</Form.Label>
 						<Select
@@ -71,6 +76,7 @@ function AddCommittee() {
 							onChange={addData}
 						/>
 					</Form.Group>
+
 					<Form.Group className="mb-3">
 						<Form.Label>Giảng viên phản biện</Form.Label>
 						<Select
@@ -84,6 +90,7 @@ function AddCommittee() {
 							onChange={addData}
 						/>
 					</Form.Group>
+
 					<Form.Group hidden={hidden} className="mb-3">
 						<Form.Label>Thành viên</Form.Label>
 						<Select
@@ -95,8 +102,10 @@ function AddCommittee() {
 							isOptionSelected={isOptionSelected}
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
+							onInputChange={addData}
 						/>
 					</Form.Group>
+
 					<FloatingLabel>
 						<Button
 							onClick={changeHidden}
@@ -105,6 +114,7 @@ function AddCommittee() {
 							{hidden ? "Thêm thành viên" : "Ẩn thành viên"}
 						</Button>
 					</FloatingLabel>
+
 					<FloatingLabel>
 						<Button type="submit" variant="primary" className="mb-3 fs-6">
 							Thêm hội đồng

@@ -26,21 +26,27 @@ function Header() {
 						<Link to="/" className="nav-link">
 							Trang chủ
 						</Link>
-						<Link to="/theses" className="nav-link">
+
+						<Link to="/committee" className="nav-link">
 							Hội đồng
 						</Link>
+
 						<Link to="/lecturers" className="nav-link">
 							Giảng viên
 						</Link>
+
 						<Link to="/students" className="nav-link">
 							Sinh viên
 						</Link>
 						<NavDropdown title="Link" id="navbarScrollingDropdown">
 							<NavDropdown.Item href="#action3">Action</NavDropdown.Item>
+
 							<NavDropdown.Item href="#action4">
 								Another action
 							</NavDropdown.Item>
+
 							<NavDropdown.Divider />
+
 							<NavDropdown.Item href="#action5">
 								Something else here
 							</NavDropdown.Item>
@@ -69,24 +75,16 @@ function Header() {
 						</Dropdown.Toggle>
 						<Dropdown.Menu className="r-0 header-dropdown-menu">
 							<Dropdown.Item>
-								<Link className="dropdown-item" to="#">
-									New project...
+								<Link className="dropdown-item" to="user-detail">
+									Thông tin cá nhân
 								</Link>
 							</Dropdown.Item>
-							<NavDropdown.Item>
-								<Link className="dropdown-item" to="#">
-									Settings
-								</Link>
-							</NavDropdown.Item>
-							<NavDropdown.Item>
-								<Link className="dropdown-item" to="#">
-									Profile
-								</Link>
-							</NavDropdown.Item>
+
 							<NavDropdown.Divider />
+
 							<NavDropdown.Item>
-								<Link className="dropdown-item" to="#">
-									Sign out
+								<Link className="dropdown-item" to="/logout">
+									Đăng xuất
 								</Link>
 							</NavDropdown.Item>
 						</Dropdown.Menu>

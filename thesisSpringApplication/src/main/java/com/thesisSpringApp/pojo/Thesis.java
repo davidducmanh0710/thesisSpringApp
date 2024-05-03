@@ -4,6 +4,8 @@
  */
 package com.thesisSpringApp.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -61,10 +63,13 @@ public class Thesis implements Serializable {
     @Column(name = "active")
     private Boolean active;
     @OneToMany(mappedBy = "thesisId")
+    @JsonIgnore
     private List<Score> scoreList;
     @OneToMany(mappedBy = "thesisId")
+    @JsonIgnore
     private List<ThesisUser> thesisUserList;
     @OneToMany(mappedBy = "thesisId")
+    @JsonIgnore
     private List<ThesisCommitteeRate> thesisCommitteeRateList;
 
     public Thesis() {

@@ -1,22 +1,40 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
+import API, { endpoints } from "../../configs/API";
+import { useNavigate } from "react-router-dom";
 
 function AddThesis() {
-	const studentList = [
-		{ value: 1, label: "Sinh Viên 1" },
-		{ value: 2, label: "Sinh Viên 2" },
-		{ value: 3, label: "Sinh Viên 3" },
-	];
+	const [name, setName] = useState("");
+	const [lecturers, setLecturers] = useState([]);
+	const [students, setStudents] = useState([]);
 
-	const lecturerList = [
-		{ value: 4, label: "Giảng Viên 1" },
-		{ value: 5, label: "Giảng Viên 2" },
-		{ value: 6, label: "Giảng Viên 3" },
-	];
+	const studentSelect = useRef();
+	const lecturerSelect = useRef();
 
-	const students = useRef();
-	const lecturers = useRef();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		document.title = "Thêm khóa luận";
+
+		const getTwoRoleList = async () => {
+			const response = await API.get(endpoints["getTwoRoleList"]);
+
+			setLecturers(
+				response.data.usersGiangVien.map((l) => {
+					return { value: l.id, label: `${l.lastName} ${l.firstName}` };
+				})
+			);
+
+			setStudents(
+				response.data.usersSinhVien.map((s) => {
+					return { value: s.id, label: `${s.lastName} ${s.firstName}` };
+				})
+			);
+		};
+
+		getTwoRoleList();
+	}, []);
 
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
@@ -24,6 +42,26 @@ function AddThesis() {
 
 	const addThesis = (event) => {
 		event.preventDefault();
+
+		const add = async () => {
+			let users = [];
+			lecturerSelect.current.props.value.forEach((i) => users.push(i.value));
+			studentSelect.current.props.value.forEach((i) => users.push(i.value));
+
+			let response = await API.post(endpoints["theses"], {
+				name: name,
+				userIds: users,
+			});
+
+			if (response.status === 200) {
+				alert("Thêm khóa luận thành công");
+				navigate("/");
+			} else {
+				alert("Thêm khóa luận thất bại");
+			}
+		};
+
+		add();
 	};
 
 	return (
@@ -40,6 +78,7 @@ function AddThesis() {
 							type="text"
 							placeholder="Nhập tên khóa luận"
 							className="mb-3"
+							onChange={(e) => setName(e.target.value)}
 						/>
 					</FloatingLabel>
 
@@ -48,13 +87,13 @@ function AddThesis() {
 						<Select
 							isMulti
 							name="students"
-							options={studentList}
+							options={students}
 							className="basic-multi-select fs-6 mb-3"
 							classNamePrefix="select"
 							isOptionSelected={isOptionSelected}
 							isSearchable={true}
 							placeholder="Chọn sinh viên"
-							useRef={students}
+							ref={studentSelect}
 						/>
 					</Form.Group>
 
@@ -63,13 +102,13 @@ function AddThesis() {
 						<Select
 							isMulti
 							name="lecturers"
-							options={lecturerList}
+							options={lecturers}
 							className="basic-multi-select fs-6 mb-3"
 							classNamePrefix="select"
 							isOptionSelected={isOptionSelected}
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
-							useRef={lecturers}
+							ref={lecturerSelect}
 						/>
 					</Form.Group>
 
