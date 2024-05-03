@@ -11,6 +11,7 @@ import Login from "./components/Login/Login";
 import Thesis from "./components/Thesis/Thesis";
 import Committee from "./components/Committee/Committee";
 import Lecturer from "./components/Lecturer/Lecturer";
+import Student from "./components/Student/Student";
 
 function App() {
 	return (
@@ -20,12 +21,13 @@ function App() {
 				<Routes>
 					<Route path="/" element={<Thesis />} />
 					<Route path="/add-thesis" element={<AddThesis />} />
-					<Route path="/committee" element={<Committee />} />
+					<Route path="/committees" element={<Committee />} />
 					<Route path="/add-committee" element={<AddCommittee />} />
 					<Route path="/login" element={<Login />} />
 					<Route path="/init-account" element={<InitAccount />} />
 					<Route path="/user-detail" element={<UserDetail />} />
 					<Route path="/lecturers" element={<Lecturer />} />
+					<Route path="/students" element={<Student />} />
 				</Routes>
 			</Container>
 			<Footer />

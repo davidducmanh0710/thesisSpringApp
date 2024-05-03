@@ -1,19 +1,18 @@
 package com.thesisSpringApp.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.mail.MessagingException;
 
+import com.thesisSpringApp.Dto.CommitteeDetailDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.thesisSpringApp.Dto.CommitteeUserDto;
 import com.thesisSpringApp.Dto.NewCommitteeDto;
@@ -26,7 +25,7 @@ import com.thesisSpringApp.service.MailSenderService;
 import com.thesisSpringApp.service.UserService;
 
 @RestController
-@RequestMapping("/api/committee/")
+@RequestMapping("/api/committees/")
 public class CommitteeApiController {
 
 	private CommitteeService committeeService;
@@ -47,7 +46,7 @@ public class CommitteeApiController {
 		this.env = env;
 	}
 
-	@PostMapping(path = "/add", consumes = {
+	@PostMapping(path = "/", consumes = {
 			MediaType.APPLICATION_JSON_VALUE,
 	})
 	@CrossOrigin
@@ -81,4 +80,30 @@ public class CommitteeApiController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	@GetMapping("/")
+	@CrossOrigin
+	public ResponseEntity<List<CommitteeDetailDTO>> list() {
+		List<Committee> committees = this.committeeService.getAllCommittee();
+
+		List<CommitteeDetailDTO> committeeDetailDTOList = new ArrayList<>();
+
+		for (Committee c : committees) {
+			CommitteeDetailDTO committeeDetailDTO = new CommitteeDetailDTO();
+			committeeDetailDTO.setName(c.getName());
+
+			List<CommitteeUserDetailDTO> committeeUserDetailDTOList = new ArrayList<>();
+
+			for (CommitteeUser member: this.committeeService.getAllUsersOfCommittee(c.getId())) {
+				CommitteeUserDetailDTO committeeUserDetailDTO = new CommitteeUserDetailDTO();
+				committeeUserDetailDTO.setRole(member.getRole());
+				committeeUserDetailDTO.setUser(member.getUserId());
+
+				committeeUserDetailDTOList.add(committeeUserDetailDTO);
+			}
+			committeeDetailDTO.setMembers(committeeUserDetailDTOList);
+			committeeDetailDTOList.add(committeeDetailDTO);
+		}
+
+		return new ResponseEntity<>(committeeDetailDTOList, HttpStatus.OK);
+	}
 }

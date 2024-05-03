@@ -2,18 +2,43 @@ import { useEffect, useState } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
 import "../AddCommittee/AddCommittee.css";
+import { useNavigate } from "react-router-dom";
+import API, { endpoints } from "../../configs/API";
 
 function AddCommittee() {
-	const [lecturers, setLecturers] = useState([
-		{ value: 4, label: "Giảng Viên 1" },
-		{ value: 5, label: "Giảng Viên 2" },
-		{ value: 6, label: "Giảng Viên 3" },
-	]);
+	const [name, setName] = useState("");
+	const [chairman, setChairman] = useState({
+		roleName: "Chủ tịch",
+		userId: null,
+	});
+	const [secretary, setSecretary] = useState({
+		roleName: "Thư kí",
+		userId: null,
+	});
+	const [criticalLecturer, setCriticalLecturer] = useState({
+		roleName: "Phản biện",
+		userId: null,
+	});
+
+	const [lecturers, setLecturers] = useState([]);
 	const [hidden, setHidden] = useState(true);
 	// const [data, setData] = useState();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		document.title = "Thêm hội đồng";
+
+		const loadLecturers = async () => {
+			const response = await API.get(endpoints["lecturers"]);
+
+			setLecturers(
+				response.data.map((l) => {
+					return { value: l.id, label: `${l.lastName} ${l.firstName}` };
+				})
+			);
+		};
+
+		loadLecturers();
 	}, []);
 
 	const isOptionSelected = (_, selectValue) => {
@@ -22,15 +47,46 @@ function AddCommittee() {
 
 	const addCommittee = (event) => {
 		event.preventDefault();
+
+		const add = async () => {
+			const members = [];
+			members.push(chairman);
+			members.push(secretary);
+			members.push(criticalLecturer);
+
+			const committee = {
+				name: name,
+				committeeUserDtos: members,
+			};
+
+			const response = await API.post(endpoints["committees"], committee);
+
+			if (response.status === 200) {
+				alert("Thêm hội đồng thành công");
+				navigate("/committees");
+			} else {
+				alert("Thêm hội đồng thất bại");
+			}
+		};
+
+		add();
 	};
 
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
 
-	const addData = (e) => {
-		setLecturers(lecturers.filter((l) => l.value !== e.value));
-	};
+	// const addMembers = (role, event) => {
+	// 	setMembers((current) => {
+	// 		return [
+	// 			...current,
+	// 			{
+	// 				roleName: role,
+	// 				userId: event.value,
+	// 			},
+	// 		];
+	// 	});
+	// };
 
 	return (
 		<div>
@@ -47,6 +103,7 @@ function AddCommittee() {
 							type="text"
 							placeholder="Nhập tên hội đồng"
 							className="mb-3"
+							onChange={(e) => setName(e.target.value)}
 						/>
 					</FloatingLabel>
 					<Form.Group className="mb-3">
@@ -59,7 +116,7 @@ function AddCommittee() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							hideSelectedOptions={true}
-							onChange={addData}
+							onChange={(e) => setChairman({ ...chairman, userId: e.value })}
 						/>
 					</Form.Group>
 
@@ -73,7 +130,7 @@ function AddCommittee() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							hideSelectedOptions={true}
-							onChange={addData}
+							onChange={(e) => setSecretary({ ...secretary, userId: e.value })}
 						/>
 					</Form.Group>
 
@@ -87,7 +144,9 @@ function AddCommittee() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							hideSelectedOptions={true}
-							onChange={addData}
+							onChange={(e) =>
+								setCriticalLecturer({ ...criticalLecturer, userId: e.value })
+							}
 						/>
 					</Form.Group>
 
@@ -102,7 +161,6 @@ function AddCommittee() {
 							isOptionSelected={isOptionSelected}
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
-							onInputChange={addData}
 						/>
 					</Form.Group>
 

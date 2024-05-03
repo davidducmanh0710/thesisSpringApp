@@ -60,12 +60,22 @@ public class UserApiController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-	@GetMapping("role/lecturer")
+	@GetMapping("/lecturers")
     @CrossOrigin
     public ResponseEntity<List<User>> getLecturers() {
         Role role = roleService.getRoleByName("ROLE_GIANGVIEN");
 
-       List<User> users = userService.getUserByRoleName(role);
+        List<User> users = userService.getUserByRoleName(role);
+
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/students")
+    @CrossOrigin
+    public ResponseEntity<List<User>> getStudents() {
+        Role role = roleService.getRoleByName("ROLE_SINHVIEN");
+
+        List<User> users = userService.getUserByRoleName(role);
 
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
