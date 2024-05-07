@@ -42,7 +42,9 @@ function Thesis() {
 							</Col>
 							<Col md="auto" className="ms-auto">
 								<Stack gap={2} direction="vertical">
-									<Button variant="success">Xem chi tiết</Button>
+									<Link to="/thesis-detail" className="btn btn-success">
+										Xem chi tiết
+									</Link>
 									<Button variant="danger">Xóa</Button>
 								</Stack>
 							</Col>
