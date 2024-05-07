@@ -5,15 +5,20 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import com.thesisSpringApp.Dto.CommitteeDetailDTO;
-import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.thesisSpringApp.Dto.CommitteeDetailDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
 import com.thesisSpringApp.Dto.CommitteeUserDto;
 import com.thesisSpringApp.Dto.NewCommitteeDto;
 import com.thesisSpringApp.pojo.Committee;
@@ -77,7 +82,7 @@ public class CommitteeApiController {
 
 		}
 
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	@GetMapping("/")

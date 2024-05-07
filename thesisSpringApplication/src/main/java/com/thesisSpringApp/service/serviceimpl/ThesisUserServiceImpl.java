@@ -1,5 +1,7 @@
 package com.thesisSpringApp.service.serviceimpl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,11 @@ public class ThesisUserServiceImpl implements ThesisUserService {
 	@Override
 	public void addNewThesisUser(ThesisUser thesisUser, Thesis thesis, User user) {
 		thesisUserRepository.saveThesisUser(thesisUser, thesis, user);
+	}
+
+	@Override
+	public List<ThesisUser> getUserByThesis(Thesis thesis) {
+		return thesisUserRepository.getUserByThesis(thesis);
 	}
 
 }

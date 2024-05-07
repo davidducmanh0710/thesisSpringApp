@@ -1,8 +1,8 @@
 package com.thesisSpringApp.repository;
 
-import com.thesisSpringApp.pojo.Thesis;
-
 import java.util.List;
+
+import com.thesisSpringApp.pojo.Thesis;
 
 public interface ThesisRepository {
 	void saveThesis(Thesis thesis);
