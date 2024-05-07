@@ -57,10 +57,14 @@ public class ThesisApiController {
 		return new ResponseEntity<>(theses, HttpStatus.OK);
 	}
 
-	@GetMapping(path = "/{thesisId}")
+	@GetMapping(path = "/{thesisId}/", produces = MediaType.APPLICATION_JSON_VALUE)
 	@CrossOrigin
 	public ResponseEntity<Thesis> retrieve(@PathVariable(value = "thesisId") int thesisId) {
+//		ThesisDetailDTO thesisDetailDTO = new ThesisDetailDTO();
+
 		Thesis thesis = thesisService.getThesisById(thesisId);
+//		List<User> users = userService.getUsersByThesisId(thesis.getId());
+//		Committee committee = thesis.getC
 
 		return new ResponseEntity<>(thesis, HttpStatus.OK);
 	}

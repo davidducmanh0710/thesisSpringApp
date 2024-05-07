@@ -1,5 +1,5 @@
 package com.thesisSpringApp.repository;
 
-public interface ThesisCommitteeRate {
+public interface ThesisCommitteeRateRepository {
     int getCommitteeIdOfThesis();
 }

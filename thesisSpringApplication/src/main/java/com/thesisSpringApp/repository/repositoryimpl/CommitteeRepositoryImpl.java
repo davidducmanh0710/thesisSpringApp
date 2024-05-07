@@ -6,7 +6,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import com.thesisSpringApp.pojo.CommitteeUser;
-import com.thesisSpringApp.pojo.Criteria;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -23,11 +22,11 @@ import java.util.List;
 public class CommitteeRepositoryImpl implements CommitteeRepository {
 
 	@Autowired
-	private LocalSessionFactoryBean factoryBean;
+	private LocalSessionFactoryBean factory;
 
 	@Override
 	public void saveCommittee(Committee committee) {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		if (committee.getId() != null && committee.getId() > 0)
 			session.update(committee);
 		else
@@ -36,7 +35,7 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 
 	@Override
 	public Committee getCommitteeById(int id) {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		Query query = session.createNamedQuery("Committee.findById");
 		query.setParameter("id", id);
 
@@ -45,7 +44,7 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 
 	@Override
 	public List<Committee> getAllCommittee() {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		Query query = session.createNamedQuery("Committee.findAll");
 
 		return (List<Committee>) query.getResultList();
@@ -53,7 +52,7 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 
 	@Override
 	public List<CommitteeUser> getAllUsersOfCommittee(int committeeId) {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 		CriteriaQuery<CommitteeUser> criteriaQuery = criteriaBuilder.createQuery(CommitteeUser.class);
 		Root<CommitteeUser> root = criteriaQuery.from(CommitteeUser.class);
@@ -64,6 +63,20 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 		Query query = session.createQuery(criteriaQuery);
 
 		return (List<CommitteeUser>) query.getResultList();
+	}
+
+	@Override
+	public Committee getCommitteeByThesisId(int thesisId) {
+		Session session = factory.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<Committee> criteriaQuery = criteriaBuilder.createQuery(Committee.class);
+		Root<Committee> root = criteriaQuery.from(Committee.class);
+
+		criteriaQuery.select(root);
+//		criteriaQuery.where(criteriaBuilder.equal(root.get()))
+
+		Query query = session.createQuery(criteriaQuery);
+		return (Committee) query.getSingleResult();
 	}
 
 }
