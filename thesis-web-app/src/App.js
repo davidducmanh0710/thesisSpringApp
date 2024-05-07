@@ -12,6 +12,7 @@ import Thesis from "./components/Thesis/Thesis";
 import Committee from "./components/Committee/Committee";
 import Lecturer from "./components/Lecturer/Lecturer";
 import Student from "./components/Student/Student";
+import ThesisDetail from "./components/ThesisDetail/ThesisDetail";
 
 function App() {
 	return (

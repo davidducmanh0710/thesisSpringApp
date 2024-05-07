@@ -64,4 +64,4 @@ public class ThesisApiController {
 
 		return new ResponseEntity<>(thesis, HttpStatus.OK);
 	}
-}
+}	
