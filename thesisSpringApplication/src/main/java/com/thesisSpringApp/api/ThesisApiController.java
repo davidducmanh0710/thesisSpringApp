@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +55,13 @@ public class ThesisApiController {
 		List<Thesis> theses = this.thesisService.getAllThesis();
 
 		return new ResponseEntity<>(theses, HttpStatus.OK);
+	}
+
+	@GetMapping(path = "/{thesisId}")
+	@CrossOrigin
+	public ResponseEntity<Thesis> retrieve(@PathVariable(value = "thesisId") int thesisId) {
+		Thesis thesis = thesisService.getThesisById(thesisId);
+
+		return new ResponseEntity<>(thesis, HttpStatus.OK);
 	}
 }

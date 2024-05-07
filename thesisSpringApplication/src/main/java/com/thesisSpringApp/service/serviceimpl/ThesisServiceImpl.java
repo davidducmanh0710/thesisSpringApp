@@ -27,6 +27,11 @@ public class ThesisServiceImpl implements ThesisService {
 	}
 
 	@Override
+	public Thesis getThesisById(int id) {
+		return this.thesisRepository.getThesisById(id);
+	}
+
+	@Override
 	public List<Thesis> getAllThesis() {
 		return this.thesisRepository.getAllThesis();
 	}

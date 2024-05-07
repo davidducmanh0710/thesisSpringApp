@@ -85,25 +85,25 @@ public class CommitteeApiController {
 	public ResponseEntity<List<CommitteeDetailDTO>> list() {
 		List<Committee> committees = this.committeeService.getAllCommittee();
 
-		List<CommitteeDetailDTO> committeeDetailDTOList = new ArrayList<>();
+		List<CommitteeDetailDTO> committeeList = new ArrayList<>();
 
 		for (Committee c : committees) {
-			CommitteeDetailDTO committeeDetailDTO = new CommitteeDetailDTO();
-			committeeDetailDTO.setName(c.getName());
+			CommitteeDetailDTO committee = new CommitteeDetailDTO();
+			committee.setName(c.getName());
 
-			List<CommitteeUserDetailDTO> committeeUserDetailDTOList = new ArrayList<>();
+			List<CommitteeUserDetailDTO> memberList = new ArrayList<>();
 
-			for (CommitteeUser member: this.committeeService.getAllUsersOfCommittee(c.getId())) {
-				CommitteeUserDetailDTO committeeUserDetailDTO = new CommitteeUserDetailDTO();
-				committeeUserDetailDTO.setRole(member.getRole());
-				committeeUserDetailDTO.setUser(member.getUserId());
+			for (CommitteeUser m: this.committeeService.getAllUsersOfCommittee(c.getId())) {
+				CommitteeUserDetailDTO member = new CommitteeUserDetailDTO();
+				member.setRole(m.getRole());
+				member.setUser(m.getUserId());
 
-				committeeUserDetailDTOList.add(committeeUserDetailDTO);
+				memberList.add(member);
 			}
-			committeeDetailDTO.setMembers(committeeUserDetailDTOList);
-			committeeDetailDTOList.add(committeeDetailDTO);
+			committee.setMembers(memberList);
+			committeeList.add(committee);
 		}
 
-		return new ResponseEntity<>(committeeDetailDTOList, HttpStatus.OK);
+		return new ResponseEntity<>(committeeList, HttpStatus.OK);
 	}
 }
