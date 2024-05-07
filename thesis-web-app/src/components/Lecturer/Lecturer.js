@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Lecturer.css";
-import { Image, Stack } from "react-bootstrap";
+import { Image, Table } from "react-bootstrap";
 import API, { endpoints } from "../../configs/API";
 
 function Lecturer() {
@@ -19,20 +19,36 @@ function Lecturer() {
 	}, []);
 
 	return (
-		<div className="d-flex flex-wrap my-4">
-			{lecturers.map((lecturer) => (
-				<div className="p-2">
-					<div className="lecturer-item">
-						<Stack gap={3} direction="horizontal" className="py-2 px-3">
+		<Table hover>
+			<thead>
+				<tr>
+					<th></th>
+					<th>ID</th>
+					<th>Họ</th>
+					<th>Tên</th>
+					<th>Email</th>
+					<th>Số điện thoại</th>
+					<th>Giới tính</th>
+					<th>Ngày sinh</th>
+				</tr>
+			</thead>
+			<tbody>
+				{lecturers.map((lecturer) => (
+					<tr>
+						<td>
 							<Image src={lecturer.avatar} width={50} roundedCircle />
-							<div>
-								{lecturer.lastName} {lecturer.firstName}
-							</div>
-						</Stack>
-					</div>
-				</div>
-			))}
-		</div>
+						</td>
+						<td>{lecturer.useruniversityid}</td>
+						<td>{lecturer.lastName}</td>
+						<td>{lecturer.firstName}</td>
+						<td>{lecturer.email}</td>
+						<td>{lecturer.phone}</td>
+						<td>{lecturer.gender === "male" ? "Nam" : "Nữ"}</td>
+						<td>{new Date(lecturer.birthday).toLocaleDateString()}</td>
+					</tr>
+				))}
+			</tbody>
+		</Table>
 	);
 }
 

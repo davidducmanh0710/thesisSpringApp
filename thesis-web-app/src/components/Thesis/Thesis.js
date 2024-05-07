@@ -28,7 +28,7 @@ function Thesis() {
 			<Row className="my-4">
 				{theses.map((thesis) => (
 					<Col md={6}>
-						<Row className="thesis-item my-2 w-100">
+						<Row className="thesis-item my-3 w-100">
 							<Col>
 								<h5>{thesis.name}</h5>
 								<h6>

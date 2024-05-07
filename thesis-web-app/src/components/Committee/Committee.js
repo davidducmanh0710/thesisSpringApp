@@ -1,11 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./Committee.css";
 import { Button, Col, Form, InputGroup, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import API, { endpoints } from "../../configs/API";
 
 function Committee() {
+	const [committees, setCommittees] = useState([]);
+
 	useEffect(() => {
 		document.title = "Hội đồng";
+
+		const loadCommittee = async () => {
+			const response = await API.get(endpoints["committees"]);
+
+			setCommittees(response.data);
+		};
+
+		loadCommittee();
 	}, []);
 
 	return (
@@ -15,51 +26,35 @@ function Committee() {
 			</Link>
 
 			<Row className="my-4">
-				<Col md={6} className="thesis-item my-2 w-100">
-					<Stack>
-						<h5>Hội đồng 1</h5>
-						<Row>
-							<Col md={4}>
-								<InputGroup className="my-2">
-									<InputGroup.Text className="w-25">Chủ tịch</InputGroup.Text>
-									<Form.Control type="text" value="Ngô Văn Lâu" disabled />
-								</InputGroup>
-							</Col>
+				{committees.map((committee) => (
+					<Col md={6} className="thesis-item my-3 w-100">
+						<Stack>
+							<h5>{committee.name}</h5>
+							<Row>
+								{committee.members.map((member) => (
+									<Col md={4}>
+										<InputGroup className="my-2">
+											<InputGroup.Text className="w-25">
+												{member.role}
+											</InputGroup.Text>
+											<Form.Control
+												type="text"
+												value={
+													member.user.lastName + " " + member.user.firstName
+												}
+												disabled
+											/>
+										</InputGroup>
+									</Col>
+								))}
+							</Row>
 
-							<Col md={4}>
-								<InputGroup className="my-2">
-									<InputGroup.Text className="w-25">Thư kí</InputGroup.Text>
-									<Form.Control type="text" value="Ngô Văn Lâu" disabled />
-								</InputGroup>
-							</Col>
-
-							<Col md={4}>
-								<InputGroup className="my-2">
-									<InputGroup.Text className="w-25">Phản biện</InputGroup.Text>
-									<Form.Control type="text" value="Ngô Văn Lâu" disabled />
-								</InputGroup>
-							</Col>
-
-							<Col md={4}>
-								<InputGroup className="my-2">
-									<InputGroup.Text className="w-25">Thành viên</InputGroup.Text>
-									<Form.Control type="text" value="Ngô Văn Lâu" disabled />
-								</InputGroup>
-							</Col>
-
-							<Col md={4}>
-								<InputGroup className="my-2">
-									<InputGroup.Text className="w-25">Thành viên</InputGroup.Text>
-									<Form.Control type="text" value="Ngô Văn Lâu" disabled />
-								</InputGroup>
-							</Col>
-						</Row>
-
-						<Button variant="danger" className="my-2 ms-auto">
-							Đóng hội đồng
-						</Button>
-					</Stack>
-				</Col>
+							<Button variant="danger" className="my-2 ms-auto">
+								Đóng hội đồng
+							</Button>
+						</Stack>
+					</Col>
+				))}
 			</Row>
 		</>
 	);

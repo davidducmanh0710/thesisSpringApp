@@ -27,7 +27,7 @@ function Header() {
 							Trang chủ
 						</Link>
 
-						<Link to="/committee" className="nav-link">
+						<Link to="/committees" className="nav-link">
 							Hội đồng
 						</Link>
 
