@@ -10,6 +10,7 @@ export let endpoints = {
 	getTwoRoleList: `${SERVER_CONTEXT}/api/users/role/get2RoleList`,
 	theses: `${SERVER_CONTEXT}/api/theses/`,
 	committees: `${SERVER_CONTEXT}/api/committees/`,
+	thesisDetail: (thesisId) => `${SERVER_CONTEXT}/api/theses/${thesisId}/`,
 };
 
 export default axios.create({

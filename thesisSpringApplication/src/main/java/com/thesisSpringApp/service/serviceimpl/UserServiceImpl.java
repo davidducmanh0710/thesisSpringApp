@@ -130,6 +130,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<User> getUsersByThesisId(int thesisId) {
+		return userRepository.getUsersByThesisId(thesisId);
+	}
+
+	@Override
 	public List<User> getUserByRoleName(Role role) {
 
 		return userRepository.getUserByRole(role);
