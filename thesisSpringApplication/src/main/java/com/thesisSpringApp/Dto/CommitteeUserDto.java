@@ -9,5 +9,4 @@ public class CommitteeUserDto {
 
 	private String roleName;
 	private int userId;
-	private int committeeId;
 }
