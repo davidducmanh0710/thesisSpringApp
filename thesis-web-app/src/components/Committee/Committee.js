@@ -11,9 +11,13 @@ function Committee() {
 		document.title = "Hội đồng";
 
 		const loadCommittee = async () => {
-			const response = await API.get(endpoints["committees"]);
+			try {
+				const response = await API.get(endpoints["committees"]);
 
-			setCommittees(response.data);
+				setCommittees(response.data);
+			} catch (ex) {
+				console.log(ex);
+			}
 		};
 
 		loadCommittee();

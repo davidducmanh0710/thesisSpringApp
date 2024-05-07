@@ -19,4 +19,6 @@ public interface UserRepository {
 	User getUserByEmail(String email);
 
 	User getUserByUniversityId(String uId);
+
+	List<User> getUsersByThesisId(int thesisId);
 }
