@@ -1,5 +1,14 @@
 package com.thesisSpringApp.repository.repositoryimpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -16,11 +25,11 @@ import com.thesisSpringApp.repository.ThesisUserRepository;
 public class ThesisUserRepositoryImpl implements ThesisUserRepository {
 
 	@Autowired
-	private LocalSessionFactoryBean factory;
+	private LocalSessionFactoryBean factoryBean;
 
 	@Override
 	public void saveThesisUser(ThesisUser thesisUser, Thesis thesis, User user) {
-		Session session = factory.getObject().getCurrentSession();
+		Session session = factoryBean.getObject().getCurrentSession();
 		thesisUser.setThesisId(thesis);
 		thesisUser.setUserId(user);
 
@@ -28,6 +37,27 @@ public class ThesisUserRepositoryImpl implements ThesisUserRepository {
 			session.update(thesisUser);
 		else
 			session.save(thesisUser);
+	}
+
+	@Override
+	public List<ThesisUser> getUserByThesis(Thesis thesis) {
+		Session session = factoryBean.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<ThesisUser> criteriaQuery = criteriaBuilder.createQuery(ThesisUser.class);
+		Root rThesisUser = criteriaQuery.from(ThesisUser.class);
+
+		criteriaQuery.select(rThesisUser);
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (thesis != null)
+			predicates.add(
+					criteriaBuilder.equal(rThesisUser.get("thesisId"), thesis.getId()));
+
+		criteriaQuery.where(predicates.toArray(Predicate[]::new)); // nhung dieu kien where
+
+		Query query = session.createQuery(criteriaQuery);
+
+		return query.getResultList();
 	}
 
 }

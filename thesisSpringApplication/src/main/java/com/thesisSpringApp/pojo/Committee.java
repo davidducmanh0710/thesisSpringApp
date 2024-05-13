@@ -6,6 +6,7 @@ package com.thesisSpringApp.pojo;
 
 import java.io.Serializable;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +21,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  *
@@ -46,8 +49,10 @@ public class Committee implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(mappedBy = "committeeId")
+	@JsonIgnore
     private List<ThesisCommitteeRate> thesisCommitteeRateList;
     @OneToMany(mappedBy = "committeeId")
+	@JsonIgnore
     private List<CommitteeUser> committeeUserList;
 
     public Committee() {

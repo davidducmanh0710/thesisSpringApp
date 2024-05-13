@@ -5,6 +5,7 @@
 package com.thesisSpringApp.pojo;
 
 import java.io.Serializable;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,7 +54,15 @@ public class ThesisCommitteeRate implements Serializable {
         this.id = id;
     }
 
-    public Integer getId() {
+
+	public ThesisCommitteeRate(Committee committeeId, Thesis thesisId, ThesisStatus statusId) {
+		super();
+		this.committeeId = committeeId;
+		this.thesisId = thesisId;
+		this.statusId = statusId;
+	}
+
+	public Integer getId() {
         return id;
     }
 
