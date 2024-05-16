@@ -13,6 +13,7 @@ import Committee from "./components/Committee/Committee";
 import Lecturer from "./components/Lecturer/Lecturer";
 import Student from "./components/Student/Student";
 import ThesisDetail from "./components/ThesisDetail/ThesisDetail";
+import Criteria from "./components/Criteria/Criteria";
 
 function App() {
 	return (
@@ -30,6 +31,7 @@ function App() {
 					<Route path="/lecturers" element={<Lecturer />} />
 					<Route path="/students" element={<Student />} />
 					<Route path="/theses/:thesisId" element={<ThesisDetail />} />
+					<Route path="/criteria" element={<Criteria />} />
 				</Routes>
 			</Container>
 			<Footer />

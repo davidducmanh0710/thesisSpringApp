@@ -3,32 +3,14 @@ package com.thesisSpringApp.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thesisSpringApp.Dto.*;
+import com.thesisSpringApp.pojo.*;
+import com.thesisSpringApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.thesisSpringApp.Dto.ThesisCommitteeDTO;
-import com.thesisSpringApp.Dto.ThesisDTO;
-import com.thesisSpringApp.Dto.ThesisDetailDTO;
-import com.thesisSpringApp.pojo.Committee;
-import com.thesisSpringApp.pojo.CommitteeUser;
-import com.thesisSpringApp.pojo.Thesis;
-import com.thesisSpringApp.pojo.ThesisStatus;
-import com.thesisSpringApp.pojo.ThesisUser;
-import com.thesisSpringApp.service.CommitteeService;
-import com.thesisSpringApp.service.CommitteeUserService;
-import com.thesisSpringApp.service.ThesisService;
-import com.thesisSpringApp.service.ThesisStatusService;
-import com.thesisSpringApp.service.ThesisUserService;
-import com.thesisSpringApp.service.UserService;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/theses")
@@ -40,12 +22,17 @@ public class ThesisApiController {
 	private CommitteeService committeeService;
 	private ThesisStatusService thesisStatusService;
 	private CommitteeUserService committeeUserService;
+	private ThesisCommitteeRateService thesisCommitteeRateService;
+	private RoleService roleService;
+	private CriteriaService criteriaService;
+	private ScoreService scoreService;
 
 	@Autowired
 	public ThesisApiController(ThesisService thesisService, ThesisUserService thesisUserService,
 			UserService userService, CommitteeService committeeService,
 			CommitteeUserService committeeUserService,
-			ThesisStatusService thesisStatusService) {
+			ThesisStatusService thesisStatusService, ThesisCommitteeRateService thesisCommitteeRateService,
+		    RoleService roleService, CriteriaService criteriaService, ScoreService scoreService) {
 		super();
 		this.thesisService = thesisService;
 		this.thesisUserService = thesisUserService;
@@ -53,6 +40,10 @@ public class ThesisApiController {
 		this.committeeService = committeeService;
 		this.thesisStatusService = thesisStatusService;
 		this.committeeUserService = committeeUserService;
+		this.thesisCommitteeRateService = thesisCommitteeRateService;
+		this.roleService = roleService;
+		this.criteriaService = criteriaService;
+		this.scoreService = scoreService;
 	}
 
 	@PostMapping(path = "/")
@@ -80,52 +71,85 @@ public class ThesisApiController {
 		return new ResponseEntity<>(theses, HttpStatus.OK);
 	}
 
-	@GetMapping(path = "/{thesisId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@CrossOrigin
-	public ResponseEntity<Thesis> retrieve(@PathVariable(value = "thesisId") int thesisId) {
-//		ThesisDetailDTO thesisDetailDTO = new ThesisDetailDTO();
+	public ThesisDetailDTO responseThesisDetail(Thesis thesis) {
+		ThesisDetailDTO thesisDetailDTO = new ThesisDetailDTO();
+		thesisDetailDTO.setThesis(thesis);
 
-		Thesis thesis = thesisService.getThesisById(thesisId);
-//		List<User> users = userService.getUsersByThesisId(thesis.getId());
-//		Committee committee = thesis.getC
+		List<ThesisUser> thesisUserList = thesisUserService.getUserByThesis(thesis);
 
-		return new ResponseEntity<>(thesis, HttpStatus.OK);
+		List<User> lecturers = new ArrayList<>();
+		List<User> students = new ArrayList<>();
+
+		for (ThesisUser thesisUser : thesisUserList) {
+			if (thesisUser.getUserId().getRoleId().getName().equals("ROLE_GIANGVIEN"))
+				lecturers.add(thesisUser.getUserId());
+			else
+				students.add(thesisUser.getUserId());
+		}
+		thesisDetailDTO.setLecturers(lecturers);
+		thesisDetailDTO.setStudents(students);
+
+		Committee committee = committeeService.getCommitteeOfThesis(thesis.getId());
+		thesisDetailDTO.setCommittee(committee);
+
+		return thesisDetailDTO;
 	}
 
-	@PostMapping(path = "/addCommittee", consumes = {
+	@GetMapping(path = "/{thesisId}/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@CrossOrigin
+	public ResponseEntity<ThesisDetailDTO> retrieve(@PathVariable(value = "thesisId") int thesisId) {
+		Thesis thesis = thesisService.getThesisById(thesisId);
+
+		ThesisDetailDTO thesisDetailDTO = responseThesisDetail(thesis);
+
+		return new ResponseEntity<>(thesisDetailDTO, HttpStatus.OK);
+	}
+
+	@PatchMapping(path = "/committee/", consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@CrossOrigin
 	public ResponseEntity<ThesisDetailDTO> addCommittee(
 			@RequestBody ThesisCommitteeDTO thesisCommitteeDTO) {
 
-		
 		Thesis thesis = thesisService.getThesisById(thesisCommitteeDTO.getThesisId());
 		Committee committee = committeeService
 				.getCommitteeById(thesisCommitteeDTO.getCommitteeId());
 
 		ThesisStatus thesisStatus = thesisStatusService.getThesisStatusById(2);
 
-//		ThesisCommitteeRate thesisCommitteeRate = new ThesisCommitteeRate(committee,
-//				thesis, thesisStatus);
+		ThesisCommitteeRate thesisCommitteeRate = thesisCommitteeRateService
+				.getThesisCommitteeRateByThesisId(thesis.getId());
 
-		ThesisDetailDTO thesisDetailDTO = new ThesisDetailDTO();
-		thesisDetailDTO.setCommittee(committee);
-		thesisDetailDTO.setThesis(thesis);
-		thesisDetailDTO.setCommitteeUser(new ArrayList<>());
-		thesisDetailDTO.setThesisUser(new ArrayList<>());
+		if (thesisCommitteeRate == null)
+			thesisCommitteeRate = new ThesisCommitteeRate(committee, thesis, thesisStatus);
+		else
+			thesisCommitteeRate.setCommitteeId(committee);
 
-		List<CommitteeUser> committeeUsers = committeeUserService
-				.getCommitteeUserByCommittee(committee);
+		thesisCommitteeRateService.addCommitteeToThesis(thesisCommitteeRate);
 
-		for (int i = 0; i < committeeUsers.size(); i++)
-			thesisDetailDTO.getCommitteeUser().add(committeeUsers.get(i).getUserId());
-		
-		List<ThesisUser> thesisUsers = thesisUserService.getUserByThesis(thesis);
+		ThesisDetailDTO thesisDetailDTO = responseThesisDetail(thesis);
 
-		for (int i = 0; i < thesisUsers.size(); i++)
-			thesisDetailDTO.getThesisUser().add(thesisUsers.get(i).getUserId());
-
-		return new ResponseEntity<ThesisDetailDTO>(thesisDetailDTO, HttpStatus.OK);
+		return new ResponseEntity<>(thesisDetailDTO, HttpStatus.OK);
 	}
 
+	@PostMapping(path = "/scores/", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@CrossOrigin
+	@ResponseStatus(HttpStatus.CREATED)
+	public void addScore(@RequestBody ScoreDTO scoreDTO) {
+		Thesis thesis = thesisService.getThesisById(scoreDTO.getThesisId());
+		CommitteeUser committeeUser = committeeUserService.getCommitteeUser(scoreDTO.getUserId(), scoreDTO.getCommitteeId());
+		List<CriteriaDTO> criteriaDTOList = scoreDTO.getScores();
+
+		for (CriteriaDTO criteriaDTO : criteriaDTOList) {
+			Criteria criteria = criteriaService.getCriteriaById(criteriaDTO.getCriteriaId());
+			Score score = scoreService.getScore(thesis.getId(), committeeUser.getId(), criteria.getId());
+
+			if (score == null)
+				score = new Score(thesis, committeeUser, criteria, criteriaDTO.getScore());
+			else
+				score.setScore(criteriaDTO.getScore());
+
+			scoreService.saveAndUpdateScore(score);
+		}
+	}
 }

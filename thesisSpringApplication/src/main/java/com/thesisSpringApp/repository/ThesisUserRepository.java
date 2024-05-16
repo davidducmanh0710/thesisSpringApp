@@ -10,4 +10,6 @@ public interface ThesisUserRepository {
 	void saveThesisUser(ThesisUser thesisUser, Thesis thesis, User user);
 
 	List<ThesisUser> getUserByThesis(Thesis thesis);
+
+	List<ThesisUser> getThesisUser();
 }

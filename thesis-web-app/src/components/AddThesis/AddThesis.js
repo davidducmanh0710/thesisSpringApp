@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
 import API, { endpoints } from "../../configs/API";
@@ -14,27 +14,32 @@ function AddThesis() {
 
 	const navigate = useNavigate();
 
+	const loadStudents = useCallback(async () => {
+		const response = await API.get(endpoints["noneThesisStudents"]);
+
+		setStudents(
+			response.data.map((s) => {
+				return { value: s.id, label: `${s.lastName} ${s.firstName}` };
+			})
+		);
+	}, []);
+
+	const loadLecturers = useCallback(async () => {
+		const response = await API.get(endpoints["lecturers"]);
+
+		setLecturers(
+			response.data.map((l) => {
+				return { value: l.id, label: `${l.lastName} ${l.firstName}` };
+			})
+		);
+	}, []);
+
 	useEffect(() => {
 		document.title = "Thêm khóa luận";
 
-		const getTwoRoleList = async () => {
-			const response = await API.get(endpoints["getTwoRoleList"]);
-
-			setLecturers(
-				response.data.usersGiangVien.map((l) => {
-					return { value: l.id, label: `${l.lastName} ${l.firstName}` };
-				})
-			);
-
-			setStudents(
-				response.data.usersSinhVien.map((s) => {
-					return { value: s.id, label: `${s.lastName} ${s.firstName}` };
-				})
-			);
-		};
-
-		getTwoRoleList();
-	}, []);
+		loadStudents();
+		loadLecturers();
+	}, [loadStudents, loadLecturers]);
 
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
@@ -53,9 +58,10 @@ function AddThesis() {
 				userIds: users,
 			});
 
-			if (response.status === 200) {
+			if (response.status === 201) {
 				alert("Thêm khóa luận thành công");
 				navigate("/");
+				loadStudents();
 			} else {
 				alert("Thêm khóa luận thất bại");
 			}

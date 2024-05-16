@@ -16,6 +16,7 @@ import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.repository.CommitteeRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -49,34 +50,4 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 
 		return (List<Committee>) query.getResultList();
 	}
-
-	@Override
-	public List<CommitteeUser> getAllUsersOfCommittee(int committeeId) {
-		Session session = factory.getObject().getCurrentSession();
-		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-		CriteriaQuery<CommitteeUser> criteriaQuery = criteriaBuilder.createQuery(CommitteeUser.class);
-		Root<CommitteeUser> root = criteriaQuery.from(CommitteeUser.class);
-
-		criteriaQuery.select(root);
-		criteriaQuery.where(criteriaBuilder.equal(root.get("committeeId"), committeeId));
-
-		Query query = session.createQuery(criteriaQuery);
-
-		return (List<CommitteeUser>) query.getResultList();
-	}
-
-	@Override
-	public Committee getCommitteeByThesisId(int thesisId) {
-		Session session = factory.getObject().getCurrentSession();
-		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-		CriteriaQuery<Committee> criteriaQuery = criteriaBuilder.createQuery(Committee.class);
-		Root<Committee> root = criteriaQuery.from(Committee.class);
-
-		criteriaQuery.select(root);
-//		criteriaQuery.where(criteriaBuilder.equal(root.get()))
-
-		Query query = session.createQuery(criteriaQuery);
-		return (Committee) query.getSingleResult();
-	}
-
 }

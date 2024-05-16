@@ -1,6 +1,8 @@
 package com.thesisSpringApp.service.serviceimpl;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,4 +29,16 @@ public class ThesisUserServiceImpl implements ThesisUserService {
 		return thesisUserRepository.getUserByThesis(thesis);
 	}
 
+	@Override
+	public Set<ThesisUser> getStudentInThesisUsers() {
+		List<ThesisUser> thesisUsers = thesisUserRepository.getThesisUser();
+
+		Set<ThesisUser> thesisUserSet = thesisUsers.stream().filter(
+				thesisUser -> {
+                    return thesisUser.getUserId().getRoleId().getName().equals("ROLE_SINHVIEN");
+				}
+		).collect(Collectors.toSet());
+
+		return thesisUserSet;
+	}
 }

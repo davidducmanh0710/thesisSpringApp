@@ -2,6 +2,7 @@ package com.thesisSpringApp.api;
 
 import java.util.List;
 
+import com.thesisSpringApp.service.ThesisUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -30,24 +31,26 @@ public class UserApiController {
     private UserService userService;
     private PasswordEncoder passwordEncoder;
     private RoleService roleService;
+    private ThesisUserService thesisUserService;
 
     @Autowired
     public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
-                             RoleService roleService) {
+                             RoleService roleService, ThesisUserService thesisUserService) {
         super();
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
+        this.thesisUserService = thesisUserService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all/")
     public ResponseEntity<List<User>> getUsers() {
         return new ResponseEntity<>(
                 this.userService.getAllUsers(),
                 HttpStatus.OK);
     }
 
-    @GetMapping("/role/get2RoleList")
+    @GetMapping("/role/get2RoleList/")
     @CrossOrigin
     public ResponseEntity<UserListsByRoleDTO> getUsersByRoleNameApi() {
         Role role1 = roleService.getRoleByName("ROLE_GIANGVIEN");
@@ -60,7 +63,7 @@ public class UserApiController {
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-	@GetMapping("/lecturers")
+	@GetMapping("/lecturers/")
     @CrossOrigin
     public ResponseEntity<List<User>> getLecturers() {
         Role role = roleService.getRoleByName("ROLE_GIANGVIEN");
@@ -70,7 +73,7 @@ public class UserApiController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/students")
+    @GetMapping("/students/")
     @CrossOrigin
     public ResponseEntity<List<User>> getStudents() {
         Role role = roleService.getRoleByName("ROLE_SINHVIEN");
@@ -80,7 +83,20 @@ public class UserApiController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{userId}/setInitAcc", consumes = {MediaType.APPLICATION_JSON_VALUE,
+    @GetMapping("/students/noneThesis/")
+    public ResponseEntity<List<User>> getStudentsNoneThesis() {
+        Role role = roleService.getRoleByName("ROLE_SINHVIEN");
+
+        List<User> users = userService.getUserByRoleName(role);
+
+        thesisUserService.getStudentInThesisUsers().forEach(thesisUser -> {
+            users.remove(thesisUser.getUserId());
+        });
+
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/{userId}/setInitAcc/", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
     @CrossOrigin
     public ResponseEntity<User> changePassAndUploadAvatar(

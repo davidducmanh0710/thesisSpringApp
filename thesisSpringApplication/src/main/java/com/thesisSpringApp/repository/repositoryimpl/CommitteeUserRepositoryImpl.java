@@ -57,4 +57,41 @@ public class CommitteeUserRepositoryImpl implements CommitteeUserRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<CommitteeUser> getAllUsersOfCommittee(int committeeId) {
+		Session session = factoryBean.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<CommitteeUser> criteriaQuery = criteriaBuilder.createQuery(CommitteeUser.class);
+		Root<CommitteeUser> root = criteriaQuery.from(CommitteeUser.class);
+
+		criteriaQuery.select(root);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("committeeId"), committeeId));
+
+		Query query = session.createQuery(criteriaQuery);
+
+		return (List<CommitteeUser>) query.getResultList();
+	}
+
+	@Override
+	public CommitteeUser getCommitteeUser(int userId, int committeeId) {
+		Session session = factoryBean.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<CommitteeUser> criteriaQuery = criteriaBuilder.createQuery(CommitteeUser.class);
+		Root<CommitteeUser> root = criteriaQuery.from(CommitteeUser.class);
+
+		criteriaQuery.select(root);
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (userId > 0 && committeeId > 0) {
+			predicates.add(criteriaBuilder.equal(root.get("userId"), userId));
+			predicates.add(criteriaBuilder.equal(root.get("committeeId"), committeeId));
+		}
+
+		criteriaQuery.where(criteriaBuilder.and(predicates.toArray(Predicate[]::new)));
+
+		Query query = session.createQuery(criteriaQuery);
+
+		return (CommitteeUser) query.getSingleResult();
+	}
+
 }

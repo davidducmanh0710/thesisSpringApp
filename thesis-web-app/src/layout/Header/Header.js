@@ -38,6 +38,10 @@ function Header() {
 						<Link to="/students" className="nav-link">
 							Sinh viên
 						</Link>
+
+						<Link to="/criteria" className="nav-link">
+							Tiêu chí
+						</Link>
 						<NavDropdown title="Link" id="navbarScrollingDropdown">
 							<NavDropdown.Item href="#action3">Action</NavDropdown.Item>
 

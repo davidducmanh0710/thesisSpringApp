@@ -10,7 +10,7 @@ import com.thesisSpringApp.repository.RoleRepository;
 import com.thesisSpringApp.service.RoleService;
 
 @Service
-public class RoleServiceimpl implements RoleService {
+public class RoleServiceImpl implements RoleService {
 
 	@Autowired
 	private RoleRepository roleRepository;

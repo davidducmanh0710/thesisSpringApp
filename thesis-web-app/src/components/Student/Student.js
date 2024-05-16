@@ -33,7 +33,7 @@ function Student() {
 			</thead>
 			<tbody>
 				{students.map((student) => (
-					<tr>
+					<tr key={student.id}>
 						<td>
 							<Image src={student.avatar} width={50} roundedCircle />
 						</td>

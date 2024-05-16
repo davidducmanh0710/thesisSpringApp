@@ -109,9 +109,9 @@ public class User implements Serializable {
     private Date birthday;
     @Column(name = "active")
     private Boolean active;
-    @OneToMany(mappedBy = "userId")
-	@JsonIgnore
-    private List<Score> scoreList;
+//    @OneToMany(mappedBy = "userId")
+//	@JsonIgnore
+//    private List<Score> scoreList;
     @OneToMany(mappedBy = "userId")
 	@JsonIgnore
     private List<ThesisUser> thesisUserList;

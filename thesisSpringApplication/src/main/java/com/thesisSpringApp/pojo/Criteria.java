@@ -4,6 +4,9 @@
  */
 package com.thesisSpringApp.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -26,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "criteria")
+@Data
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Criteria.findAll", query = "SELECT c FROM Criteria c"),
@@ -46,6 +50,7 @@ public class Criteria implements Serializable {
     @Column(name = "active")
     private Boolean active;
     @OneToMany(mappedBy = "criteriaId")
+    @JsonIgnore
     private List<Score> scoreList;
 
     public Criteria() {
@@ -53,6 +58,10 @@ public class Criteria implements Serializable {
 
     public Criteria(Integer id) {
         this.id = id;
+    }
+
+    public Criteria(String name) {
+        this.name = name;
     }
 
     public Integer getId() {

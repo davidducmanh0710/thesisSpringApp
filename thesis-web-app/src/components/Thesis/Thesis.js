@@ -29,7 +29,7 @@ function Thesis() {
 				{theses.map((thesis) => {
 					const url = `theses/${thesis.id}`;
 					return (
-						<Col md={6}>
+						<Col md={6} key={thesis.id}>
 							<Row className="thesis-item my-3 w-100">
 								<Col>
 									<h5>{thesis.name}</h5>

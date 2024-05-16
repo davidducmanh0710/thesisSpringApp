@@ -31,12 +31,12 @@ function Committee() {
 
 			<Row className="my-4">
 				{committees.map((committee) => (
-					<Col md={6} className="thesis-item my-3 w-100">
+					<Col key={committee.id} md={6} className="thesis-item my-3 w-100">
 						<Stack>
 							<h5>{committee.name}</h5>
 							<Row>
 								{committee.members.map((member) => (
-									<Col md={4}>
+									<Col md={4} key={member.user.id}>
 										<InputGroup className="my-2">
 											<InputGroup.Text className="w-25">
 												{member.role}

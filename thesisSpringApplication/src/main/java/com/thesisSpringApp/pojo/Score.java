@@ -4,6 +4,9 @@
  */
 package com.thesisSpringApp.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -25,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "score")
+@Data
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Score.findAll", query = "SELECT s FROM Score s"),
@@ -44,16 +48,20 @@ public class Score implements Serializable {
     private float score;
     @JoinColumn(name = "committee_user_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private CommitteeUser committeeUserId;
     @JoinColumn(name = "criteria_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Criteria criteriaId;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Thesis thesisId;
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @ManyToOne
-    private User userId;
+//    @JoinColumn(name = "user_id", referencedColumnName = "id")
+//    @ManyToOne
+//    @JsonIgnore
+//    private User userId;
 
     public Score() {
     }
@@ -64,6 +72,13 @@ public class Score implements Serializable {
 
     public Score(Integer id, float score) {
         this.id = id;
+        this.score = score;
+    }
+
+    public Score(Thesis thesis, CommitteeUser committeeUser, Criteria criteria, float score) {
+        this.thesisId = thesis;
+        this.committeeUserId = committeeUser;
+        this.criteriaId = criteria;
         this.score = score;
     }
 
@@ -107,13 +122,13 @@ public class Score implements Serializable {
         this.thesisId = thesisId;
     }
 
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
-    }
+//    public User getUserId() {
+//        return userId;
+//    }
+//
+//    public void setUserId(User userId) {
+//        this.userId = userId;
+//    }
 
     @Override
     public int hashCode() {

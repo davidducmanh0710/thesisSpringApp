@@ -7,7 +7,13 @@ import java.util.List;
 
 public interface CommitteeService {
 	void saveCommittee(Committee committee);
+
 	Committee getCommitteeById(int id);
+
 	List<Committee> getAllCommittee();
-	List<CommitteeUser> getAllUsersOfCommittee(int committeeId);
+
+	List<Committee> getCommiteesForThesis();
+
+	Committee getCommitteeOfThesis(int thesisId);
+
 }

@@ -152,5 +152,4 @@ public class UserServiceImpl implements UserService {
 				user.getPassword(), authorities);
 	}
 
-
 }

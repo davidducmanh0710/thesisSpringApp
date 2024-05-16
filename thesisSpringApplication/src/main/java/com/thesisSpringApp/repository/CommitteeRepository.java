@@ -12,7 +12,4 @@ public interface CommitteeRepository {
 
 	List<Committee> getAllCommittee();
 
-	List<CommitteeUser> getAllUsersOfCommittee(int committeeId);
-
-	Committee getCommitteeByThesisId(int thesisId);
 }

@@ -19,7 +19,7 @@ function Lecturer() {
 	}, []);
 
 	return (
-		<Table hover>
+		<Table striped hover>
 			<thead>
 				<tr>
 					<th></th>
@@ -34,7 +34,7 @@ function Lecturer() {
 			</thead>
 			<tbody>
 				{lecturers.map((lecturer) => (
-					<tr>
+					<tr key={lecturer.id}>
 						<td>
 							<Image src={lecturer.avatar} width={50} roundedCircle />
 						</td>

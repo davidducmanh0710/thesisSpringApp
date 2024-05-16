@@ -60,4 +60,12 @@ public class ThesisUserRepositoryImpl implements ThesisUserRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<ThesisUser> getThesisUser() {
+		Session session = factoryBean.getObject().getCurrentSession();
+		Query query = session.createNamedQuery("ThesisUser.findAll");
+
+		return query.getResultList();
+	}
+
 }

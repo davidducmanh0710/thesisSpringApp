@@ -10,4 +10,7 @@ public interface CommitteeUserService {
 
 	List<CommitteeUser> getCommitteeUserByCommittee(Committee committee);
 
+	List<CommitteeUser> getAllUsersOfCommittee(int committeeId);
+
+	CommitteeUser getCommitteeUser(int userId, int committeeId);
 }

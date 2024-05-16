@@ -26,4 +26,13 @@ public class CommitteeUserServiceImpl implements CommitteeUserService {
 		return committeeUserRepository.getCommitteeUserByCommittee(committee);
 	}
 
+	@Override
+	public List<CommitteeUser> getAllUsersOfCommittee(int committeeId) {
+		return committeeUserRepository.getAllUsersOfCommittee(committeeId);
+	}
+
+	@Override
+	public CommitteeUser getCommitteeUser(int userId, int committeeId) {
+		return committeeUserRepository.getCommitteeUser(userId, committeeId);
+	}
 }

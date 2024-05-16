@@ -14,6 +14,7 @@ import lombok.Setter;
 public class ThesisDetailDTO {
 	private Thesis thesis;
 	private Committee committee;
-	private List<User> thesisUser;
-	private List<User> committeeUser;
+	private List<User> students;
+	private List<User> lecturers;
+//	private List<User> committeeUser;
 }

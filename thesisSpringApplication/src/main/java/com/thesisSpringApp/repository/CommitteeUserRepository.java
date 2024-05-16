@@ -9,4 +9,8 @@ public interface CommitteeUserRepository {
 	void saveCommitteeUser(CommitteeUser committeeUser);
 
 	List<CommitteeUser> getCommitteeUserByCommittee(Committee committee);
+
+	List<CommitteeUser> getAllUsersOfCommittee(int committeeId);
+
+	CommitteeUser getCommitteeUser(int userId, int committeeId);
 }

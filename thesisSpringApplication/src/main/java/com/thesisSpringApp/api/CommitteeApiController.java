@@ -94,11 +94,12 @@ public class CommitteeApiController {
 
 		for (Committee c : committees) {
 			CommitteeDetailDTO committee = new CommitteeDetailDTO();
+			committee.setId(c.getId());
 			committee.setName(c.getName());
 
 			List<CommitteeUserDetailDTO> memberList = new ArrayList<>();
 
-			for (CommitteeUser m: this.committeeService.getAllUsersOfCommittee(c.getId())) {
+			for (CommitteeUser m: committeeUserRepository.getAllUsersOfCommittee(c.getId())) {
 				CommitteeUserDetailDTO member = new CommitteeUserDetailDTO();
 				member.setRole(m.getRole());
 				member.setUser(m.getUserId());
@@ -110,5 +111,12 @@ public class CommitteeApiController {
 		}
 
 		return new ResponseEntity<>(committeeList, HttpStatus.OK);
+	}
+
+	@GetMapping("/active/")
+	public ResponseEntity<List<Committee>> listCommitteeForThesis() {
+		List<Committee> committees = committeeService.getCommiteesForThesis();
+
+		return new ResponseEntity<>(committees, HttpStatus.OK);
 	}
 }

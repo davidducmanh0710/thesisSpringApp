@@ -2,6 +2,7 @@ package com.thesisSpringApp.repository.repositoryimpl;
 
 import javax.persistence.Query;
 
+import com.thesisSpringApp.pojo.Committee;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;

@@ -10,6 +10,7 @@ import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 
 public interface UserService extends UserDetailsService {
+
 	List<User> getAllUsers();
 
 	void saveUser(User user);
@@ -29,4 +30,5 @@ public interface UserService extends UserDetailsService {
 	User getUserByUniversityId(String uId);
 
 	List<User> getUsersByThesisId(int thesisId);
+
 }
