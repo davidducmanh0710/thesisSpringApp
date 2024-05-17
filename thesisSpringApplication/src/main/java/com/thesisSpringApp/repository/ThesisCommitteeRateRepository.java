@@ -1,6 +1,5 @@
 package com.thesisSpringApp.repository;
 
-import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.ThesisCommitteeRate;
 
 import java.util.List;
@@ -10,5 +9,5 @@ public interface ThesisCommitteeRateRepository {
 
     List<ThesisCommitteeRate> getCommitteeRatesByCommitteeId(int committeeId);
 
-    void addCommitteeToThesis(ThesisCommitteeRate thesisCommitteeRate);
+    void saveAndUpdateThesisCommitteeRate(ThesisCommitteeRate thesisCommitteeRate);
 }

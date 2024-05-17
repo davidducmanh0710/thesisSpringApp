@@ -1,6 +1,5 @@
 package com.thesisSpringApp.service.serviceimpl;
 
-import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.ThesisCommitteeRate;
 import com.thesisSpringApp.repository.ThesisCommitteeRateRepository;
 import com.thesisSpringApp.service.ThesisCommitteeRateService;
@@ -25,7 +24,7 @@ public class ThesisCommitteeRateServiceImpl implements ThesisCommitteeRateServic
     }
 
     @Override
-    public void addCommitteeToThesis(ThesisCommitteeRate thesisCommitteeRate) {
-        thesisCommitteeRateRepository.addCommitteeToThesis(thesisCommitteeRate);
+    public void saveAndUpdateThesisCommitteeRate(ThesisCommitteeRate thesisCommitteeRate) {
+        thesisCommitteeRateRepository.saveAndUpdateThesisCommitteeRate(thesisCommitteeRate);
     }
 }

@@ -3,7 +3,6 @@ package com.thesisSpringApp.service.serviceimpl;
 import java.util.Date;
 import java.util.List;
 
-import com.thesisSpringApp.pojo.Committee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +17,19 @@ public class ThesisServiceImpl implements ThesisService {
 	private ThesisRepository thesisRepository;
 
 	@Override
-	public void addNewThesis(Thesis thesis) {
-		Date date = new Date();
-		thesis.setCreateDate(date);
-		thesis.setUpdateDate(date);
-		thesis.setActive(false);
+	public void saveAndUpdateThesis(Thesis thesis) {
 
-		thesisRepository.saveThesis(thesis);
+        Date date = new Date();
+        if (thesis.getId() != null && thesis.getId() > 0) {
+            thesis.setUpdateDate(date);
+			thesis.setActive(true);
+		} else {
+            thesis.setCreateDate(date);
+			thesis.setUpdateDate(date);
+			thesis.setActive(false);
+		}
+
+		thesisRepository.saveAndUpdateThesis(thesis);
 	}
 
 	@Override

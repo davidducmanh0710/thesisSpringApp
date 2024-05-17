@@ -6,6 +6,8 @@ import com.thesisSpringApp.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ScoreServiceImpl implements ScoreService {
     @Autowired
@@ -19,5 +21,10 @@ public class ScoreServiceImpl implements ScoreService {
     @Override
     public Score getScore(int thesisId, int committeeUserId, int criteriaId) {
         return scoreRepository.getScore(thesisId, committeeUserId, criteriaId);
+    }
+
+    @Override
+    public List<Score> getScoresByThesisId(int thesisId) {
+        return scoreRepository.getScoresByThesisId(thesisId);
     }
 }

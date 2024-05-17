@@ -61,4 +61,19 @@ public class ScoreRepositoryImpl implements ScoreRepository {
 
 
     }
+
+    @Override
+    public List<Score> getScoresByThesisId(int thesisId) {
+        Session session = factory.getObject().getCurrentSession();
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Score> criteriaQuery = criteriaBuilder.createQuery(Score.class);
+        Root<Score> root = criteriaQuery.from(Score.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("thesisId"), thesisId));
+
+        Query query = session.createQuery(criteriaQuery);
+
+        return (List<Score>) query.getResultList();
+    }
 }

@@ -57,7 +57,7 @@ public class ThesisCommitteeRateRepositoryImpl implements ThesisCommitteeRateRep
     }
 
     @Override
-    public void addCommitteeToThesis(ThesisCommitteeRate thesisCommitteeRate) {
+    public void saveAndUpdateThesisCommitteeRate(ThesisCommitteeRate thesisCommitteeRate) {
         Session session = factory.getObject().getCurrentSession();
 
         if (thesisCommitteeRate.getId() != null && thesisCommitteeRate.getId() > 0)

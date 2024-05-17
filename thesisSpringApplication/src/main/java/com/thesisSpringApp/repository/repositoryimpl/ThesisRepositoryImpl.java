@@ -22,7 +22,7 @@ public class ThesisRepositoryImpl implements ThesisRepository {
 	private LocalSessionFactoryBean factory;
 
 	@Override
-	public void saveThesis(Thesis thesis) {
+	public void saveAndUpdateThesis(Thesis thesis) {
 		Session session = factory.getObject().getCurrentSession();
 		if (thesis.getId() != null && thesis.getId() > 0)
 			session.update(thesis);

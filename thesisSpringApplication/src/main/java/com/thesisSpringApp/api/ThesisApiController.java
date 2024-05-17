@@ -52,7 +52,7 @@ public class ThesisApiController {
 		Thesis thesis = new Thesis();
 		String name = thesisDTO.getName();
 		thesis.setName(name);
-		thesisService.addNewThesis(thesis);
+		thesisService.saveAndUpdateThesis(thesis);
 
 		List<Integer> userIds = thesisDTO.getUserIds();
 
@@ -125,7 +125,7 @@ public class ThesisApiController {
 		else
 			thesisCommitteeRate.setCommitteeId(committee);
 
-		thesisCommitteeRateService.addCommitteeToThesis(thesisCommitteeRate);
+		thesisCommitteeRateService.saveAndUpdateThesisCommitteeRate(thesisCommitteeRate);
 
 		ThesisDetailDTO thesisDetailDTO = responseThesisDetail(thesis);
 

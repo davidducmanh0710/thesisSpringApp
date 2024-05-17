@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 
 /**
  *
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "committee")
+@Data
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Committee.findAll", query = "SELECT c FROM Committee c"),
@@ -48,6 +50,8 @@ public class Committee implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "name")
     private String name;
+    @Column(name = "active")
+    private Boolean active;
     @OneToMany(mappedBy = "committeeId")
 	@JsonIgnore
     private List<ThesisCommitteeRate> thesisCommitteeRateList;
