@@ -3,14 +3,44 @@ package com.thesisSpringApp.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.thesisSpringApp.Dto.*;
-import com.thesisSpringApp.pojo.*;
-import com.thesisSpringApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.thesisSpringApp.Dto.CriteriaDTO;
+import com.thesisSpringApp.Dto.ScoreDTO;
+import com.thesisSpringApp.Dto.ThesisCommitteeDTO;
+import com.thesisSpringApp.Dto.ThesisDTO;
+import com.thesisSpringApp.Dto.ThesisDetailDTO;
+import com.thesisSpringApp.pojo.Committee;
+import com.thesisSpringApp.pojo.CommitteeUser;
+import com.thesisSpringApp.pojo.Criteria;
+import com.thesisSpringApp.pojo.Score;
+import com.thesisSpringApp.pojo.Thesis;
+import com.thesisSpringApp.pojo.ThesisCommitteeRate;
+import com.thesisSpringApp.pojo.ThesisStatus;
+import com.thesisSpringApp.pojo.ThesisUser;
+import com.thesisSpringApp.pojo.User;
+import com.thesisSpringApp.service.CommitteeService;
+import com.thesisSpringApp.service.CommitteeUserService;
+import com.thesisSpringApp.service.CriteriaService;
+import com.thesisSpringApp.service.RoleService;
+import com.thesisSpringApp.service.ScoreService;
+import com.thesisSpringApp.service.ThesisCommitteeRateService;
+import com.thesisSpringApp.service.ThesisService;
+import com.thesisSpringApp.service.ThesisStatusService;
+import com.thesisSpringApp.service.ThesisUserService;
+import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/theses")
@@ -146,6 +176,7 @@ public class ThesisApiController {
 
 			if (score == null)
 				score = new Score(thesis, committeeUser, criteria, criteriaDTO.getScore());
+			// thiếu chấm cho user nào
 			else
 				score.setScore(criteriaDTO.getScore());
 

@@ -55,7 +55,8 @@ create table `thesis_user`(
 
 create table `committee` (
 	`id` INT AUTO_INCREMENT PRIMARY KEY,
-	`name` VARCHAR(50) not null unique
+	`name` VARCHAR(50) not null unique,
+    active BIT DEFAULT b'1'
 );
 
 create table `thesis_status`(
@@ -99,4 +100,15 @@ create table `score`(
 	CONSTRAINT `FK_CRITERIA_SCORE` FOREIGN KEY (`criteria_id`) REFERENCES `criteria`(`id`),
     `committee_user_id` int,
     CONSTRAINT `FK_COMMITTEEUSER_SCORE` Foreign key (`committee_user_id`) References `committee_user`(`id`)
-    )
+);
+
+create table `paymentvnpaydetail`(
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`order_id` VARCHAR(20) not null,
+    `amount` float not null,
+    `order_desc` varchar(255),
+    `vnp_TransactionNo` varchar(255),
+    `vnp_ResponseCode` varchar(255),
+    `user_id` INT,
+    CONSTRAINT `FK_VNPAY_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+)

@@ -24,6 +24,7 @@ public class DispatcherServletInit extends AbstractAnnotationConfigDispatcherSer
 				MailConfig.class,
 				SecurityConfig.class,
 				CloudinaryConfig.class,
+				PaymentVnPayConfig.class,
 		};
 	}
 

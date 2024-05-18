@@ -2,7 +2,6 @@ package com.thesisSpringApp.api;
 
 import java.util.List;
 
-import com.thesisSpringApp.service.ThesisUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +21,7 @@ import com.thesisSpringApp.Dto.UserListsByRoleDTO;
 import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.service.RoleService;
+import com.thesisSpringApp.service.ThesisUserService;
 import com.thesisSpringApp.service.UserService;
 
 @RestController
@@ -96,21 +96,21 @@ public class UserApiController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{userId}/setInitAcc/", consumes = {MediaType.APPLICATION_JSON_VALUE,
+	@PostMapping(path = "/{userId}/setInitAcc/", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE})
     @CrossOrigin
     public ResponseEntity<User> changePassAndUploadAvatar(
             @PathVariable int userId,
             @RequestParam("password") String password,
-            @RequestPart("avatar") MultipartFile[] files) {
+			@RequestPart("avatar") MultipartFile files) {
         User user = userService.getUserById(userId);
 
         user.setPassword(passwordEncoder.encode(password));
-        if (files.length > 0)
-            user.setFile(files[0]);
+		if (!files.isEmpty())
+			user.setFile(files);
         user.setActive(true);
         userService.saveUser(user);
         userService.setCloudinaryField(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+		return new ResponseEntity<User>(HttpStatus.OK);
     }
 }

@@ -5,17 +5,40 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import com.thesisSpringApp.Dto.*;
-import com.thesisSpringApp.pojo.*;
-import com.thesisSpringApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.thesisSpringApp.Dto.CloseCommitteeDTO;
+import com.thesisSpringApp.Dto.CommitteeDetailDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDto;
+import com.thesisSpringApp.Dto.NewCommitteeDto;
+import com.thesisSpringApp.pojo.Committee;
+import com.thesisSpringApp.pojo.CommitteeUser;
+import com.thesisSpringApp.pojo.Score;
+import com.thesisSpringApp.pojo.Thesis;
+import com.thesisSpringApp.pojo.ThesisCommitteeRate;
+import com.thesisSpringApp.pojo.ThesisStatus;
+import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.repository.CommitteeUserRepository;
+import com.thesisSpringApp.service.CommitteeService;
+import com.thesisSpringApp.service.CriteriaService;
+import com.thesisSpringApp.service.MailSenderService;
+import com.thesisSpringApp.service.ScoreService;
+import com.thesisSpringApp.service.ThesisCommitteeRateService;
+import com.thesisSpringApp.service.ThesisService;
+import com.thesisSpringApp.service.ThesisStatusService;
+import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/committees/")
@@ -61,6 +84,7 @@ public class CommitteeApiController {
 		Committee committee = new Committee();
 		String committeeName = newCommitteeDto.getName();
 		committee.setName(committeeName);
+		committee.setActive(true);
 		committeeService.saveCommittee(committee);
 
 		List<CommitteeUserDto> committeeUserDtos = newCommitteeDto.getCommitteeUserDtos();
