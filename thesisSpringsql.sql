@@ -112,3 +112,5 @@ create table `paymentvnpaydetail`(
     `user_id` INT,
     CONSTRAINT `FK_VNPAY_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
 )
+
+

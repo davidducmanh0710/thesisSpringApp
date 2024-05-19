@@ -54,6 +54,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
 
+	@JsonIgnore
     @OneToMany(mappedBy = "userId")
     private List<Paymentvnpaydetail> paymentvnpaydetailList;
 
@@ -110,9 +111,6 @@ public class User implements Serializable {
     private Date birthday;
     @Column(name = "active")
     private Boolean active;
-//  @OneToMany(mappedBy = "userId")
-//	@JsonIgnore
-//  private List<Score> scoreList;
     @OneToMany(mappedBy = "userId")
 	@JsonIgnore
     private List<ThesisUser> thesisUserList;

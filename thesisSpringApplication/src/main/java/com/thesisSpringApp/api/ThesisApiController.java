@@ -176,7 +176,6 @@ public class ThesisApiController {
 
 			if (score == null)
 				score = new Score(thesis, committeeUser, criteria, criteriaDTO.getScore());
-			// thiếu chấm cho user nào
 			else
 				score.setScore(criteriaDTO.getScore());
 
