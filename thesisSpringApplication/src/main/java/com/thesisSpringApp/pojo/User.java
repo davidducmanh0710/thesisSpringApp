@@ -54,9 +54,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
 
-	@JsonIgnore
-    @OneToMany(mappedBy = "userId")
-    private List<Paymentvnpaydetail> paymentvnpaydetailList;
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -126,6 +124,10 @@ public class User implements Serializable {
 	@JsonIgnore
     private List<CommitteeUser> committeeUserList;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "userId")
+	private List<Paymentvnpaydetail> paymentvnpaydetailList;
+
 	@Transient
 	@JsonIgnore
 	private MultipartFile file;
@@ -190,6 +192,7 @@ public class User implements Serializable {
 		return active;
 	}
 
+	@XmlTransient
 	public List<ThesisUser> getThesisUserList() {
 		return thesisUserList;
 	}
@@ -202,6 +205,7 @@ public class User implements Serializable {
 		return roleId;
 	}
 
+	@XmlTransient
 	public List<CommitteeUser> getCommitteeUserList() {
 		return committeeUserList;
 	}

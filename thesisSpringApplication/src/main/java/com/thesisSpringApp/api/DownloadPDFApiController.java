@@ -35,7 +35,7 @@ public class DownloadPDFApiController {
 
 			byte[] pdfBytes = downloadPDFService.generatePdf(pdfInitDto);
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("Content-Disposition", "inline; filename=summary.pdf");
+			headers.add("Content-Disposition", "inline");
 			return ResponseEntity.ok().headers(headers)
 					.contentType(org.springframework.http.MediaType.APPLICATION_PDF).body(pdfBytes);
 		} catch (IOException e) {
