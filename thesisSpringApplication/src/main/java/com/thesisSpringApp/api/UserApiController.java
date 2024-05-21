@@ -161,10 +161,13 @@ public class UserApiController {
 
 		List<Thesis> theses = new ArrayList<>();
 
-		for (int i = 0; i < thesisUsers.size(); i++)
-			theses.add(thesisUsers.get(i).getThesisId());
-
+		if (thesisUsers != null) {
+			for (int i = 0; i < thesisUsers.size(); i++)
+				theses.add(thesisUsers.get(i).getThesisId());
 		return new ResponseEntity<List<Thesis>>(theses, HttpStatus.OK);
+	}
+
+		return new ResponseEntity<List<Thesis>>(HttpStatus.NO_CONTENT);
 	}
 
 }

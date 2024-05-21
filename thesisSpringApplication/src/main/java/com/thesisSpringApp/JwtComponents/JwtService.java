@@ -3,6 +3,10 @@ package com.thesisSpringApp.JwtComponents;
 import java.text.ParseException;
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.JOSEException;
@@ -19,8 +23,19 @@ import com.nimbusds.jwt.SignedJWT;
 @Component
 public class JwtService {
 
-	public static final String SECRET_KEY = "(&XM!@$@#Y%*%WAF@#(X*&)($&AE!&$&@AEWF*%@*&)*)(U)(#&^##&*@)(*@DM(*";
-	public static final byte[] SHARED_SECRET_KEY = SECRET_KEY.getBytes();
+	@Autowired
+	private Environment environment;
+
+	public String SECRET_KEY = "";
+	public byte[] SHARED_SECRET_KEY = SECRET_KEY.getBytes();
+
+	@PostConstruct
+	public void init() {
+		SECRET_KEY = environment.getProperty("spring.jwt.secretkey");
+		SHARED_SECRET_KEY = SECRET_KEY.getBytes();
+
+	}
+
 	public static final int EXPIRE_TIME = 86400000;
 
 	public String generateTokenLogin(String username, String password) {

@@ -167,7 +167,9 @@ public class ThesisApiController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public void addScore(@RequestBody ScoreDTO scoreDTO) {
 		Thesis thesis = thesisService.getThesisById(scoreDTO.getThesisId());
-		CommitteeUser committeeUser = committeeUserService.getCommitteeUser(scoreDTO.getUserId(), scoreDTO.getCommitteeId());
+		User user = userService.getCurrentLoginUser();
+		CommitteeUser committeeUser = committeeUserService.getCommitteeUser(user.getId(),
+				scoreDTO.getCommitteeId());
 		List<CriteriaDTO> criteriaDTOList = scoreDTO.getScores();
 
 		for (CriteriaDTO criteriaDTO : criteriaDTOList) {

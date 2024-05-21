@@ -52,21 +52,21 @@ public class PaymentVNPAYApiController {
 	public ResponseEntity<String> payment(@RequestBody PaymentInitDto paymentInitDto)
 			throws UnsupportedEncodingException {
 
-		User user = userService.getUserById(paymentInitDto.getUser_id());
+		User user = userService.getCurrentLoginUser();
 
 
-		String vnp_Version = "2.1.0";
+		String vnp_Version = "2.1.0"; // phiên bản
 		String vnp_Command = "pay";
-		String orderType = "billpayment";
+		String orderType = "billpayment"; // loại thanh toán
 		long amount = paymentInitDto.getAmount() * 100;
 		String bankCode = "";
 
-		String vnp_TxnRef = PaymentVnPayConfig.getRandomNumber(8);
+		String vnp_TxnRef = PaymentVnPayConfig.getRandomNumber(8); // tạo id random
 		String vnp_IpAddr = PaymentVnPayConfig.getIpAddress(req);
 
-		String vnp_TmnCode = PaymentVnPayConfig.vnp_TmnCode;
+		String vnp_TmnCode = PaymentVnPayConfig.vnp_TmnCode; // mã bí mật trong file .properties
 
-		Map<String, String> vnp_Params = new HashMap<>();
+		Map<String, String> vnp_Params = new HashMap<>(); // tạo chuỗi param để gửi cùng url vnp
 		vnp_Params.put("vnp_Version", vnp_Version);
 		vnp_Params.put("vnp_Command", vnp_Command);
 		vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
@@ -74,7 +74,7 @@ public class PaymentVNPAYApiController {
 		vnp_Params.put("vnp_CurrCode", "VND");
 
 		if (bankCode != null && !bankCode.isEmpty()) {
-			vnp_Params.put("vnp_BankCode", bankCode);
+			vnp_Params.put("vnp_BankCode", bankCode); // nếu bankcode rỗng thì chọn ngân hàng
 		}
 		vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
 		vnp_Params.put("vnp_OrderInfo",
@@ -87,7 +87,8 @@ public class PaymentVNPAYApiController {
 		} else {
 			vnp_Params.put("vnp_Locale", "vn");
 		}
-		vnp_Params.put("vnp_ReturnUrl", PaymentVnPayConfig.vnp_ReturnUrl);
+		vnp_Params.put("vnp_ReturnUrl", PaymentVnPayConfig.vnp_ReturnUrl); // url return sau khi
+																			// thanh toán
 		vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
 		Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -127,14 +128,15 @@ public class PaymentVNPAYApiController {
 		String vnp_SecureHash = PaymentVnPayConfig.hmacSHA512(PaymentVnPayConfig.secretKey,
 				hashData.toString());
 		queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-		String paymentUrl = PaymentVnPayConfig.vnp_PayUrl + "?" + queryUrl;
+		String paymentUrl = PaymentVnPayConfig.vnp_PayUrl + "?" + queryUrl; // trả về url cuối cùng
+																			// kèm params
 
 		return new ResponseEntity<String>(paymentUrl, HttpStatus.OK);	
 	}
 	
 
 
-	@GetMapping("/payment_return/")
+	@GetMapping("/payment_return/") // xử lý dữ liệu trả về
 	public ResponseEntity<Map<String, String>> payment_return (@RequestParam Map<String, String> params) { 
 		
 		String vnpResponseCode = params.get("vnp_ResponseCode");
