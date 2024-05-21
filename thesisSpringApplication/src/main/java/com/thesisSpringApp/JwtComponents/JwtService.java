@@ -19,7 +19,7 @@ import com.nimbusds.jwt.SignedJWT;
 @Component
 public class JwtService {
 
-	public static final String SECRET_KEY = "(&XM!@$@#Y%(^(*%WAF@#(X*&)($&AEWFAEWF*%@*&AEF)@_)(EWFBLOIKNFAJPCU($)*&N)(#U#*DMI( U@)(*@DM(*";
+	public static final String SECRET_KEY = "(&XM!@$@#Y%*%WAF@#(X*&)($&AE!&$&@AEWF*%@*&)*)(U)(#&^##&*@)(*@DM(*";
 	public static final byte[] SHARED_SECRET_KEY = SECRET_KEY.getBytes();
 	public static final int EXPIRE_TIME = 86400000;
 

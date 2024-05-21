@@ -51,6 +51,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getCurrentLoginUser() {
+		return userRepository.getCurrentLoginUser();
+	}
+
+
+	@Override
 	public boolean authUser(String username, String password) {
 		return userRepository.authUser(username, password);
 	}
@@ -158,6 +164,7 @@ public class UserServiceImpl implements UserService {
 		return new org.springframework.security.core.userdetails.User(user.getUsername(),
 				user.getPassword(), authorities);
 	}
+
 
 
 }

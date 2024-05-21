@@ -11,5 +11,7 @@ public interface ThesisUserRepository {
 
 	List<ThesisUser> getUserByThesis(Thesis thesis);
 
+	List<ThesisUser> getThesisByUser(User user);
+
 	List<ThesisUser> getThesisUser();
 }

@@ -12,6 +12,10 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +40,17 @@ public class UserRepositoryImpl implements UserRepository {
 
 		return this.passwordEncoder.matches(password, user.getPassword());
 	}
+
+	@Override
+	public User getCurrentLoginUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails)
+			return this.getUserByUsername((authentication.getName()));
+		else
+			throw new UsernameNotFoundException(
+					"User not found with username: " + authentication.getName());
+	}
+
 
 	@Override
 	public List<User> getAllUsers() {
@@ -123,5 +138,6 @@ public class UserRepositoryImpl implements UserRepository {
 
 		return (List<User>) query.getResultList();
 	}
+
 
 }

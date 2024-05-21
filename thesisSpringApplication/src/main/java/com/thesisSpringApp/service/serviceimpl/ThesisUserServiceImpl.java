@@ -30,6 +30,11 @@ public class ThesisUserServiceImpl implements ThesisUserService {
 	}
 
 	@Override
+	public List<ThesisUser> getThesisByUser(User user) {
+		return thesisUserRepository.getThesisByUser(user);
+	}
+
+	@Override
 	public Set<ThesisUser> getStudentInThesisUsers() {
 		List<ThesisUser> thesisUsers = thesisUserRepository.getThesisUser();
 
@@ -41,4 +46,5 @@ public class ThesisUserServiceImpl implements ThesisUserService {
 
 		return thesisUserSet;
 	}
+
 }
