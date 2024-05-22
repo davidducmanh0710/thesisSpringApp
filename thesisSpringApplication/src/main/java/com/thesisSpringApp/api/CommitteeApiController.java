@@ -58,6 +58,10 @@ public class CommitteeApiController {
 	public ResponseEntity<Committee> addNewCommittee(@RequestBody NewCommitteeDto newCommitteeDto)
 			throws MessagingException {
 
+		if (newCommitteeDto.getCommitteeUserDtos().isEmpty() || newCommitteeDto.getCommitteeUserDtos().size() > 5) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
 		Committee committee = new Committee();
 		String committeeName = newCommitteeDto.getName();
 		committee.setName(committeeName);
@@ -157,8 +161,9 @@ public class CommitteeApiController {
 
 					// Lưu các thay đổi
 					thesis.setScore(score);
+					thesis.setActive(false);
 					thesisService.saveAndUpdateThesis(thesis);
-					committeeService.saveCommittee(committee);
+
 					ThesisStatus thesisStatus = thesisStatusService.getThesisStatusById(3);
 					t.setStatusId(thesisStatus);
 					thesisCommitteeRateService.saveAndUpdateThesisCommitteeRate(t);
@@ -168,6 +173,8 @@ public class CommitteeApiController {
 				}
 			}
 		}
+
+		committeeService.saveCommittee(committee);
 
 		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail();
 
