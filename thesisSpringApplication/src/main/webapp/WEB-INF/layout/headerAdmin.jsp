@@ -19,7 +19,7 @@
 				<li class="nav-item"><a class="nav-link" href="#">Home</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">Users</a></li>
 
-				<li class="nav-item"><a class="nav-link" href="#">Logout</a></li>
+				<li class="nav-item"><a class="nav-link" href="/thesisSpringApplication/logout">Logout</a></li>
 			</ul>
 		</div>
 	</div>

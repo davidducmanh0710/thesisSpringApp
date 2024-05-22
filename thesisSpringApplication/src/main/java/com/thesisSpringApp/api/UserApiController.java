@@ -1,17 +1,20 @@
 package com.thesisSpringApp.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.thesisSpringApp.service.ThesisUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -19,9 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisSpringApp.Dto.UserListsByRoleDTO;
+import com.thesisSpringApp.Dto.UserLoginDto;
+import com.thesisSpringApp.JwtComponents.JwtService;
 import com.thesisSpringApp.pojo.Role;
+import com.thesisSpringApp.pojo.Thesis;
+import com.thesisSpringApp.pojo.ThesisUser;
 import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.service.RoleService;
+import com.thesisSpringApp.service.ThesisUserService;
 import com.thesisSpringApp.service.UserService;
 
 @RestController
@@ -32,16 +40,47 @@ public class UserApiController {
     private PasswordEncoder passwordEncoder;
     private RoleService roleService;
     private ThesisUserService thesisUserService;
+	private JwtService jwtService;
 
     @Autowired
     public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
-                             RoleService roleService, ThesisUserService thesisUserService) {
+			RoleService roleService, ThesisUserService thesisUserService, JwtService jwtService) {
         super();
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
         this.thesisUserService = thesisUserService;
+		this.jwtService = jwtService;
     }
+
+	@PostMapping("/login/")
+	@CrossOrigin
+	public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
+		if (this.userService.authUser(userLoginDto.getUsername(),
+				userLoginDto.getPassword()) == true) {
+			String token = jwtService.generateTokenLogin(userLoginDto.getUsername(),
+					userLoginDto.getPassword());
+
+			return new ResponseEntity<>(token, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<>("error", HttpStatus.BAD_REQUEST);
+	}
+
+	@GetMapping(path = "/current-user/", produces = {
+			MediaType.APPLICATION_JSON_VALUE
+	})
+	@CrossOrigin
+	public ResponseEntity<User> getCurrentUserApi() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+			User user =  userService.getUserByUsername((authentication.getName()));
+			
+			return new ResponseEntity<User>(user, HttpStatus.OK);
+		}
+		return null;
+	}
+
 
     @GetMapping("/all/")
     public ResponseEntity<List<User>> getUsers() {
@@ -96,21 +135,39 @@ public class UserApiController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{userId}/setInitAcc/", consumes = {MediaType.APPLICATION_JSON_VALUE,
+	@PostMapping(path = "/setInitAcc/", consumes = {
             MediaType.MULTIPART_FORM_DATA_VALUE})
     @CrossOrigin
     public ResponseEntity<User> changePassAndUploadAvatar(
-            @PathVariable int userId,
             @RequestParam("password") String password,
-            @RequestPart("avatar") MultipartFile[] files) {
-        User user = userService.getUserById(userId);
+			@RequestPart("avatar") MultipartFile files) {
+		User user = userService.getCurrentLoginUser();
 
         user.setPassword(passwordEncoder.encode(password));
-        if (files.length > 0)
-            user.setFile(files[0]);
+		if (!files.isEmpty())
+			user.setFile(files);
         user.setActive(true);
         userService.saveUser(user);
         userService.setCloudinaryField(user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+		return new ResponseEntity<User>(HttpStatus.OK);
     }
+
+	@GetMapping(path = "/theses/")
+	@CrossOrigin
+	public ResponseEntity<List<Thesis>> getThesesCurrentUser() {
+		User user = userService.getCurrentLoginUser();
+
+		List<ThesisUser> thesisUsers = thesisUserService.getThesisByUser(user);
+
+		List<Thesis> theses = new ArrayList<>();
+
+		if (thesisUsers != null) {
+			for (int i = 0; i < thesisUsers.size(); i++)
+				theses.add(thesisUsers.get(i).getThesisId());
+		return new ResponseEntity<List<Thesis>>(theses, HttpStatus.OK);
+	}
+
+		return new ResponseEntity<List<Thesis>>(HttpStatus.NO_CONTENT);
+	}
+
 }

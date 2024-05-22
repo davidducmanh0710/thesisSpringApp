@@ -3,6 +3,8 @@ package com.thesisSpringApp.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 		"com.thesisSpringApp.config",
 
 })
+@Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Bean
@@ -31,8 +34,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().authorizeRequests()
-				.antMatchers("/**").permitAll()
-				.and().csrf().disable(); // Tắt CSRF (Cross-Site Request Forgery) protection
+				.antMatchers("/admin").hasRole("ADMIN")
+				.antMatchers(HttpMethod.POST, "/api/users/**")
+				.access("hasRole('ROLE_SINHVIEN') or hasRole('ROLE_GIANGVIEN') or hasRole('ROLE_GIAOVU')")
+				.and().csrf().disable();
+
+		http.formLogin().usernameParameter("username").passwordParameter("password");
+
+		http.formLogin().defaultSuccessUrl("/")
+				.failureUrl("/login?error");
+
+		http.logout().permitAll();
+		http.logout().logoutSuccessUrl("/login");
+
+		http.exceptionHandling()
+				.accessDeniedPage("/login?accessDenied");
 	}
 
 

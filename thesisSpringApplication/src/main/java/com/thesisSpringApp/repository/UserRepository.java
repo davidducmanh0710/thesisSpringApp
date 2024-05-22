@@ -6,6 +6,11 @@ import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 
 public interface UserRepository {
+
+	User getCurrentLoginUser();
+
+	public boolean authUser(String username, String password);
+
 	List<User> getAllUsers();
 
 	void saveUser(User user);

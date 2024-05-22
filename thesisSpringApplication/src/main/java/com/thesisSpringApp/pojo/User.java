@@ -24,19 +24,17 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Data;
-
 /**
  *
  * @author ADMIN
  */
-@Data
 @Entity
 @Table(name = "user")
 @XmlRootElement
@@ -55,6 +53,8 @@ import lombok.Data;
     @NamedQuery(name = "User.findByBirthday", query = "SELECT u FROM User u WHERE u.birthday = :birthday"),
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
+
+
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -109,9 +109,6 @@ public class User implements Serializable {
     private Date birthday;
     @Column(name = "active")
     private Boolean active;
-//    @OneToMany(mappedBy = "userId")
-//	@JsonIgnore
-//    private List<Score> scoreList;
     @OneToMany(mappedBy = "userId")
 	@JsonIgnore
     private List<ThesisUser> thesisUserList;
@@ -127,9 +124,14 @@ public class User implements Serializable {
 	@JsonIgnore
     private List<CommitteeUser> committeeUserList;
 
+	@JsonIgnore
+	@OneToMany(mappedBy = "userId")
+	private List<Paymentvnpaydetail> paymentvnpaydetailList;
+
 	@Transient
 	@JsonIgnore
 	private MultipartFile file;
+
 
     public User() {
     }
@@ -138,8 +140,150 @@ public class User implements Serializable {
         this.id = id;
     }
 
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 
-    @Override
+	public Integer getId() {
+		return id;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public String getUseruniversityid() {
+		return useruniversityid;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	@XmlTransient
+	public List<ThesisUser> getThesisUserList() {
+		return thesisUserList;
+	}
+
+	public Faculty getFacultyId() {
+		return facultyId;
+	}
+
+	public Role getRoleId() {
+		return roleId;
+	}
+
+	@XmlTransient
+	public List<CommitteeUser> getCommitteeUserList() {
+		return committeeUserList;
+	}
+
+	@XmlTransient
+	public MultipartFile getFile() {
+		return file;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public void setUseruniversityid(String useruniversityid) {
+		this.useruniversityid = useruniversityid;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	public void setThesisUserList(List<ThesisUser> thesisUserList) {
+		this.thesisUserList = thesisUserList;
+	}
+
+	public void setFacultyId(Faculty facultyId) {
+		this.facultyId = facultyId;
+	}
+
+	public void setRoleId(Role roleId) {
+		this.roleId = roleId;
+	}
+
+	public void setCommitteeUserList(List<CommitteeUser> committeeUserList) {
+		this.committeeUserList = committeeUserList;
+	}
+
+	public void setFile(MultipartFile file) {
+		this.file = file;
+	}
+
+	@Override
     public int hashCode() {
         int hash = 0;
         hash += (id != null ? id.hashCode() : 0);
@@ -162,6 +306,15 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "com.thesisSpringApp.pojo.User[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    public List<Paymentvnpaydetail> getPaymentvnpaydetailList() {
+        return paymentvnpaydetailList;
+    }
+
+    public void setPaymentvnpaydetailList(List<Paymentvnpaydetail> paymentvnpaydetailList) {
+        this.paymentvnpaydetailList = paymentvnpaydetailList;
     }
     
 }

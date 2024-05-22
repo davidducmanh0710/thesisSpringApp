@@ -53,12 +53,34 @@ public class ThesisUserRepositoryImpl implements ThesisUserRepository {
 			predicates.add(
 					criteriaBuilder.equal(rThesisUser.get("thesisId"), thesis.getId()));
 
-		criteriaQuery.where(predicates.toArray(Predicate[]::new)); // nhung dieu kien where
+		criteriaQuery.where(predicates.toArray(Predicate[]::new));
 
 		Query query = session.createQuery(criteriaQuery);
 
 		return query.getResultList();
 	}
+
+	@Override
+	public List<ThesisUser> getThesisByUser(User user) {
+		Session session = factoryBean.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<ThesisUser> criteriaQuery = criteriaBuilder.createQuery(ThesisUser.class);
+		Root rThesisUser = criteriaQuery.from(ThesisUser.class);
+		criteriaQuery.select(rThesisUser);
+		List<Predicate> predicates = new ArrayList<>();
+
+		if (user != null)
+			predicates.add(
+					criteriaBuilder.equal(rThesisUser.get("userId"), user.getId()));
+
+		criteriaQuery.where(predicates.toArray(Predicate[]::new));
+
+		Query query = session.createQuery(criteriaQuery);
+		return query.getResultList();
+
+	}
+
+
 
 	@Override
 	public List<ThesisUser> getThesisUser() {
@@ -67,5 +89,6 @@ public class ThesisUserRepositoryImpl implements ThesisUserRepository {
 
 		return query.getResultList();
 	}
+
 
 }

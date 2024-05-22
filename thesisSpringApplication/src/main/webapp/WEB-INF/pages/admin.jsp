@@ -27,7 +27,7 @@
 			<c:forEach items="${users}" var="u">
 				<tr>
 					<td></td>
-					<td><img class="card-img-top" src="${u.firstName}"
+					<td><img class="card-img-top" src="${u.avatar}"
 						style="width: 300px" alt="Card image"></td>
 					<td>${u.firstName}</td>
 					<td>${u.lastName}</td>

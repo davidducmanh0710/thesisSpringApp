@@ -1,13 +1,12 @@
 package com.thesisSpringApp.Dto;
 
-import lombok.Data;
-
 import java.util.List;
+
+import lombok.Data;
 
 @Data
 public class ScoreDTO {
     private int thesisId;
-    private int userId;
-    private int committeeId;
+	private int committeeId;
     private List<CriteriaDTO> scores;
 }

@@ -11,6 +11,10 @@ import com.thesisSpringApp.pojo.User;
 
 public interface UserService extends UserDetailsService {
 
+	User getCurrentLoginUser();
+
+	public boolean authUser(String username, String password);
+
 	List<User> getAllUsers();
 
 	void saveUser(User user);

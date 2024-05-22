@@ -12,5 +12,7 @@ public interface ThesisUserService {
 
 	List<ThesisUser> getUserByThesis(Thesis thesis);
 
+	List<ThesisUser> getThesisByUser(User user);
+
 	Set<ThesisUser> getStudentInThesisUsers();
 }
