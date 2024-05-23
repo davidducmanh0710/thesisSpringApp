@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
 		String password = generateRandomString(7);
 		user.setPassword(password);
 
-		user.setActive(false);
+		user.setActive(true);
 
 		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
 
@@ -165,6 +165,10 @@ public class UserServiceImpl implements UserService {
 				user.getPassword(), authorities);
 	}
 
+	@Override
+	public void deleteUser(User user) {
+		userRepository.deleteUser(user);
+	}
 
 
 }

@@ -139,5 +139,10 @@ public class UserRepositoryImpl implements UserRepository {
 		return (List<User>) query.getResultList();
 	}
 
+	@Override
+	public void deleteUser(User user) {
+		Session session = factory.getObject().getCurrentSession();
+		session.delete(user);
+	}
 
 }

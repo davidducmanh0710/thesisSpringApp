@@ -26,4 +26,6 @@ public interface UserRepository {
 	User getUserByUniversityId(String uId);
 
 	List<User> getUsersByThesisId(int thesisId);
+
+	void deleteUser(User user);
 }

@@ -1,12 +1,11 @@
 1<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<h1>Hello ADMIN</h1>
-
-
-<div class="container">
+<div class="container mt-4">
 	<div>
 		<c:url value="/admin/addUser" var="addUserUrl" />
+		<c:url value="/admin/updateUser" var="updateUserUrl" />
+		
 		<a href="${addUserUrl}" class="btn btn-primary mt-1 mb-1">Add new
 			user</a>
 	</div>
@@ -35,11 +34,22 @@
 					<td></td>
 
 
-					<td><button class="btn btn-primary">Update</button>
-						<button class="btn btn-danger">Delete</button></td>
+					<td><a href="<c:url value="/admin/updateUser/${u.id}" />"
+						class="btn btn-primary mt-1 mb-1">Update</a>
+						<a onclick="confirmDeleteProduct()" href="<c:url value="/admin/deleteUser/${u.id}" />"
+						class="btn btn-danger mt-1 mb-1">Delete</a></td>
 				</tr>
 			</c:forEach>
 
 		</tbody>
 	</table>
 </div>
+
+<script>
+	function confirmDeleteProduct() {
+		if (confirm("Bạn chắc chắn xóa không?") !== true) {
+			event.preventDefault();
+		} else {
+		}
+	}
+</script>

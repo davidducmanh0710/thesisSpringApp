@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.thesisSpringApp.formatters.FormatterColumn;
@@ -62,7 +63,14 @@ public class AdminController {
 
 		model.addAttribute("user", new User());
 
-		return "addUser";
+		return "addOrUpdateUser";
+	}
+
+	@GetMapping("/admin/updateUser/{userId}")
+	public String adminUpdateUserView(@PathVariable("userId") int userId, Model model) {
+		User user = userService.getUserById(userId);
+		model.addAttribute("user", user);
+		return "addOrUpdateUser";
 	}
 
 	@PostMapping(value = "/admin/add/user")
@@ -70,23 +78,42 @@ public class AdminController {
 			BindingResult result)
 			throws MessagingException {
 
-		if (!result.hasErrors()) {
+		Role role = roleService.getRoleById(user.getRoleId().getId());
+		Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());
+
+
+		if (!result.hasErrors() && user.getId() == null) {
 			try {
-				Role role = roleService.getRoleById(user.getRoleId().getId());
-				Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());
 				user.setFacultyId(faculty);
 				user.setRoleId(role);
 				userService.saveInitUserAndSendMail(user);
 
-				return "redirect:/admin";
-
 			} catch (Exception ex) {
 				model.addAttribute("errMsg", ex.toString());
 			}
+		} else if (!result.hasErrors() && user.getId() > 0) {
 
+			User updateUser = userService.getUserById(user.getId());
+			updateUser.setFacultyId(faculty);
+			updateUser.setRoleId(role);
+			updateUser.setEmail(user.getEmail());
+			updateUser.setUseruniversityid(user.getUseruniversityid());
+			updateUser.setFirstName(user.getFirstName());
+			updateUser.setLastName(user.getLastName());
+			updateUser.setBirthday(user.getBirthday());
+			updateUser.setGender(user.getGender());
+			userService.saveUser(updateUser);
 		}
-		return "addUser";
 
+		return "redirect:/admin";
+
+	}
+
+	@GetMapping("/admin/deleteUser/{userId}")
+	public String deleteUser(@PathVariable("userId") int id) {
+		User user = userService.getUserById(id);
+		userService.deleteUser(user);
+		return "redirect:/admin";
 	}
 
 }

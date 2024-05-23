@@ -163,7 +163,6 @@
 			<version>2.7.9</version>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-core -->
 		<dependency>
 		    <groupId>com.itextpdf</groupId>
 		    <artifactId>itext-core</artifactId>

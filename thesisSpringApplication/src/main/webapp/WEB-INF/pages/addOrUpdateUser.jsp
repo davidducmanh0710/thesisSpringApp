@@ -47,6 +47,8 @@ h1 {
 				<form:form method="post" action="${actionAddUser}"
 					modelAttribute="user">
 					<form:errors path="*" element="div" cssClass="alert alert-danger" />
+					
+					<form:input path="id" type="hidden" value="${user.id}"/>
 
 					<div class="row g-3">
 						<div class="col">
@@ -144,7 +146,14 @@ h1 {
 								<form:select class="form-select" name="facultyId" id="facultyId"
 									path="facultyId">
 									<c:forEach items="${faculties}" var="fa">
-										<option value="${fa.id}">${fa.name}</option>
+										<c:choose>
+											<c:when test="${fa.id == user.facultyId.id}">
+												<option value="${fa.id}" selected>${fa.name}</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${fa.id}">${fa.name}</option>
+											</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</form:select>
 								<label for="facultyId">FACULTY ID <span
