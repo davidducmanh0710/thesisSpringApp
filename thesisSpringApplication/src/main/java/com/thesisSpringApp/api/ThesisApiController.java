@@ -145,13 +145,20 @@ public class ThesisApiController {
 		Committee committee = committeeService
 				.getCommitteeById(thesisCommitteeDTO.getCommitteeId());
 
+		if (!thesis.getActive() || !committee.getActive()) {
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		}
+
 		ThesisStatus thesisStatus = thesisStatusService.getThesisStatusById(2);
 
 		ThesisCommitteeRate thesisCommitteeRate = thesisCommitteeRateService
 				.getThesisCommitteeRateByThesisId(thesis.getId());
 
-		if (thesisCommitteeRate == null)
+		if (thesisCommitteeRate == null) {
 			thesisCommitteeRate = new ThesisCommitteeRate(committee, thesis, thesisStatus);
+			thesis.setActive(true);
+			thesisService.saveAndUpdateThesis(thesis);
+		}
 		else
 			thesisCommitteeRate.setCommitteeId(committee);
 

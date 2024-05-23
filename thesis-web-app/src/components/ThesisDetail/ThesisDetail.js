@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import API, { endpoints } from "../../configs/API";
 import { Button, Form } from "react-bootstrap";
 import Select from "react-select";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 function ThesisDetail() {
 	const [thesis, setThesis] = useState();
@@ -26,6 +26,13 @@ function ThesisDetail() {
 		);
 	}, []);
 
+	useEffect(() => {
+		document.title = "Chi tiết khóa luận";
+
+		loadThesis();
+		loadCommittees();
+	}, [loadThesis, loadCommittees]);
+
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
@@ -45,11 +52,6 @@ function ThesisDetail() {
 		};
 		add();
 	};
-
-	useEffect(() => {
-		loadThesis();
-		loadCommittees();
-	}, [loadThesis, loadCommittees]);
 
 	return (
 		<>
@@ -124,6 +126,14 @@ function ThesisDetail() {
 									</Button>
 								</>
 							)}
+						</div>
+
+						<div className="mt-4">
+							<Link
+								to={`/theses/${thesisId}/score`}
+								className="btn btn-success">
+								Chấm điểm
+							</Link>
 						</div>
 					</div>
 				</>

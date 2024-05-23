@@ -22,7 +22,6 @@ public class ThesisServiceImpl implements ThesisService {
         Date date = new Date();
         if (thesis.getId() != null && thesis.getId() > 0) {
             thesis.setUpdateDate(date);
-			thesis.setActive(true);
 		} else {
             thesis.setCreateDate(date);
 			thesis.setUpdateDate(date);

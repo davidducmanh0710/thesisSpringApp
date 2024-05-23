@@ -14,6 +14,7 @@ import Lecturer from "./components/Lecturer/Lecturer";
 import Student from "./components/Student/Student";
 import ThesisDetail from "./components/ThesisDetail/ThesisDetail";
 import Criteria from "./components/Criteria/Criteria";
+import Score from "./components/Score/Score";
 
 function App() {
 	return (
@@ -32,6 +33,7 @@ function App() {
 					<Route path="/students" element={<Student />} />
 					<Route path="/theses/:thesisId" element={<ThesisDetail />} />
 					<Route path="/criteria" element={<Criteria />} />
+					<Route path="/theses/:thesisId/score" element={<Score />} />
 				</Routes>
 			</Container>
 			<Footer />
