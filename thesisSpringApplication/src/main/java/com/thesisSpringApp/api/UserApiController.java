@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thesisSpringApp.Dto.CurrentUserDetailDto;
 import com.thesisSpringApp.Dto.UserListsByRoleDTO;
 import com.thesisSpringApp.Dto.UserLoginDto;
 import com.thesisSpringApp.JwtComponents.JwtService;
@@ -71,12 +72,13 @@ public class UserApiController {
 			MediaType.APPLICATION_JSON_VALUE
 	})
 	@CrossOrigin
-	public ResponseEntity<User> getCurrentUserApi() {
+	public ResponseEntity<CurrentUserDetailDto> getCurrentUserApi() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
 			User user =  userService.getUserByUsername((authentication.getName()));
-			
-			return new ResponseEntity<User>(user, HttpStatus.OK);
+			CurrentUserDetailDto c = new CurrentUserDetailDto(user, user.getFacultyId(),
+					user.getRoleId());
+			return new ResponseEntity<CurrentUserDetailDto>(c, HttpStatus.OK);
 		}
 		return null;
 	}
@@ -136,7 +138,9 @@ public class UserApiController {
     }
 
 	@PostMapping(path = "/setInitAcc/", consumes = {
-            MediaType.MULTIPART_FORM_DATA_VALUE})
+			MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
+					MediaType.APPLICATION_JSON_VALUE
+			})
     @CrossOrigin
     public ResponseEntity<User> changePassAndUploadAvatar(
             @RequestParam("password") String password,
@@ -149,7 +153,7 @@ public class UserApiController {
         user.setActive(true);
         userService.saveUser(user);
         userService.setCloudinaryField(user);
-		return new ResponseEntity<User>(HttpStatus.OK);
+		return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
 	@GetMapping(path = "/theses/")
