@@ -27,7 +27,7 @@ function UserDetail() {
 						<h1 className="text-center text-success my-4">Thông tin cá nhân</h1>
 
 						<Image
-							src={user.avatar}
+							src={user.user.avatar}
 							width="200"
 							height="200"
 							alt="Ảnh đại diện"
@@ -43,7 +43,7 @@ function UserDetail() {
 											<Form.Label>Họ</Form.Label>
 											<Form.Control
 												type="text"
-												value={user.lastName}
+												value={user.user.lastName}
 												disabled
 												required
 											/>
@@ -55,7 +55,7 @@ function UserDetail() {
 											<Form.Label>Tên</Form.Label>
 											<Form.Control
 												type="text"
-												value={user.firstName}
+												value={user.user.firstName}
 												required
 												disabled
 											/>
@@ -68,7 +68,7 @@ function UserDetail() {
 										<Form.Label>Mã ID</Form.Label>
 										<Form.Control
 											type="number"
-											value={user.useruniversityid}
+											value={user.user.useruniversityid}
 											disabled
 											required
 										/>
@@ -78,7 +78,7 @@ function UserDetail() {
 										<Form.Label>Ngày sinh</Form.Label>
 										<Form.Control
 											type="text"
-											value={new Date(user.birthday).toLocaleDateString()}
+											value={new Date(user.user.birthday).toLocaleDateString()}
 											disabled
 											required
 										/>
@@ -90,7 +90,7 @@ function UserDetail() {
 										<Form.Label>Khoa</Form.Label>
 										<Form.Control
 											type="text"
-											value={user.faculty}
+											value={user.faculty.name}
 											required
 											disabled
 										/>
@@ -102,7 +102,7 @@ function UserDetail() {
 											<InputGroup.Text>84</InputGroup.Text>
 											<Form.Control
 												type="number"
-												value={user.phone.substring(1)}
+												value={user.user.phone.substring(1)}
 												required
 												disabled
 											/>
@@ -117,7 +117,7 @@ function UserDetail() {
 											<InputGroup.Text>@</InputGroup.Text>
 											<Form.Control
 												type="text"
-												value={user.email}
+												value={user.user.email}
 												required
 												disabled
 											/>

@@ -39,21 +39,30 @@ function Header() {
 									Trang chủ
 								</Link>
 
-								<Link to="/committees" className="nav-link">
-									Hội đồng
-								</Link>
+								{() => {
+									if (user.role.name === "ROLE_GIAOVU") {
+										return (
+											<>
+												<Link to="/committees" className="nav-link">
+													Hội đồng
+												</Link>
 
-								<Link to="/lecturers" className="nav-link">
-									Giảng viên
-								</Link>
+												<Link to="/lecturers" className="nav-link">
+													Giảng viên
+												</Link>
 
-								<Link to="/students" className="nav-link">
-									Sinh viên
-								</Link>
+												<Link to="/students" className="nav-link">
+													Sinh viên
+												</Link>
 
-								<Link to="/criteria" className="nav-link">
-									Tiêu chí
-								</Link>
+												<Link to="/criteria" className="nav-link">
+													Tiêu chí
+												</Link>
+											</>
+										);
+									}
+								}}
+
 								<NavDropdown title="Link" id="navbarScrollingDropdown">
 									<NavDropdown.Item href="#action3">Action</NavDropdown.Item>
 
@@ -96,7 +105,7 @@ function Header() {
 							<Dropdown className="dropdown text-end ms-4">
 								<Dropdown.Toggle className="header-btn-primary">
 									<Image
-										src={user === null ? "" : user.avatar}
+										src={user === null ? "" : user.user.avatar}
 										alt="mdo"
 										width="50"
 										height="50"
