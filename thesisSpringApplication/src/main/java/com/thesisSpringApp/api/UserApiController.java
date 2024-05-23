@@ -57,7 +57,7 @@ public class UserApiController {
 	@CrossOrigin
 	public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
 		if (this.userService.authUser(userLoginDto.getUsername(),
-				userLoginDto.getPassword()) == true) {
+				userLoginDto.getPassword())) {
 			String token = jwtService.generateTokenLogin(userLoginDto.getUsername(),
 					userLoginDto.getPassword());
 
