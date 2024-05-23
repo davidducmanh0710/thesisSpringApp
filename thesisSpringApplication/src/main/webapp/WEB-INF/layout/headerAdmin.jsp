@@ -18,6 +18,8 @@
 			<ul class="navbar-nav ms-auto">
 				<li class="nav-item"><a class="nav-link" href="#">Home</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">Users</a></li>
+				<li class="nav-item"><a class="nav-link" href="#">Stats</a></li>
+				
 
 				<li class="nav-item"><a class="nav-link" href="/thesisSpringApplication/logout">Logout</a></li>
 			</ul>
