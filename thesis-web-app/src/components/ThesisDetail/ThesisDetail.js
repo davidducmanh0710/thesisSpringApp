@@ -1,15 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import API, { endpoints } from "../../configs/API";
 import { Button, Form } from "react-bootstrap";
 import Select from "react-select";
 import { Link, useParams } from "react-router-dom";
+import { LoadingContext, UserContext } from "../../configs/Context";
+import { isAcademicManager, isLecturer } from "../Common/Common";
 
 function ThesisDetail() {
+	const [, loadingDispatch] = useContext(LoadingContext);
+	const [user] = useContext(UserContext);
 	const [thesis, setThesis] = useState();
 	const { thesisId } = useParams();
 	const [committees, setCommittees] = useState([]);
 	const [hidden, setHidden] = useState(true);
-	const [committee, setCommittee] = useState();
+	const [committee, setCommittee] = useState(null);
 
 	const loadThesis = useCallback(async () => {
 		const response = await API.get(endpoints["thesisDetail"](thesisId));
@@ -27,18 +31,22 @@ function ThesisDetail() {
 	}, []);
 
 	useEffect(() => {
+		loadingDispatch({ type: "loading" });
 		document.title = "Chi tiết khóa luận";
-
 		loadThesis();
 		loadCommittees();
-	}, [loadThesis, loadCommittees]);
+		loadingDispatch({ type: "unloading" });
+	}, [loadThesis, loadCommittees, loadingDispatch]);
 
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
 
-	const addCommittee = () => {
-		const add = async () => {
+	const addCommittee = async () => {
+		loadingDispatch({ type: "loading" });
+		if (committee === null) {
+			alert("Chưa chọn hội đồng");
+		} else {
 			const response = await API.patch(
 				endpoints["addOrUpdateCommitteeForThesis"],
 				{
@@ -49,8 +57,9 @@ function ThesisDetail() {
 
 			setThesis(response.data);
 			loadCommittees();
-		};
-		add();
+		}
+
+		loadingDispatch({ type: "unloading" });
 	};
 
 	return (
@@ -99,7 +108,12 @@ function ThesisDetail() {
 									isSearchable={true}
 									placeholder="Chọn hội đồng"
 									hideSelectedOptions={true}
-									onChange={(e) => setCommittee(e.value)}
+									onChange={(e) => {
+										if (e !== null) setCommittee(e.value);
+										else setCommittee(null);
+									}}
+									required
+									isClearable
 								/>
 							</Form.Group>
 
@@ -108,33 +122,37 @@ function ThesisDetail() {
 							</Button>
 						</div>
 
-						<div className="mt-4">
-							{hidden ? (
-								<>
-									<Button variant="info" onClick={changeHidden}>
-										{thesis.committee === null
-											? "Thêm hội đồng"
-											: "Chỉnh sửa hội đồng"}
-									</Button>
-								</>
-							) : (
-								<>
-									<Button variant="danger" onClick={changeHidden}>
-										{thesis.committee === null
-											? "Ẩn thêm hội đồng"
-											: "Ẩn chỉnh sửa hội đồng"}
-									</Button>
-								</>
-							)}
-						</div>
+						{isAcademicManager(user) && (
+							<div className="mt-4">
+								{hidden ? (
+									<>
+										<Button variant="info" onClick={changeHidden}>
+											{thesis.committee === null
+												? "Thêm hội đồng"
+												: "Chỉnh sửa hội đồng"}
+										</Button>
+									</>
+								) : (
+									<>
+										<Button variant="danger" onClick={changeHidden}>
+											{thesis.committee === null
+												? "Ẩn thêm hội đồng"
+												: "Ẩn chỉnh sửa hội đồng"}
+										</Button>
+									</>
+								)}
+							</div>
+						)}
 
-						<div className="mt-4">
-							<Link
-								to={`/theses/${thesisId}/score`}
-								className="btn btn-success">
-								Chấm điểm
-							</Link>
-						</div>
+						{isLecturer(user) && (
+							<div className="mt-4">
+								<Link
+									to={`/theses/${thesisId}/score`}
+									className="btn btn-success">
+									Chấm điểm
+								</Link>
+							</div>
+						)}
 					</div>
 				</>
 			) : (

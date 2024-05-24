@@ -18,29 +18,37 @@ import com.thesisSpringApp.repository.RoleRepository;
 public class RoleRepositoryImpl implements RoleRepository {
 
 	@Autowired
-	private LocalSessionFactoryBean factoryBean;
+	private LocalSessionFactoryBean factory;
 
 	@Override
 	public Role getRoleById(int id) {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("Role.findById");
 		query.setParameter("id", id);
-		return (Role) query.getSingleResult();
+		try {
+			return (Role) query.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	@Override
 	public List<Role> getAllRoles() {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("Role.findAll");
 		return query.getResultList();
 	}
 
 	@Override
 	public Role getRoleByName(String name) {
-		Session session = factoryBean.getObject().getCurrentSession();
+		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("Role.findByName");
 		query.setParameter("name", name);
-		return (Role) query.getSingleResult();
+		try {
+			return (Role) query.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

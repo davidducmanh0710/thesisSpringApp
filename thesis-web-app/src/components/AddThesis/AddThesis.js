@@ -1,17 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
 import API, { endpoints } from "../../configs/API";
 import { useNavigate } from "react-router-dom";
+import { LoadingContext } from "../../configs/Context";
 
 function AddThesis() {
+	const [, loadingDispatch] = useContext(LoadingContext);
 	const [name, setName] = useState("");
 	const [lecturers, setLecturers] = useState([]);
 	const [students, setStudents] = useState([]);
-
 	const studentSelect = useRef();
 	const lecturerSelect = useRef();
-
 	const navigate = useNavigate();
 
 	const loadStudents = useCallback(async () => {
@@ -35,39 +35,38 @@ function AddThesis() {
 	}, []);
 
 	useEffect(() => {
+		loadingDispatch({ type: "loading" });
 		document.title = "Thêm khóa luận";
-
 		loadStudents();
 		loadLecturers();
-	}, [loadStudents, loadLecturers]);
+		loadingDispatch({ type: "unloading" });
+	}, [loadStudents, loadLecturers, loadingDispatch]);
 
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
 	};
 
-	const addThesis = (event) => {
+	const addThesis = async (event) => {
 		event.preventDefault();
+		loadingDispatch({ type: "loading" });
 
-		const add = async () => {
-			let users = [];
-			lecturerSelect.current.props.value.forEach((i) => users.push(i.value));
-			studentSelect.current.props.value.forEach((i) => users.push(i.value));
+		let users = [];
+		lecturerSelect.current.props.value.forEach((i) => users.push(i.value));
+		studentSelect.current.props.value.forEach((i) => users.push(i.value));
 
-			let response = await API.post(endpoints["theses"], {
-				name: name,
-				userIds: users,
-			});
+		let response = await API.post(endpoints["theses"], {
+			name: name,
+			userIds: users,
+		});
 
-			if (response.status === 201) {
-				alert("Thêm khóa luận thành công");
-				navigate("/");
-				loadStudents();
-			} else {
-				alert("Thêm khóa luận thất bại");
-			}
-		};
+		if (response.status === 201) {
+			navigate("/");
+			loadStudents();
+		} else {
+			alert("Thêm khóa luận thất bại");
+		}
 
-		add();
+		loadingDispatch({ type: "unloading" });
 	};
 
 	return (
@@ -85,6 +84,7 @@ function AddThesis() {
 							placeholder="Nhập tên khóa luận"
 							className="mb-3"
 							onChange={(e) => setName(e.target.value)}
+							required
 						/>
 					</FloatingLabel>
 
@@ -100,6 +100,7 @@ function AddThesis() {
 							isSearchable={true}
 							placeholder="Chọn sinh viên"
 							ref={studentSelect}
+							required
 						/>
 					</Form.Group>
 
@@ -115,6 +116,7 @@ function AddThesis() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							ref={lecturerSelect}
+							required
 						/>
 					</Form.Group>
 

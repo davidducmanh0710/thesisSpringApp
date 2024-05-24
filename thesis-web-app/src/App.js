@@ -15,28 +15,91 @@ import Student from "./components/Student/Student";
 import ThesisDetail from "./components/ThesisDetail/ThesisDetail";
 import Criteria from "./components/Criteria/Criteria";
 import Score from "./components/Score/Score";
+import { useReducer } from "react";
+import { LoadingReducer, UserReducer } from "./configs/Reducer";
+import { LoadingContext, UserContext } from "./configs/Context";
+import ChangeAvatarAndPassword from "./components/ChangeAvatarAndPassword/ChangeAvatarAndPassword";
+import {
+	isAcademicManager,
+	isAccountInit,
+	isLecturer,
+} from "./components/Common/Common";
 
 function App() {
+	const [user, userDispatch] = useReducer(UserReducer, null);
+	const [loading, loadingDispatch] = useReducer(LoadingReducer, false);
+
 	return (
 		<BrowserRouter>
-			<Header />
-			<Container>
-				<Routes>
-					<Route path="/" element={<Thesis />} />
-					<Route path="/add-thesis" element={<AddThesis />} />
-					<Route path="/committees" element={<Committee />} />
-					<Route path="/add-committee" element={<AddCommittee />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/init-account" element={<InitAccount />} />
-					<Route path="/user-detail" element={<UserDetail />} />
-					<Route path="/lecturers" element={<Lecturer />} />
-					<Route path="/students" element={<Student />} />
-					<Route path="/theses/:thesisId" element={<ThesisDetail />} />
-					<Route path="/criteria" element={<Criteria />} />
-					<Route path="/theses/:thesisId/score" element={<Score />} />
-				</Routes>
-			</Container>
-			<Footer />
+			<UserContext.Provider value={[user, userDispatch]}>
+				<LoadingContext.Provider value={[loading, loadingDispatch]}>
+					{user === null ? (
+						<>
+							<Container>
+								<Routes>
+									<Route path="/*" element={<Login />} />
+								</Routes>
+							</Container>
+						</>
+					) : (
+						<>
+							{isAccountInit(user) ? (
+								<>
+									<Header />
+									<Container>
+										<Routes>
+											<Route path="/" element={<Thesis />} />
+											<Route
+												path="/theses/:thesisId"
+												element={<ThesisDetail />}
+											/>
+											<Route path="/init-account" element={<InitAccount />} />
+											<Route path="/user-detail" element={<UserDetail />} />
+											<Route
+												path="/user-detail/change"
+												element={<ChangeAvatarAndPassword />}
+											/>
+
+											{isAcademicManager(user) && (
+												<>
+													<Route path="/add-thesis" element={<AddThesis />} />
+													<Route path="/committees" element={<Committee />} />
+													<Route
+														path="/add-committee"
+														element={<AddCommittee />}
+													/>
+													<Route path="/lecturers" element={<Lecturer />} />
+													<Route path="/students" element={<Student />} />
+													<Route path="/criteria" element={<Criteria />} />
+												</>
+											)}
+
+											{isLecturer(user) && (
+												<>
+													<Route
+														path="/theses/:thesisId/score"
+														element={<Score />}
+													/>
+													<Route path="/committees" element={<Committee />} />
+												</>
+											)}
+										</Routes>
+									</Container>
+									<Footer />
+								</>
+							) : (
+								<>
+									<Container>
+										<Routes>
+											<Route path="/*" element={<InitAccount />} />
+										</Routes>
+									</Container>
+								</>
+							)}
+						</>
+					)}
+				</LoadingContext.Provider>
+			</UserContext.Provider>
 		</BrowserRouter>
 	);
 }

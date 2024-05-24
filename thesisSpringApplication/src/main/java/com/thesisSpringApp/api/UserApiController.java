@@ -3,6 +3,9 @@ package com.thesisSpringApp.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thesisSpringApp.Dto.*;
+import com.thesisSpringApp.pojo.*;
+import com.thesisSpringApp.service.CommitteeUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,14 +24,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.thesisSpringApp.Dto.CurrentUserDetailDto;
-import com.thesisSpringApp.Dto.UserListsByRoleDTO;
-import com.thesisSpringApp.Dto.UserLoginDto;
 import com.thesisSpringApp.JwtComponents.JwtService;
-import com.thesisSpringApp.pojo.Role;
-import com.thesisSpringApp.pojo.Thesis;
-import com.thesisSpringApp.pojo.ThesisUser;
-import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.service.RoleService;
 import com.thesisSpringApp.service.ThesisUserService;
 import com.thesisSpringApp.service.UserService;
@@ -42,23 +38,26 @@ public class UserApiController {
     private RoleService roleService;
     private ThesisUserService thesisUserService;
 	private JwtService jwtService;
+    private CommitteeUserService committeeUserService;
 
     @Autowired
     public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
-			RoleService roleService, ThesisUserService thesisUserService, JwtService jwtService) {
+			RoleService roleService, ThesisUserService thesisUserService,
+                             CommitteeUserService committeeUserService, JwtService jwtService) {
         super();
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
         this.thesisUserService = thesisUserService;
 		this.jwtService = jwtService;
+        this.committeeUserService = committeeUserService;
     }
 
 	@PostMapping("/login/")
 	@CrossOrigin
 	public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
 		if (this.userService.authUser(userLoginDto.getUsername(),
-				userLoginDto.getPassword()) == true) {
+				userLoginDto.getPassword())) {
 			String token = jwtService.generateTokenLogin(userLoginDto.getUsername(),
 					userLoginDto.getPassword());
 
@@ -137,23 +136,38 @@ public class UserApiController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-	@PostMapping(path = "/setInitAcc/", consumes = {
+	@PostMapping(path = "/init-account/", consumes = {
 			MediaType.MULTIPART_FORM_DATA_VALUE }, produces = {
 					MediaType.APPLICATION_JSON_VALUE
 			})
     @CrossOrigin
-    public ResponseEntity<User> changePassAndUploadAvatar(
+    public ResponseEntity<CurrentUserDetailDto> changePassAndUploadAvatar(
             @RequestParam("password") String password,
 			@RequestPart("avatar") MultipartFile files) {
-		User user = userService.getCurrentLoginUser();
 
-        user.setPassword(passwordEncoder.encode(password));
-		if (!files.isEmpty())
-			user.setFile(files);
-        user.setActive(true);
-        userService.saveUser(user);
-        userService.setCloudinaryField(user);
-		return new ResponseEntity<User>(user, HttpStatus.OK);
+        if (password == null || password.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userService.getCurrentLoginUser();
+
+		if (user != null) {
+            user.setPassword(passwordEncoder.encode(password));
+            user.setActive(true);
+            userService.saveUser(user);
+
+            if (files != null && !files.isEmpty()) {
+                user.setFile(files);
+                userService.setCloudinaryField(user);
+            }
+
+			CurrentUserDetailDto c = new CurrentUserDetailDto(user, user.getFacultyId(),
+					user.getRoleId());
+
+			return new ResponseEntity<>(c, HttpStatus.OK);
+		}
+
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 	@GetMapping(path = "/theses/")
@@ -173,5 +187,38 @@ public class UserApiController {
 
 		return new ResponseEntity<List<Thesis>>(HttpStatus.NO_CONTENT);
 	}
+
+    @GetMapping("/committees/")
+    @CrossOrigin
+    public ResponseEntity<List<CommitteeDetailDTO>> getCommitteeCurrentUser() {
+        User user = userService.getCurrentLoginUser();
+
+        List<CommitteeUser> committeeUserList = committeeUserService.getCommitteeUserByUser(user);
+
+		List<CommitteeDetailDTO> committeeList = new ArrayList<>();
+
+        if (committeeUserList != null) {
+            for (CommitteeUser c : committeeUserList) {
+                CommitteeDetailDTO committee = new CommitteeDetailDTO();
+                committee.setId(c.getCommitteeId().getId());
+                committee.setName(c.getCommitteeId().getName());
+
+
+                List<CommitteeUserDetailDTO> memberList = new ArrayList<>();
+
+                for (CommitteeUser m: committeeUserService.getAllUsersOfCommittee(c.getCommitteeId().getId())) {
+                    CommitteeUserDetailDTO member = new CommitteeUserDetailDTO();
+                    member.setRole(m.getRole());
+                    member.setUser(m.getUserId());
+
+                    memberList.add(member);
+                }
+
+                committee.setMembers(memberList);
+                committeeList.add(committee);
+            }
+        }
+        return new ResponseEntity<>(committeeList, HttpStatus.OK);
+    }
 
 }
