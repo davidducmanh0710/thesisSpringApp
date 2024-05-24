@@ -1,8 +1,9 @@
 package com.thesisSpringApp.repository.repositoryimpl;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
-import com.thesisSpringApp.pojo.Committee;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -11,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.thesisSpringApp.pojo.Thesis;
 import com.thesisSpringApp.repository.ThesisRepository;
-
-import java.util.List;
 
 @Repository
 @Transactional
@@ -46,4 +45,6 @@ public class ThesisRepositoryImpl implements ThesisRepository {
 		Query query = session.getNamedQuery("Thesis.findAll");
 		return query.getResultList();
 	}
+
+
 }

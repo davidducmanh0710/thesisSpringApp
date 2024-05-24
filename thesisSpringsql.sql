@@ -92,8 +92,6 @@ create table `criteria`(
 create table `score`( 
 	`id` INT AUTO_INCREMENT PRIMARY KEY,
     `score` float not null,
-    `user_id` INT,
-    CONSTRAINT `FK_USER_SCORE` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
     `thesis_id` INT,
 	CONSTRAINT `FK_THESIS_SCORE` FOREIGN KEY (`thesis_id`) REFERENCES `thesis`(`id`),
     `criteria_id` INT,

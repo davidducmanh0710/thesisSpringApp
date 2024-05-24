@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -66,14 +65,14 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.antMatcher("/api/**").httpBasic().authenticationEntryPoint(restServicesEntryPoint())
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests()
-				.antMatchers(HttpMethod.POST, "/api/users/setInitAcc/")
-				.access("hasRole('ROLE_GIANGVIEN') or hasRole('ROLE_SINHVIEN') or hasRole('ROLE_GIAOVU')")
-				.antMatchers(HttpMethod.GET, "/api/users/theses/")
-				.access("hasRole('ROLE_SINHVIEN')")
-				.antMatchers(HttpMethod.POST, "/api/pdf/generate/")
-				.access("hasRole('ROLE_SINHVIEN')")
-				.and()
+//				.authorizeRequests()
+//				.antMatchers(HttpMethod.POST, "/api/users/setInitAcc/")
+//				.access("hasRole('ROLE_GIANGVIEN') or hasRole('ROLE_SINHVIEN') or hasRole('ROLE_GIAOVU')")
+//				.antMatchers(HttpMethod.GET, "/api/users/theses/")
+//				.access("hasRole('ROLE_SINHVIEN')")
+//				.antMatchers(HttpMethod.POST, "/api/pdf/generate/")
+//				.access("hasRole('ROLE_SINHVIEN')")
+//				.and()
 				.addFilterBefore(jwtAuthenticationTokenFilter(),
 						UsernamePasswordAuthenticationFilter.class)
 				.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler());

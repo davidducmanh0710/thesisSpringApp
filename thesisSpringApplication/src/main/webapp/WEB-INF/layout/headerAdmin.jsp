@@ -7,6 +7,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 	<div class="container-fluid">
 		<c:url value="/admin/" var="adminUrl" />
+		<c:url value="/admin/stats" var="statsUrl" />
+		
 
 		<a class="navbar-brand" href="${adminUrl}">Admin Dashboard</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -18,7 +20,7 @@
 			<ul class="navbar-nav ms-auto">
 				<li class="nav-item"><a class="nav-link" href="#">Home</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">Users</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">Stats</a></li>
+				<li class="nav-item"><a class="nav-link" href="${statsUrl}">Stats</a></li>
 				
 
 				<li class="nav-item"><a class="nav-link" href="/thesisSpringApplication/logout">Logout</a></li>

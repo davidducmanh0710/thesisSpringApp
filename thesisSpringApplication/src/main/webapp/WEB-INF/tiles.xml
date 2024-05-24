@@ -37,4 +37,9 @@
 		<put-attribute name="contentAdmin"
 			value="/WEB-INF/pages/addOrUpdateUser.jsp" />
 	</definition>
+	<definition name="stats" extends="baseLayoutAdmin">
+		<put-attribute name="title" value="Thống kê khóa luận" />
+		<put-attribute name="contentAdmin"
+			value="/WEB-INF/pages/stats.jsp" />
+	</definition>
 </tiles-definitions>

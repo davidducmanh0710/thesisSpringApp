@@ -25,7 +25,7 @@ public class ThesisServiceImpl implements ThesisService {
 		} else {
             thesis.setCreateDate(date);
 			thesis.setUpdateDate(date);
-			thesis.setActive(false);
+			thesis.setActive(true);
 		}
 
 		thesisRepository.saveAndUpdateThesis(thesis);
@@ -40,4 +40,6 @@ public class ThesisServiceImpl implements ThesisService {
 	public List<Thesis> getAllThesis() {
 		return this.thesisRepository.getAllThesis();
 	}
+
+
 }

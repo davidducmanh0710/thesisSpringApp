@@ -1,8 +1,8 @@
 package com.thesisSpringApp.service;
 
-import com.thesisSpringApp.pojo.Thesis;
-
 import java.util.List;
+
+import com.thesisSpringApp.pojo.Thesis;
 
 public interface ThesisService {
 	void saveAndUpdateThesis(Thesis thesis);
@@ -10,4 +10,6 @@ public interface ThesisService {
 	Thesis getThesisById(int id);
 
 	List<Thesis> getAllThesis();
+
+
 }
