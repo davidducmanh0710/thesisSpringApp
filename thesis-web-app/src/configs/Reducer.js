@@ -8,3 +8,14 @@ export const UserReducer = (current, action) => {
 			return current;
 	}
 };
+
+export const LoadingReducer = (current, action) => {
+	switch (action.type) {
+		case "loading":
+			return true;
+		case "unloading":
+			return false;
+		default:
+			return current;
+	}
+};

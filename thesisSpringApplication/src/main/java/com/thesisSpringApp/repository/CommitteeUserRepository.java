@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
+import com.thesisSpringApp.pojo.User;
 
 public interface CommitteeUserRepository {
 	void saveCommitteeUser(CommitteeUser committeeUser);
@@ -13,4 +14,6 @@ public interface CommitteeUserRepository {
 	List<CommitteeUser> getAllUsersOfCommittee(int committeeId);
 
 	CommitteeUser getCommitteeUser(int userId, int committeeId);
+
+	List<CommitteeUser> getCommitteeUserByUser(User user);
 }

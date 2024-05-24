@@ -2,6 +2,7 @@ package com.thesisSpringApp.service.serviceimpl;
 
 import java.util.List;
 
+import com.thesisSpringApp.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,5 +35,10 @@ public class CommitteeUserServiceImpl implements CommitteeUserService {
 	@Override
 	public CommitteeUser getCommitteeUser(int userId, int committeeId) {
 		return committeeUserRepository.getCommitteeUser(userId, committeeId);
+	}
+
+	@Override
+	public List<CommitteeUser> getCommitteeUserByUser(User user) {
+		return committeeUserRepository.getCommitteeUserByUser(user);
 	}
 }

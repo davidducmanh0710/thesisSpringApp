@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import com.thesisSpringApp.pojo.User;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -92,6 +93,20 @@ public class CommitteeUserRepositoryImpl implements CommitteeUserRepository {
 		Query query = session.createQuery(criteriaQuery);
 
 		return (CommitteeUser) query.getSingleResult();
+	}
+
+	@Override
+	public List<CommitteeUser> getCommitteeUserByUser(User user) {
+		Session session = factoryBean.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<CommitteeUser> criteriaQuery = criteriaBuilder.createQuery(CommitteeUser.class);
+		Root<CommitteeUser> root = criteriaQuery.from(CommitteeUser.class);
+
+		criteriaQuery.select(root);
+		criteriaQuery.where(criteriaBuilder.equal(root.get("userId"), user.getId()));
+
+		Query query = session.createQuery(criteriaQuery);
+		return (List<CommitteeUser>) query.getResultList();
 	}
 
 }

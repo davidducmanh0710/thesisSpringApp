@@ -5,7 +5,7 @@ const SERVER_CONTEXT = "thesisSpringApplication_war";
 const SERVER = "http://localhost:8080";
 
 export let endpoints = {
-	initAccount: (userId) => `/api/users/${userId}/setInitAcc/`,
+	initAccount: "/api/users/init-account/",
 	lecturers: `/api/users/lecturers/`,
 	students: `/api/users/students/`,
 	getTwoRoleList: `/api/users/role/get2RoleList/`,
@@ -18,6 +18,8 @@ export let endpoints = {
 	criteria: `/api/criteria/`,
 	login: "/api/users/login/",
 	currentUser: "/api/users/current-user/",
+	thesisOfUser: "/api/users/theses/",
+	committeesOfUser: "/api/users/committees/",
 };
 
 export const authAPI = () => {

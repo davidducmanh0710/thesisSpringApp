@@ -9,6 +9,7 @@ import {
 	Stack,
 } from "react-bootstrap";
 import { UserContext } from "../../configs/Context";
+import { Link } from "react-router-dom";
 
 function UserDetail() {
 	const [user] = useContext(UserContext);
@@ -64,7 +65,7 @@ function UserDetail() {
 								</Row>
 
 								<Row className="mb-3">
-									<Form.Group controlId="universityId" class="col-sm-6">
+									<Form.Group controlId="universityId" className="col-sm-6">
 										<Form.Label>Mã ID</Form.Label>
 										<Form.Control
 											type="number"
@@ -74,7 +75,7 @@ function UserDetail() {
 										/>
 									</Form.Group>
 
-									<Form.Group controlId="birthday" class="col-sm-6">
+									<Form.Group controlId="birthday" className="col-sm-6">
 										<Form.Label>Ngày sinh</Form.Label>
 										<Form.Control
 											type="text"
@@ -86,7 +87,7 @@ function UserDetail() {
 								</Row>
 
 								<Row className="mb-3">
-									<Form.Group controlId="faculty" class="col-sm-6">
+									<Form.Group controlId="faculty" className="col-sm-6">
 										<Form.Label>Khoa</Form.Label>
 										<Form.Control
 											type="text"
@@ -96,7 +97,7 @@ function UserDetail() {
 										/>
 									</Form.Group>
 
-									<Form.Group controlId="phone" class="col-sm-6">
+									<Form.Group controlId="phone" className="col-sm-6">
 										<Form.Label>Phone</Form.Label>
 										<InputGroup>
 											<InputGroup.Text>84</InputGroup.Text>
@@ -111,7 +112,7 @@ function UserDetail() {
 								</Row>
 
 								<Row className="mb-3">
-									<Form.Group controlId="email" class="col-sm-6">
+									<Form.Group controlId="email" className="col-sm-6">
 										<Form.Label>Email</Form.Label>
 										<InputGroup>
 											<InputGroup.Text>@</InputGroup.Text>
@@ -123,6 +124,11 @@ function UserDetail() {
 											/>
 										</InputGroup>
 									</Form.Group>
+									<div className="col-sm-6 d-flex justify-content-center align-items-end">
+										<Link to="/user-detail/change" className="btn btn-danger">
+											Thay đổi avatar và password
+										</Link>
+									</div>
 								</Row>
 							</Container>
 						</Form>

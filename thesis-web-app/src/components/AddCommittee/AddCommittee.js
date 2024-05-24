@@ -1,92 +1,182 @@
-import { useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Button, FloatingLabel, Form, Stack } from "react-bootstrap";
 import Select from "react-select";
 import "../AddCommittee/AddCommittee.css";
 import { useNavigate } from "react-router-dom";
-import API, { endpoints } from "../../configs/API";
+import API, { authAPI, endpoints } from "../../configs/API";
+import { LoadingContext } from "../../configs/Context";
 
 function AddCommittee() {
+	const [, loadingDispatch] = useContext(LoadingContext);
 	const [name, setName] = useState("");
-	const [chairman, setChairman] = useState({
-		roleName: "Chủ tịch",
-		userId: null,
-	});
-	const [secretary, setSecretary] = useState({
-		roleName: "Thư kí",
-		userId: null,
-	});
-	const [criticalLecturer, setCriticalLecturer] = useState({
-		roleName: "Phản biện",
-		userId: null,
+	const [members, setMembers] = useState({
+		chairman: null,
+		secretary: null,
+		criticalLecturer: null,
+		member: null,
 	});
 
 	const [lecturers, setLecturers] = useState([]);
+	const lecturerRef = useRef({
+		chairman: null,
+		secretary: null,
+		criticalLecturer: null,
+		member: null,
+	});
+
 	const [hidden, setHidden] = useState(true);
-	// const [data, setData] = useState();
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		document.title = "Thêm hội đồng";
+	const loadLecturers = useCallback(async () => {
+		const response = await API.get(endpoints["lecturers"]);
 
-		const loadLecturers = async () => {
-			const response = await API.get(endpoints["lecturers"]);
-
-			setLecturers(
-				response.data.map((l) => {
-					return { value: l.id, label: `${l.lastName} ${l.firstName}` };
-				})
-			);
-		};
-
-		loadLecturers();
+		setLecturers(
+			response.data.map((l) => {
+				return {
+					value: l.id,
+					label: `${l.lastName} ${l.firstName}`,
+				};
+			})
+		);
+		// lecturerRef.current = lecturers;
 	}, []);
+
+	useEffect(() => {
+		loadingDispatch({ type: "loading" });
+		document.title = "Thêm hội đồng";
+		loadLecturers();
+		loadingDispatch({ type: "unloading" });
+	}, [loadLecturers, loadingDispatch]);
 
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
 	};
 
-	const addCommittee = (event) => {
-		event.preventDefault();
+	const handleChange = (field, e) => {
+		setMembers({ ...members, [field]: e });
 
-		const add = async () => {
-			const members = [];
-			members.push(chairman);
-			members.push(secretary);
-			members.push(criticalLecturer);
+		const lecturer = lecturerRef.current[field];
 
-			const committee = {
-				name: name,
-				committeeUserDtos: members,
-			};
-
-			const response = await API.post(endpoints["committees"], committee);
-
-			if (response.status === 200) {
-				alert("Thêm hội đồng thành công");
-				navigate("/committees");
+		if (e === null) {
+			setLecturers((current) => {
+				return [...current, lecturer];
+			});
+		} else {
+			if (lecturer === null) {
+				setLecturers((current) => {
+					return [...current.filter((l) => l.value !== e.value)];
+				});
 			} else {
-				alert("Thêm hội đồng thất bại");
+				setLecturers((current) => {
+					return [...current.filter((l) => l.value !== e.value), lecturer];
+				});
 			}
+		}
+
+		lecturerRef.current = {
+			...lecturerRef.current,
+			[field]: e,
+		};
+	};
+
+	const handleMultiChange = (field, e) => {
+		setMembers({ ...members, [field]: e });
+
+		let deleteLecturers = e;
+		let backupLecturers = lecturerRef.current[field];
+
+		if (deleteLecturers !== null && backupLecturers !== null) {
+			deleteLecturers = deleteLecturers.filter((i) => {
+				return !lecturerRef.current[field].includes(i);
+			});
+
+			deleteLecturers.forEach((d) => {
+				setLecturers((current) => {
+					return [...current.filter((l) => l.value !== d.value)];
+				});
+			});
+
+			backupLecturers = backupLecturers.filter((i) => {
+				return !e.includes(i);
+			});
+
+			backupLecturers.forEach((b) => {
+				setLecturers((current) => {
+					return [...current, b];
+				});
+			});
+		}
+
+		if (deleteLecturers !== null && backupLecturers === null) {
+			deleteLecturers.forEach((d) => {
+				setLecturers((current) => {
+					return [...current.filter((l) => l.value !== d.value)];
+				});
+			});
+		}
+
+		if (backupLecturers !== null && deleteLecturers === null) {
+			backupLecturers.forEach((b) => {
+				setLecturers((current) => {
+					return [...current, b];
+				});
+			});
+		}
+
+		lecturerRef.current = {
+			...lecturerRef.current,
+			[field]: e,
+		};
+	};
+
+	const addCommittee = async (event) => {
+		event.preventDefault();
+		loadingDispatch({ type: "loading" });
+
+		let data = [];
+		data.push({
+			roleName: "Chủ tịch",
+			userId: members["chairman"].value,
+		});
+		data.push({
+			roleName: "Thư kí",
+			userId: members["secretary"].value,
+		});
+		data.push({
+			roleName: "Phản biện",
+			userId: members["criticalLecturer"].value,
+		});
+
+		const member = members["member"];
+		if (member !== null && member.length > 0) {
+			member.map((m) =>
+				data.push({
+					roleName: "Thành viên",
+					userId: m.value,
+				})
+			);
+		}
+
+		const committee = {
+			name: name,
+			committeeUserDtos: data,
 		};
 
-		add();
+		console.log(committee);
+
+		const response = await authAPI().post(endpoints["committees"], committee);
+
+		if (response.status === 201) {
+			navigate("/committees");
+		} else {
+			alert("Thêm hội đồng thất bại");
+		}
+		loadingDispatch({ type: "unloading" });
 	};
 
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
-
-	// const addMembers = (role, event) => {
-	// 	setMembers((current) => {
-	// 		return [
-	// 			...current,
-	// 			{
-	// 				roleName: role,
-	// 				userId: event.value,
-	// 			},
-	// 		];
-	// 	});
-	// };
 
 	return (
 		<div>
@@ -104,8 +194,10 @@ function AddCommittee() {
 							placeholder="Nhập tên hội đồng"
 							className="mb-3"
 							onChange={(e) => setName(e.target.value)}
+							required
 						/>
 					</FloatingLabel>
+
 					<Form.Group className="mb-3">
 						<Form.Label>Chủ tịch</Form.Label>
 						<Select
@@ -116,7 +208,9 @@ function AddCommittee() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							hideSelectedOptions={true}
-							onChange={(e) => setChairman({ ...chairman, userId: e.value })}
+							onChange={(e) => handleChange("chairman", e)}
+							required
+							isClearable
 						/>
 					</Form.Group>
 
@@ -130,7 +224,8 @@ function AddCommittee() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							hideSelectedOptions={true}
-							onChange={(e) => setSecretary({ ...secretary, userId: e.value })}
+							onChange={(e) => handleChange("secretary", e)}
+							required
 						/>
 					</Form.Group>
 
@@ -144,14 +239,18 @@ function AddCommittee() {
 							isSearchable={true}
 							placeholder="Chọn giảng viên"
 							hideSelectedOptions={true}
-							onChange={(e) =>
-								setCriticalLecturer({ ...criticalLecturer, userId: e.value })
-							}
+							onChange={(e) => handleChange("criticalLecturer", e)}
+							required
 						/>
 					</Form.Group>
 
 					<Form.Group hidden={hidden} className="mb-3">
-						<Form.Label>Thành viên</Form.Label>
+						<Form.Label>
+							Thành viên{" "}
+							<span className="text-danger">
+								(Có thể chọn tối đa 2 giảng viên)
+							</span>
+						</Form.Label>
 						<Select
 							isMulti
 							name="lecturers"
@@ -160,6 +259,7 @@ function AddCommittee() {
 							classNamePrefix="select"
 							isOptionSelected={isOptionSelected}
 							isSearchable={true}
+							onChange={(e) => handleMultiChange("member", e)}
 							placeholder="Chọn giảng viên"
 						/>
 					</Form.Group>

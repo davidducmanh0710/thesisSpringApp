@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
+import com.thesisSpringApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -31,14 +32,6 @@ import com.thesisSpringApp.pojo.ThesisCommitteeRate;
 import com.thesisSpringApp.pojo.ThesisStatus;
 import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.repository.CommitteeUserRepository;
-import com.thesisSpringApp.service.CommitteeService;
-import com.thesisSpringApp.service.CriteriaService;
-import com.thesisSpringApp.service.MailSenderService;
-import com.thesisSpringApp.service.ScoreService;
-import com.thesisSpringApp.service.ThesisCommitteeRateService;
-import com.thesisSpringApp.service.ThesisService;
-import com.thesisSpringApp.service.ThesisStatusService;
-import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/committees/")
@@ -46,7 +39,7 @@ public class CommitteeApiController {
 
 	private CommitteeService committeeService;
 	private UserService userService;
-	private CommitteeUserRepository committeeUserRepository;
+	private CommitteeUserService committeeUserService;
 	private MailSenderService mailSenderService;
 	private Environment env;
 	private ThesisService thesisService;
@@ -57,14 +50,14 @@ public class CommitteeApiController {
 
 	@Autowired
 	public CommitteeApiController(CommitteeService committeeService, UserService userService,
-		CommitteeUserRepository committeeUserRepository, MailSenderService mailSenderService,
+		CommitteeUserService committeeUserService, MailSenderService mailSenderService,
   		Environment env, ThesisService thesisService, ThesisCommitteeRateService thesisCommitteeRateService,
   		ScoreService scoreService, ThesisStatusService thesisStatusService,
 	  	CriteriaService criteriaService) {
 		super();
 		this.committeeService = committeeService;
 		this.userService = userService;
-		this.committeeUserRepository = committeeUserRepository;
+		this.committeeUserService = committeeUserService;
 		this.mailSenderService = mailSenderService;
 		this.env = env;
 		this.thesisService = thesisService;
@@ -106,7 +99,7 @@ public class CommitteeApiController {
 			cmU.setUserId(user);
 			cmU.setCommitteeId(committee);
 
-			committeeUserRepository.saveCommitteeUser(cmU);
+			committeeUserService.saveCommitteeUser(cmU);
 
 		}
 
@@ -125,7 +118,7 @@ public class CommitteeApiController {
 
 			List<CommitteeUserDetailDTO> memberList = new ArrayList<>();
 
-			for (CommitteeUser m: committeeUserRepository.getAllUsersOfCommittee(c.getId())) {
+			for (CommitteeUser m: committeeUserService.getAllUsersOfCommittee(c.getId())) {
 				CommitteeUserDetailDTO member = new CommitteeUserDetailDTO();
 				member.setRole(m.getRole());
 				member.setUser(m.getUserId());
@@ -173,7 +166,7 @@ public class CommitteeApiController {
 				if (!t.getStatusId().getId().equals(3)) {
 					Thesis thesis = t.getThesisId();
 					List<Score> scores = scoreService.getScoresByThesisId(thesis.getId());
-					int committeeUserCount = committeeUserRepository.getAllUsersOfCommittee(committee.getId()).size();
+					int committeeUserCount = committeeUserService.getAllUsersOfCommittee(committee.getId()).size();
 					int criteriaCount = criteriaService.getCriteriaList().size();
 
 					// Tính điểm
