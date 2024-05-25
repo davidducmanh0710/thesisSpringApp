@@ -6,6 +6,7 @@ import API, { authAPI, endpoints } from "../../configs/API";
 import { UserContext } from "../../configs/Context";
 import cookies from "react-cookies";
 import { CircularProgress } from "@mui/material";
+import { CustomerSnackbar } from "../Common/Common";
 
 function Login() {
 	const [username, setUserName] = useState();
@@ -13,6 +14,11 @@ function Login() {
 	const [loading, setLoading] = useState(false);
 	const [, userDispatch] = useContext(UserContext);
 	const navigate = useNavigate();
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Đăng nhập thành công",
+		severity: "success",
+	});
 
 	useEffect(() => {
 		document.title = "Đăng nhập";
@@ -21,40 +27,68 @@ function Login() {
 	const login = async (event) => {
 		event.preventDefault();
 		setLoading(true);
-
-		const response = await API.post(endpoints["login"], {
-			username: username,
-			password: password,
-		});
-
-		if (response.status === 200) {
-			cookies.save("token", response.data);
-		} else {
-			alert("Sai tài khoản hoặc mật khẩu");
-		}
-
-		setTimeout(async () => {
-			const response = await authAPI().get(endpoints["currentUser"]);
+		try {
+			const response = await API.post(endpoints["login"], {
+				username: username,
+				password: password,
+			});
 
 			if (response.status === 200) {
-				userDispatch({ type: "login", payload: response.data });
-				setUserName(null);
-				setPassword(null);
-				navigate("/");
-			} else {
-				alert("Lỗi khi lấy thông tin tài khoản");
+				if (cookies.load("token")) cookies.remove("token");
+				cookies.save("token", response.data, { maxAge: 60 * 30 });
 			}
-		}, 200);
 
+			setTimeout(async () => {
+				const response = await authAPI().get(endpoints["currentUser"]);
+
+				if (response.status === 200) {
+					setData({
+						message: "Đăng nhập thành công",
+						severity: "success",
+					});
+
+					setOpen(true);
+
+					setTimeout(() => {
+						setOpen(false);
+					}, 2000);
+
+					userDispatch({ type: "login", payload: response.data });
+					cookies.save("user", response.data, { maxAge: 60 * 30 });
+					setUserName(null);
+					setPassword(null);
+
+					setTimeout(() => {
+						navigate("/");
+					}, 1000);
+				}
+			}, 200);
+		} catch {
+			setData({
+				message: "Tài khoản hoặc mật khẩu không đúng!",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
+		}
 		setLoading(false);
 	};
 
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			<h1 className="text text-center text-success mt-150">
 				HỆ THỐNG QUẢN LÝ KHÓA LUẬN
 			</h1>
-
 			<div className="flex-box my-4">
 				<div className="form-login">
 					<h1 className="text-center text-primary mb-3">ĐĂNG NHẬP</h1>
@@ -93,6 +127,7 @@ function Login() {
 									<Button type="submit" variant="primary" className="mb-3 fs-5">
 										Đăng nhập
 									</Button>
+
 									<Link to="#">Forget password?</Link>
 								</>
 							)}

@@ -4,6 +4,8 @@ import { authAPI, endpoints } from "../../configs/API";
 import { UserContext } from "../../configs/Context";
 import "../Common/Common.css";
 import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import { CustomerSnackbar } from "../Common/Common";
 
 function InitAccount() {
 	const [user, userDispatch] = useContext(UserContext);
@@ -12,6 +14,12 @@ function InitAccount() {
 	const [avatar, setAvatar] = useState(null);
 	const avatarRef = useRef();
 	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Kích hoạt tài khoản thành công",
+		severity: "success",
+	});
 
 	useEffect(() => {
 		document.title = "Kích hoạt tài khoản";
@@ -33,6 +41,7 @@ function InitAccount() {
 
 	const handleInit = async (event) => {
 		event.preventDefault();
+		setLoading(true);
 
 		if (password === requiredPassword) {
 			let form = new FormData();
@@ -52,19 +61,47 @@ function InitAccount() {
 			});
 
 			if (response.status === 200) {
+				setData({
+					message: "Kích hoạt tài khoản thành công",
+					severity: "success",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
 				userDispatch({ type: "login", payload: response.data });
-				alert("Kích hoạt tài khoản thành công");
 				setPassword(null);
 				setRequiredPassword(null);
-				navigate("/");
+				setTimeout(() => {
+					navigate("/");
+				}, 1000);
 			}
 		} else {
-			alert("Mật khẩu không khớp");
+			setData({
+				message: "Mật khẩu không khớp",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
 		}
+		setLoading(false);
 	};
 
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			<div className="w-50 box-shadow border-radius mx-auto my-5 p-5">
 				<h1 className="text text-center text-primary">KÍCH HOẠT TÀI KHOẢN</h1>
 
@@ -122,9 +159,17 @@ function InitAccount() {
 						</FloatingLabel>
 
 						<Form.Group className="mb-3 d-flex justify-content-center">
-							<Button variant="info" type="submit" className="mt-3">
-								Kích hoạt tài khoản
-							</Button>
+							{loading ? (
+								<>
+									<CircularProgress />
+								</>
+							) : (
+								<>
+									<Button variant="info" type="submit" className="mt-3">
+										Kích hoạt tài khoản
+									</Button>
+								</>
+							)}
 						</Form.Group>
 					</Form>
 				</div>

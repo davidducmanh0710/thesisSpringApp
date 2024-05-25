@@ -4,7 +4,7 @@ import { Button, Col, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import API, { authAPI, endpoints } from "../../configs/API";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { isAcademicManager } from "../Common/Common";
+import { isAcademicManager, isLecturer, isStudent } from "../Common/Common";
 import { Alert } from "@mui/material";
 
 function Thesis() {
@@ -14,9 +14,11 @@ function Thesis() {
 
 	const loadTheses = useCallback(async () => {
 		let response;
-
 		if (isAcademicManager(user)) response = await API.get(endpoints["theses"]);
-		else response = await authAPI().get(endpoints["thesisOfUser"]);
+		else if (isLecturer(user))
+			response = await authAPI().get(endpoints["thesesOfLecturer"]);
+		else if (isStudent(user))
+			response = await authAPI().get(endpoints["thesisOfUser"]);
 
 		if (response) setTheses(response.data);
 	}, []);
@@ -50,25 +52,46 @@ function Thesis() {
 							return (
 								<Col md={6} key={thesis.id}>
 									<Row className="thesis-item my-3 w-100">
-										<Col>
+										{isLecturer(user) && (
+											<>
+												{thesis.isScoring ? (
+													<>
+														<Alert severity="success" className="mb-3">
+															Đã chấm điểm
+														</Alert>
+													</>
+												) : (
+													<>
+														<Alert severity="info" className="mb-3">
+															Chưa chấm điểm{" "}
+														</Alert>
+													</>
+												)}
+											</>
+										)}
+										<Col className="px-0">
 											<h5>{thesis.name}</h5>
-											<h6>
-												Điểm:{" "}
-												{thesis.score !== null
-													? thesis.score
-													: "Chưa chấm điểm"}
-											</h6>
+											{!isLecturer(user) && (
+												<h6>
+													Điểm:{" "}
+													{thesis.score !== null
+														? thesis.score
+														: "Đang trong quá trình chấm điểm"}
+												</h6>
+											)}
 											<div>
 												Cập nhật lần cuối:{" "}
 												{new Date(thesis.updateDate).toLocaleString()}
 											</div>
 										</Col>
-										<Col md="auto" className="ms-auto">
+										<Col md="auto" className="px-0">
 											<Stack gap={2} direction="vertical">
 												<Link to={url} className="btn btn-success">
 													Xem chi tiết
 												</Link>
-												<Button variant="danger">Xóa</Button>
+												{isAcademicManager(user) && (
+													<Button variant="danger">Xóa</Button>
+												)}
 											</Stack>
 										</Col>
 									</Row>

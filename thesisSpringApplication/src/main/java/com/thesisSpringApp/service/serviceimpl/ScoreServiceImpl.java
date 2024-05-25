@@ -27,4 +27,16 @@ public class ScoreServiceImpl implements ScoreService {
     public List<Score> getScoresByThesisId(int thesisId) {
         return scoreRepository.getScoresByThesisId(thesisId);
     }
+
+    @Override
+    public boolean isScoring(int thesisId, int committeeUserId) {
+
+        List<Score> scores = scoreRepository.getScoreOfCommitteeUser(thesisId, committeeUserId);
+
+        if (scores == null || scores.isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
 }

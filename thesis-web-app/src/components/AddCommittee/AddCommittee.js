@@ -5,6 +5,7 @@ import "../AddCommittee/AddCommittee.css";
 import { useNavigate } from "react-router-dom";
 import API, { authAPI, endpoints } from "../../configs/API";
 import { LoadingContext } from "../../configs/Context";
+import { CustomerSnackbar } from "../Common/Common";
 
 function AddCommittee() {
 	const [, loadingDispatch] = useContext(LoadingContext);
@@ -15,7 +16,6 @@ function AddCommittee() {
 		criticalLecturer: null,
 		member: null,
 	});
-
 	const [lecturers, setLecturers] = useState([]);
 	const lecturerRef = useRef({
 		chairman: null,
@@ -23,9 +23,13 @@ function AddCommittee() {
 		criticalLecturer: null,
 		member: null,
 	});
-
 	const [hidden, setHidden] = useState(true);
 	const navigate = useNavigate();
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Thêm hội đồng thành công",
+		severity: "success",
+	});
 
 	const loadLecturers = useCallback(async () => {
 		const response = await API.get(endpoints["lecturers"]);
@@ -132,44 +136,65 @@ function AddCommittee() {
 	const addCommittee = async (event) => {
 		event.preventDefault();
 		loadingDispatch({ type: "loading" });
+		try {
+			let data = [];
+			data.push({
+				roleName: "Chủ tịch",
+				userId: members["chairman"].value,
+			});
+			data.push({
+				roleName: "Thư kí",
+				userId: members["secretary"].value,
+			});
+			data.push({
+				roleName: "Phản biện",
+				userId: members["criticalLecturer"].value,
+			});
 
-		let data = [];
-		data.push({
-			roleName: "Chủ tịch",
-			userId: members["chairman"].value,
-		});
-		data.push({
-			roleName: "Thư kí",
-			userId: members["secretary"].value,
-		});
-		data.push({
-			roleName: "Phản biện",
-			userId: members["criticalLecturer"].value,
-		});
+			const member = members["member"];
+			if (member !== null && member.length > 0) {
+				member.map((m) =>
+					data.push({
+						roleName: "Thành viên",
+						userId: m.value,
+					})
+				);
+			}
 
-		const member = members["member"];
-		if (member !== null && member.length > 0) {
-			member.map((m) =>
-				data.push({
-					roleName: "Thành viên",
-					userId: m.value,
-				})
-			);
-		}
+			const committee = {
+				name: name,
+				committeeUserDtos: data,
+			};
 
-		const committee = {
-			name: name,
-			committeeUserDtos: data,
-		};
+			const response = await authAPI().post(endpoints["committees"], committee);
 
-		console.log(committee);
+			if (response.status === 201) {
+				setData({
+					message: "Thêm hội đồng thành công",
+					severity: "success",
+				});
 
-		const response = await authAPI().post(endpoints["committees"], committee);
+				setOpen(true);
 
-		if (response.status === 201) {
-			navigate("/committees");
-		} else {
-			alert("Thêm hội đồng thất bại");
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				setTimeout(() => {
+					navigate("/committees");
+				}, 1000);
+			}
+		} catch {
+			setData({
+				message: "Thêm hội đồng thất bại",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
 		}
 		loadingDispatch({ type: "unloading" });
 	};
@@ -180,6 +205,12 @@ function AddCommittee() {
 
 	return (
 		<div>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			<h1 className="text-success text-center my-3">
 				Thêm hội đồng bảo vệ khóa luận
 			</h1>

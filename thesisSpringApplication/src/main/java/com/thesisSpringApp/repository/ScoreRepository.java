@@ -10,4 +10,6 @@ public interface ScoreRepository {
     Score getScore(int thesisId, int committeeUserId, int criteriaId);
 
     List<Score> getScoresByThesisId(int thesisId);
+
+    List<Score> getScoreOfCommitteeUser(int thesisId, int committeeUserId);
 }

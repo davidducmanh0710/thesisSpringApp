@@ -11,13 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.thesisSpringApp.Dto.CloseCommitteeDTO;
 import com.thesisSpringApp.Dto.CommitteeDetailDTO;
@@ -115,6 +109,7 @@ public class CommitteeApiController {
 			CommitteeDetailDTO committee = new CommitteeDetailDTO();
 			committee.setId(c.getId());
 			committee.setName(c.getName());
+			committee.setActive(c.getActive());
 
 			List<CommitteeUserDetailDTO> memberList = new ArrayList<>();
 
@@ -147,16 +142,16 @@ public class CommitteeApiController {
 		return new ResponseEntity<>(committees, HttpStatus.OK);
 	}
 
-	@PatchMapping(value = "/close/", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PatchMapping("/{committeeId}/close/")
 	@CrossOrigin
 	public ResponseEntity<List<CommitteeDetailDTO>> closeCommittee(
-			@RequestBody CloseCommitteeDTO closeCommitteeDTO) {
+			@PathVariable(value = "committeeId") int committeeId) {
 
-		if (closeCommitteeDTO.getId() < 1) {
+		if (committeeId < 1) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		Committee committee = committeeService.getCommitteeById(closeCommitteeDTO.getId());
+		Committee committee = committeeService.getCommitteeById(committeeId);
 		committee.setActive(!committee.getActive());
 
 		if (!committee.getActive()) {

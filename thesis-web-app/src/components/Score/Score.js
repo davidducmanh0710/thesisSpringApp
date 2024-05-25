@@ -1,60 +1,147 @@
-import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import API, { endpoints } from "../../configs/API";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import API, { authAPI, endpoints } from "../../configs/API";
 import { Button, Form, InputGroup } from "react-bootstrap";
 import "../Score/Score.css";
+import { LoadingContext, UserContext } from "../../configs/Context";
+import { CustomerSnackbar } from "../Common/Common";
 
 function Score() {
+	const [user] = useContext(UserContext);
 	const { thesisId } = useParams();
-	const [thesis, setThesis] = useState();
+	const [thesis, setThesis] = useState(null);
 	const [criteria, setCriteria] = useState([]);
-	const [scores, setScores] = useState([]);
+	const [scores, setScores] = useState();
+	const [, loadingDispatch] = useContext(LoadingContext);
+	const [isScoring, setIsScoring] = useState(false);
+	const navigate = useNavigate();
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Thành công",
+		severity: "success",
+	});
 
 	const loadThesis = useCallback(async () => {
 		const response = await API.get(endpoints["thesisDetail"](thesisId));
 		setThesis(response.data);
+
+		setIsScoring(
+			response.data.scores.find((s) => s.userId === user.user.id) ? true : false
+		);
+
+		if (
+			response.data !== null &&
+			response.data.scores.find((s) => s.userId === user.user.id)
+		) {
+			response.data.scores
+				.filter((s) => s.userId === user.user.id)
+				.forEach((i) => {
+					setScores((current) => {
+						return { ...current, [i.criteriaId]: i.score };
+					});
+				});
+		}
 	}, [thesisId]);
 
 	const loadCriteria = useCallback(async () => {
 		const response = await API.get(endpoints["criteria"]);
 		setCriteria(response.data);
+
+		response.data.forEach((c) => {
+			setScores((current) => {
+				return { ...current, [c.id]: parseFloat(0) };
+			});
+		});
 	}, []);
 
 	useEffect(() => {
+		loadingDispatch({ type: "loading" });
 		document.title = "Chấm điểm";
-
-		loadThesis();
 		loadCriteria();
-	}, [loadThesis, loadCriteria]);
+		loadThesis();
+
+		loadingDispatch({ type: "unloading" });
+	}, [loadThesis, loadCriteria, loadingDispatch]);
+
+	const handleChange = (id, e) => {
+		if (parseFloat(e.target.value) > 10 || parseFloat(e.target.value) < 0) {
+			e.target.value = "";
+			setScores((current) => {
+				return { ...current, [id]: parseFloat(0) };
+			});
+		} else {
+			if (e.target.value === "") {
+				setScores((current) => {
+					return { ...current, [id]: parseFloat(0) };
+				});
+			} else {
+				setScores((current) => {
+					return { ...current, [id]: parseFloat(e.target.value) };
+				});
+			}
+		}
+	};
+
+	const handleScore = async () => {
+		loadingDispatch({ type: "loading" });
+
+		try {
+			const score = {
+				thesisId: thesisId,
+				committeeId: thesis.committee.id,
+				scores: Object.keys(scores).map((key) => ({
+					criteriaId: key,
+					score: scores[key],
+				})),
+			};
+
+			const response = await authAPI().post(endpoints["score"], score);
+
+			if (response.status === 201) {
+				setData({
+					message: "Thành công",
+					severity: "success",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				setTimeout(() => {
+					navigate(`/theses/${thesis.thesis.id}`);
+				}, 1000);
+			}
+		} catch {
+			setData({
+				message: "Thất bại",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
+		}
+
+		loadingDispatch({ type: "unloading" });
+	};
 
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			{thesis ? (
 				<>
 					<div className="w-75 thesis-item my-4 mx-auto">
 						<div>
-							<h2>
-								{thesis.thesis.name} -{" "}
-								{thesis.students.map(
-									(student) => student.lastName + " " + student.firstName
-								)}
-							</h2>
-						</div>
-
-						<div>
-							Giảng viên hướng dẫn:{" "}
-							{thesis.lecturers.map((lecturer) => (
-								<span key={lecturer.id}>
-									{lecturer.lastName} {lecturer.firstName}
-								</span>
-							))}
-						</div>
-
-						<div>
-							Hội đồng bảo vệ:{" "}
-							{thesis.committee === null
-								? "Chưa có hội đồng"
-								: thesis.committee.name}
+							<h2>BẢNG ĐIỂM</h2>
 						</div>
 
 						<Form>
@@ -66,10 +153,11 @@ function Score() {
 										<InputGroup.Text id="basic-addon1">Điểm</InputGroup.Text>
 										<Form.Control
 											type="number"
+											defaultValue={isScoring ? scores[c.id] : ""}
 											max={10}
 											min={0}
-											defaultValue={0}
 											placeholder="Điểm"
+											onChange={(e) => handleChange(c.id, e)}
 										/>
 									</InputGroup>
 								</Form.Group>
@@ -77,7 +165,15 @@ function Score() {
 						</Form>
 
 						<div className="mt-4">
-							<Button variant="success">Chấm điểm</Button>
+							<Button onClick={handleScore} variant="success">
+								Chấm điểm
+							</Button>
+
+							<Link
+								to={`/theses/${thesis.thesis.id}`}
+								className="ms-3 btn btn-danger">
+								Ẩn chấm điểm
+							</Link>
 						</div>
 					</div>
 				</>

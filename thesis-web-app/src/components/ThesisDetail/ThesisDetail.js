@@ -1,10 +1,21 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import API, { endpoints } from "../../configs/API";
+import API, { authAPI, endpoints } from "../../configs/API";
 import { Button, Form } from "react-bootstrap";
 import Select from "react-select";
-import { Link, useParams } from "react-router-dom";
+import {
+	Outlet,
+	useNavigate,
+	useParams,
+	useResolvedPath,
+} from "react-router-dom";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { isAcademicManager, isLecturer } from "../Common/Common";
+import {
+	CustomerSnackbar,
+	isAcademicManager,
+	isLecturer,
+	isStudent,
+} from "../Common/Common";
+import { Alert } from "@mui/material";
 
 function ThesisDetail() {
 	const [, loadingDispatch] = useContext(LoadingContext);
@@ -14,6 +25,13 @@ function ThesisDetail() {
 	const [committees, setCommittees] = useState([]);
 	const [hidden, setHidden] = useState(true);
 	const [committee, setCommittee] = useState(null);
+	const navigate = useNavigate();
+	const patch = useResolvedPath();
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Thành công",
+		severity: "success",
+	});
 
 	const loadThesis = useCallback(async () => {
 		const response = await API.get(endpoints["thesisDetail"](thesisId));
@@ -44,10 +62,27 @@ function ThesisDetail() {
 
 	const addCommittee = async () => {
 		loadingDispatch({ type: "loading" });
-		if (committee === null) {
-			alert("Chưa chọn hội đồng");
+
+		if (committee === null || thesis.thesis.score > 0) {
+			if (committee === null)
+				setData({
+					message: "Chưa chọn hội đồng",
+					severity: "error",
+				});
+
+			if (thesis.thesis.score > 0)
+				setData({
+					message: "Khóa luận đã được chấm điểm",
+					severity: "error",
+				});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
 		} else {
-			const response = await API.patch(
+			const response = await authAPI().patch(
 				endpoints["addOrUpdateCommitteeForThesis"],
 				{
 					thesisId: parseInt(thesisId),
@@ -55,18 +90,79 @@ function ThesisDetail() {
 				}
 			);
 
-			setThesis(response.data);
-			loadCommittees();
+			if (response.status === 200) {
+				setData({
+					message: "Thêm hội đồng vào khóa luận thành công",
+					severity: "success",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				setThesis(response.data);
+				loadCommittees();
+				setHidden(true);
+			}
 		}
+
+		loadingDispatch({ type: "unloading" });
+	};
+
+	const checkScoring = () => {
+		if (thesis.scores === null || thesis.scores.length < 1) {
+			return false;
+		} else {
+			return thesis.scores.find((s) => s.userId === user.user.id);
+		}
+	};
+
+	const handleNextScoring = () => {
+		navigate(`/theses/${thesisId}/score`);
+	};
+
+	const handlePrintPDF = async () => {
+		loadingDispatch({ type: "loading" });
+
+		const response = await authAPI().post(endpoints["payment"], {
+			amount: 10000,
+		});
+
+		window.open(response.data, "_blank");
 
 		loadingDispatch({ type: "unloading" });
 	};
 
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			{thesis ? (
 				<>
 					<div className="w-75 thesis-item my-4 mx-auto">
+						{isLecturer(user) && (
+							<>
+								{checkScoring() ? (
+									<>
+										<Alert severity="success" className="mb-3">
+											Đã chấm điểm
+										</Alert>
+									</>
+								) : (
+									<>
+										<Alert severity="info" className="mb-3">
+											Chưa chấm điểm{" "}
+										</Alert>
+									</>
+								)}
+							</>
+						)}
 						<h2>{thesis.thesis.name}</h2>
 						<div>
 							Sinh viên thực hiện:{" "}
@@ -91,66 +187,85 @@ function ThesisDetail() {
 								: thesis.committee.name}
 						</div>
 
-						<div>Điểm: {thesis.thesis.score}</div>
+						{!isLecturer(user) && (
+							<div>
+								Điểm:{" "}
+								{thesis.thesis.score !== null
+									? thesis.thesis.score
+									: "Đang trong quá trình chấm điểm"}
+							</div>
+						)}
 						<div>
 							Cập nhật lần cuối:{" "}
 							{new Date(thesis.thesis.updateDate).toLocaleString()}
 						</div>
 
-						<div hidden={hidden} className="thesis-item my-4 w-100">
-							<Form.Group className="mb-3">
-								<Form.Label>Chọn hội đồng</Form.Label>
-								<Select
-									name="committees"
-									options={committees}
-									className="basic-single fs-6 mb-3"
-									classNamePrefix="select"
-									isSearchable={true}
-									placeholder="Chọn hội đồng"
-									hideSelectedOptions={true}
-									onChange={(e) => {
-										if (e !== null) setCommittee(e.value);
-										else setCommittee(null);
-									}}
-									required
-									isClearable
-								/>
-							</Form.Group>
-
-							<Button variant="success" onClick={addCommittee}>
-								{thesis.committee === null ? "Thêm" : "Chỉnh sửa"}
-							</Button>
-						</div>
-
 						{isAcademicManager(user) && (
-							<div className="mt-4">
-								{hidden ? (
-									<>
-										<Button variant="info" onClick={changeHidden}>
-											{thesis.committee === null
-												? "Thêm hội đồng"
-												: "Chỉnh sửa hội đồng"}
-										</Button>
-									</>
-								) : (
-									<>
-										<Button variant="danger" onClick={changeHidden}>
-											{thesis.committee === null
-												? "Ẩn thêm hội đồng"
-												: "Ẩn chỉnh sửa hội đồng"}
-										</Button>
-									</>
-								)}
-							</div>
+							<>
+								<div hidden={hidden} className="thesis-item my-4 w-100">
+									<Form.Group className="mb-3">
+										<Form.Label>Chọn hội đồng</Form.Label>
+										<Select
+											name="committees"
+											options={committees}
+											className="basic-single fs-6 mb-3"
+											classNamePrefix="select"
+											isSearchable={true}
+											placeholder="Chọn hội đồng"
+											hideSelectedOptions={true}
+											onChange={(e) => {
+												if (e !== null) setCommittee(e.value);
+												else setCommittee(null);
+											}}
+											required
+											isClearable
+										/>
+									</Form.Group>
+
+									<Button variant="success" onClick={addCommittee}>
+										{thesis.committee === null ? "Thêm" : "Chỉnh sửa"}
+									</Button>
+								</div>
+
+								<div className="mt-4">
+									{hidden ? (
+										<>
+											<Button variant="info" onClick={changeHidden}>
+												{thesis.committee === null
+													? "Thêm hội đồng"
+													: "Chỉnh sửa hội đồng"}
+											</Button>
+										</>
+									) : (
+										<>
+											<Button variant="danger" onClick={changeHidden}>
+												{thesis.committee === null
+													? "Ẩn thêm hội đồng"
+													: "Ẩn chỉnh sửa hội đồng"}
+											</Button>
+										</>
+									)}
+								</div>
+							</>
 						)}
 
 						{isLecturer(user) && (
-							<div className="mt-4">
-								<Link
-									to={`/theses/${thesisId}/score`}
-									className="btn btn-success">
-									Chấm điểm
-								</Link>
+							<>
+								{patch.pathname !== `/theses/${thesis.thesis.id}/score` && (
+									<div className="mt-4" hidden={!hidden}>
+										<Button onClick={handleNextScoring} variant="success">
+											{checkScoring() ? "Chỉnh sửa điểm" : "Chấm điểm"}
+										</Button>
+									</div>
+								)}
+
+								<Outlet />
+							</>
+						)}
+
+						{isStudent(user) && (
+							<div className="mt-4" onClick={() => handlePrintPDF()}>
+								<Button variant="primary">In file PDF</Button>
 							</div>
 						)}
 					</div>

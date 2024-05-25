@@ -3,14 +3,23 @@ import "./Committee.css";
 import { Button, Col, Form, InputGroup, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import API, { authAPI, endpoints } from "../../configs/API";
-import { isAcademicManager, isLecturer } from "../Common/Common";
+import {
+	CustomerSnackbar,
+	isAcademicManager,
+	isLecturer,
+} from "../Common/Common";
 import { LoadingContext, UserContext } from "../../configs/Context";
 import { Alert } from "@mui/material";
 
 function Committee() {
 	const [committees, setCommittees] = useState([]);
 	const [user] = useContext(UserContext);
-	const [loading, loadingDispatch] = useContext(LoadingContext);
+	const [, loadingDispatch] = useContext(LoadingContext);
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Thành công",
+		severity: "success",
+	});
 
 	const loadCommittee = useCallback(async () => {
 		try {
@@ -24,21 +33,61 @@ function Committee() {
 		} catch (ex) {
 			console.log(ex);
 		}
-
-		console.log(Math.random());
 	}, [user]);
 
 	useEffect(() => {
 		loadingDispatch({ type: "loading" });
-
 		document.title = "Hội đồng";
-
 		loadCommittee();
 		loadingDispatch({ type: "unloading" });
 	}, [loadCommittee, loadingDispatch]);
 
+	const handleCloseCommittee = async (committeeId) => {
+		loadingDispatch({ type: "loading" });
+
+		try {
+			const response = await authAPI().patch(
+				endpoints["closeCommittee"](committeeId)
+			);
+
+			if (response.status === 200) {
+				setData({
+					message: "Thành công",
+					severity: "success",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				setCommittees(response.data);
+			}
+		} catch {
+			setData({
+				message: "Thất bại",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
+		}
+
+		loadingDispatch({ type: "unloading" });
+	};
+
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			{isAcademicManager(user) && (
 				<Link to="/add-committee" className="btn btn-success mt-4">
 					Thêm hội đồng
@@ -78,9 +127,27 @@ function Committee() {
 									</Row>
 
 									{isAcademicManager(user) && (
-										<Button variant="danger" className="my-2 ms-auto">
-											Đóng hội đồng
-										</Button>
+										<>
+											{committee.active ? (
+												<>
+													<Button
+														onClick={() => handleCloseCommittee(committee.id)}
+														variant="danger"
+														className="my-2 ms-auto">
+														Đóng hội đồng
+													</Button>
+												</>
+											) : (
+												<>
+													<Button
+														onClick={() => handleCloseCommittee(committee.id)}
+														variant="primary"
+														className="my-2 ms-auto">
+														Mở hội đồng
+													</Button>
+												</>
+											)}
+										</>
 									)}
 								</Stack>
 							</Col>

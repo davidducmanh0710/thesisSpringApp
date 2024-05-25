@@ -35,9 +35,9 @@ import com.thesisSpringApp.service.ThesisUserService;
 public class DownloadPDFServiceImpl implements DownloadPDFService {
 
 	public static File fontvuArialFile = new File(
-			"D:/Clone app/thesiSpringApp/thesisSpringApplication/src/main/webapp/resources/fonts/vuArial.ttf");
+			"D:/workspace/thesisSpringApp/thesisSpringApplication/src/main/webapp/resources/fonts/vuArial.ttf");
 	public static File fontvuArialBoldFile = new File(
-			"D:/Clone app/thesiSpringApp/thesisSpringApplication/src/main/webapp/resources/fonts/vuArialBold.ttf");
+			"D:/workspace/thesisSpringApp/thesisSpringApplication/src/main/webapp/resources/fonts/vuArialBold.ttf");
 
 	private ThesisService thesisService;
 	private CommitteeService committeeService;

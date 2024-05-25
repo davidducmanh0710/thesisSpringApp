@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.thesisSpringApp.Dto.*;
 import com.thesisSpringApp.pojo.*;
-import com.thesisSpringApp.service.CommitteeUserService;
+import com.thesisSpringApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,9 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisSpringApp.JwtComponents.JwtService;
-import com.thesisSpringApp.service.RoleService;
-import com.thesisSpringApp.service.ThesisUserService;
-import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -39,11 +36,16 @@ public class UserApiController {
     private ThesisUserService thesisUserService;
 	private JwtService jwtService;
     private CommitteeUserService committeeUserService;
+    private ThesisCommitteeRateService thesisCommitteeRateService;
+    private ScoreService scoreService;
 
     @Autowired
     public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
-			RoleService roleService, ThesisUserService thesisUserService,
-                             CommitteeUserService committeeUserService, JwtService jwtService) {
+                             RoleService roleService, ThesisUserService thesisUserService,
+                             CommitteeUserService committeeUserService, JwtService jwtService,
+                             ThesisCommitteeRateService thesisCommitteeRateService,
+                             ScoreService scoreService) {
+
         super();
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
@@ -51,6 +53,8 @@ public class UserApiController {
         this.thesisUserService = thesisUserService;
 		this.jwtService = jwtService;
         this.committeeUserService = committeeUserService;
+        this.thesisCommitteeRateService = thesisCommitteeRateService;
+        this.scoreService = scoreService;
     }
 
 	@PostMapping("/login/")
@@ -141,7 +145,7 @@ public class UserApiController {
 					MediaType.APPLICATION_JSON_VALUE
 			})
     @CrossOrigin
-    public ResponseEntity<CurrentUserDetailDto> changePassAndUploadAvatar(
+    public ResponseEntity<CurrentUserDetailDto> changePasswordAndUploadAvatar(
             @RequestParam("password") String password,
 			@RequestPart("avatar") MultipartFile files) {
 
@@ -182,10 +186,11 @@ public class UserApiController {
 		if (thesisUsers != null) {
 			for (int i = 0; i < thesisUsers.size(); i++)
 				theses.add(thesisUsers.get(i).getThesisId());
-		return new ResponseEntity<List<Thesis>>(theses, HttpStatus.OK);
-	}
 
-		return new ResponseEntity<List<Thesis>>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(theses, HttpStatus.OK);
+        }
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
     @GetMapping("/committees/")
@@ -221,4 +226,34 @@ public class UserApiController {
         return new ResponseEntity<>(committeeList, HttpStatus.OK);
     }
 
+    @GetMapping("/lecturer/theses/")
+    @CrossOrigin
+    public ResponseEntity<List<Thesis>> getThesesOfLecturer() {
+        User user = userService.getCurrentLoginUser();
+
+        List<CommitteeUser> committeeUserList = committeeUserService.getCommitteeUserByUser(user);
+
+        List<Thesis> theses = new ArrayList<>();
+
+        if (committeeUserList != null) {
+            for (CommitteeUser c : committeeUserList) {
+                Committee committee = c.getCommitteeId();
+                List<ThesisCommitteeRate> thesisCommitteeRateList =
+                        thesisCommitteeRateService.getThesisCommitteeRatesByCommitteeId(committee.getId());
+
+                if (thesisCommitteeRateList != null) {
+                    for (ThesisCommitteeRate thesisCommitteeRate : thesisCommitteeRateList) {
+                        Thesis thesis = thesisCommitteeRate.getThesisId();
+
+                        thesis.setIsScoring(scoreService.isScoring(thesis.getId(), c.getId()));
+
+                        if (thesis.getActive())
+                            theses.add(thesis);
+                    }
+                }
+            }
+        }
+
+        return new ResponseEntity<>(theses, HttpStatus.OK);
+    }
 }

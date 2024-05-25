@@ -3,6 +3,7 @@ package com.thesisSpringApp.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thesisSpringApp.Dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,11 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.thesisSpringApp.Dto.CriteriaDTO;
-import com.thesisSpringApp.Dto.ScoreDTO;
-import com.thesisSpringApp.Dto.ThesisCommitteeDTO;
-import com.thesisSpringApp.Dto.ThesisDTO;
-import com.thesisSpringApp.Dto.ThesisDetailDTO;
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
 import com.thesisSpringApp.pojo.Criteria;
@@ -122,6 +118,21 @@ public class ThesisApiController {
 		Committee committee = committeeService.getCommitteeOfThesis(thesis.getId());
 		thesisDetailDTO.setCommittee(committee);
 
+		List<Score> scoreList = scoreService.getScoresByThesisId(thesis.getId());
+		List<ScoreDetailDTO> scores = new ArrayList<>();
+		if (scoreList != null) {
+			for (Score s : scoreList) {
+				ScoreDetailDTO scoreDetailDTO = new ScoreDetailDTO();
+				scoreDetailDTO.setId(s.getId());
+				scoreDetailDTO.setCriteriaId(s.getCriteriaId().getId());
+				scoreDetailDTO.setUserId(s.getCommitteeUserId().getUserId().getId());
+				scoreDetailDTO.setScore(s.getScore());
+
+				scores.add(scoreDetailDTO);
+			}
+		}
+		thesisDetailDTO.setScores(scores);
+
 		return thesisDetailDTO;
 	}
 
@@ -145,7 +156,7 @@ public class ThesisApiController {
 		Committee committee = committeeService
 				.getCommitteeById(thesisCommitteeDTO.getCommitteeId());
 
-		if (!thesis.getActive() || !committee.getActive()) {
+		if (!committee.getActive()) {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		}
 

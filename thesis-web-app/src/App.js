@@ -15,7 +15,7 @@ import Student from "./components/Student/Student";
 import ThesisDetail from "./components/ThesisDetail/ThesisDetail";
 import Criteria from "./components/Criteria/Criteria";
 import Score from "./components/Score/Score";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { LoadingReducer, UserReducer } from "./configs/Reducer";
 import { LoadingContext, UserContext } from "./configs/Context";
 import ChangeAvatarAndPassword from "./components/ChangeAvatarAndPassword/ChangeAvatarAndPassword";
@@ -23,11 +23,20 @@ import {
 	isAcademicManager,
 	isAccountInit,
 	isLecturer,
+	isStudent,
 } from "./components/Common/Common";
+import cookies from "react-cookies";
+import { type } from "@testing-library/user-event/dist/type";
 
 function App() {
 	const [user, userDispatch] = useReducer(UserReducer, null);
 	const [loading, loadingDispatch] = useReducer(LoadingReducer, false);
+
+	useEffect(() => {
+		if (cookies.load("user")) {
+			userDispatch({ type: "login", payload: cookies.load("user") });
+		}
+	}, []);
 
 	return (
 		<BrowserRouter>
@@ -77,10 +86,18 @@ function App() {
 											{isLecturer(user) && (
 												<>
 													<Route
-														path="/theses/:thesisId/score"
-														element={<Score />}
-													/>
+														path="/theses/:thesisId"
+														element={<ThesisDetail />}>
+														<Route path="score" element={<Score />} />
+													</Route>
+
 													<Route path="/committees" element={<Committee />} />
+												</>
+											)}
+
+											{isStudent(user) && (
+												<>
+													<Route path="/" />
 												</>
 											)}
 										</Routes>

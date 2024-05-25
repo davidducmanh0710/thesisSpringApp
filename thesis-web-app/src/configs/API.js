@@ -20,6 +20,12 @@ export let endpoints = {
 	currentUser: "/api/users/current-user/",
 	thesisOfUser: "/api/users/theses/",
 	committeesOfUser: "/api/users/committees/",
+	thesesOfLecturer: "/api/users/lecturer/theses/",
+	score: "/api/theses/scores/",
+	closeCommittee: (committeeId) => `/api/committees/${committeeId}/close/`,
+	printPDF: "/api/pdf/generate/",
+	payment: "/api/payment/",
+	paymentResult: "api/payment/payment_return/",
 };
 
 export const authAPI = () => {

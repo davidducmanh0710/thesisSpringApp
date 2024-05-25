@@ -3,6 +3,7 @@ package com.thesisSpringApp.Dto;
 import java.util.List;
 
 import com.thesisSpringApp.pojo.Committee;
+import com.thesisSpringApp.pojo.Score;
 import com.thesisSpringApp.pojo.Thesis;
 import com.thesisSpringApp.pojo.User;
 
@@ -16,5 +17,5 @@ public class ThesisDetailDTO {
 	private Committee committee;
 	private List<User> students;
 	private List<User> lecturers;
-//	private List<User> committeeUser;
+	private List<ScoreDetailDTO> scores;
 }

@@ -4,6 +4,7 @@ import Select from "react-select";
 import API, { endpoints } from "../../configs/API";
 import { useNavigate } from "react-router-dom";
 import { LoadingContext } from "../../configs/Context";
+import { CustomerSnackbar } from "../Common/Common";
 
 function AddThesis() {
 	const [, loadingDispatch] = useContext(LoadingContext);
@@ -13,6 +14,11 @@ function AddThesis() {
 	const studentSelect = useRef();
 	const lecturerSelect = useRef();
 	const navigate = useNavigate();
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Thêm khóa luận thành công",
+		severity: "success",
+	});
 
 	const loadStudents = useCallback(async () => {
 		const response = await API.get(endpoints["noneThesisStudents"]);
@@ -49,21 +55,44 @@ function AddThesis() {
 	const addThesis = async (event) => {
 		event.preventDefault();
 		loadingDispatch({ type: "loading" });
+		try {
+			let users = [];
+			lecturerSelect.current.props.value.forEach((i) => users.push(i.value));
+			studentSelect.current.props.value.forEach((i) => users.push(i.value));
 
-		let users = [];
-		lecturerSelect.current.props.value.forEach((i) => users.push(i.value));
-		studentSelect.current.props.value.forEach((i) => users.push(i.value));
+			let response = await API.post(endpoints["theses"], {
+				name: name,
+				userIds: users,
+			});
 
-		let response = await API.post(endpoints["theses"], {
-			name: name,
-			userIds: users,
-		});
+			if (response.status === 201) {
+				setData({
+					message: "Thêm khóa luận thành công",
+					severity: "success",
+				});
 
-		if (response.status === 201) {
-			navigate("/");
-			loadStudents();
-		} else {
-			alert("Thêm khóa luận thất bại");
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				setTimeout(() => {
+					navigate("/");
+				}, 1000);
+				loadStudents();
+			}
+		} catch {
+			setData({
+				message: "Thêm khóa luận thất bại",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
 		}
 
 		loadingDispatch({ type: "unloading" });
@@ -71,6 +100,12 @@ function AddThesis() {
 
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			<h1 className="text-success text-center my-3">THÊM KHÓA LUẬN</h1>
 
 			<Stack>
@@ -122,7 +157,7 @@ function AddThesis() {
 
 					<FloatingLabel>
 						<Button type="submit" variant="primary" className="mb-3 fs-6">
-							Đăng nhập
+							Thêm khóa luận
 						</Button>
 					</FloatingLabel>
 				</Form>

@@ -3,12 +3,18 @@ import API, { authAPI, endpoints } from "../../configs/API";
 import { Button, FloatingLabel, Form, Table } from "react-bootstrap";
 import { Alert } from "@mui/material";
 import { LoadingContext } from "../../configs/Context";
+import { CustomerSnackbar } from "../Common/Common";
 
 function Criteria() {
 	const [loading, loadingDispatch] = useContext(LoadingContext);
 	const [criteria, setCriteria] = useState([]);
 	const [hidden, setHidden] = useState(true);
 	const [name, setName] = useState(null);
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Thêm tiêu chí thành công",
+		severity: "success",
+	});
 
 	const loadCriteria = useCallback(async () => {
 		const response = await API.get(endpoints["criteria"]);
@@ -31,18 +37,49 @@ function Criteria() {
 		loadingDispatch({ type: "loading" });
 
 		if (name === null || name.trim().length === 0) {
-			alert("Chưa nhập tên tiêu chí");
-		} else {
-			const response = await authAPI().post(endpoints["criteria"], {
-				name: name,
+			setData({
+				message: "Chưa nhập tên tiêu chí",
+				severity: "error",
 			});
 
-			if (response.status === 201) {
-				setName(null);
-				setHidden(true);
-				setCriteria(response.data);
-			} else {
-				alert("Thêm tiêu chí thất bại");
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
+		} else {
+			try {
+				const response = await authAPI().post(endpoints["criteria"], {
+					name: name,
+				});
+
+				if (response.status === 201) {
+					setData({
+						message: "Thêm tiêu chí thành công",
+						severity: "success",
+					});
+
+					setOpen(true);
+
+					setTimeout(() => {
+						setOpen(false);
+					}, 2000);
+
+					setName("");
+					setHidden(true);
+					setCriteria(response.data);
+				}
+			} catch {
+				setData({
+					message: "Thêm tiêu chí thất bại",
+					severity: "error",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
 			}
 		}
 
@@ -51,6 +88,12 @@ function Criteria() {
 
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			<div className="my-4">
 				<div hidden={hidden} className="criteria-item my-4 w-100">
 					<FloatingLabel
