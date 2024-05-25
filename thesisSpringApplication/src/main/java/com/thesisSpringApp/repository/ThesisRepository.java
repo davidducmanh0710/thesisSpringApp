@@ -10,4 +10,5 @@ public interface ThesisRepository {
 	Thesis getThesisById(int id);
 
 	List<Thesis> getAllThesis();
+
 }

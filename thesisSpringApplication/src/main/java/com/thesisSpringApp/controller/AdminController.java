@@ -1,6 +1,7 @@
 package com.thesisSpringApp.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.thesisSpringApp.formatters.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
@@ -21,6 +23,8 @@ import com.thesisSpringApp.pojo.Role;
 import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.service.FacultyService;
 import com.thesisSpringApp.service.RoleService;
+import com.thesisSpringApp.service.StatsService;
+import com.thesisSpringApp.service.ThesisService;
 import com.thesisSpringApp.service.UserService;
 
 @Controller
@@ -30,14 +34,18 @@ public class AdminController {
 	private UserService userService;
 	private RoleService roleService;
 	private FacultyService facultyService;
+	private ThesisService thesisService;
+	private StatsService statsService;
 
 	@Autowired
 	public AdminController(UserService userService, RoleService roleService,
-			FacultyService facultyService) {
+			FacultyService facultyService, ThesisService thesisService, StatsService statsService) {
 		super();
 		this.userService = userService;
 		this.roleService = roleService;
 		this.facultyService = facultyService;
+		this.thesisService = thesisService;
+		this.statsService = statsService;
 	}
 
 	@ModelAttribute("formatterColumn")
@@ -50,6 +58,22 @@ public class AdminController {
 		List<User> users = userService.getAllUsers();
 		model.addAttribute("users", users);
 		return "admin";
+	}
+
+	@GetMapping("/admin/stats")
+	public String adminStatsView(Model model, @RequestParam Map<String, String> params) {
+		String year = params.getOrDefault("year", "2024");
+
+		if (year.isEmpty() || year == null)
+			year = "2024";
+
+		List<Object[]> theses = statsService.statsThesisByYear(Integer.parseInt(year));
+		model.addAttribute("theses", theses);
+		List<Object[]> theses2 = statsService
+				.statsFrequencyJoinedThesisByYear(Integer.parseInt(year));
+		model.addAttribute("theses2", theses2);
+
+		return "stats";
 	}
 
 	@ModelAttribute

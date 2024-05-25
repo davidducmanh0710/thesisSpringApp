@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
 		String password = generateRandomString(7);
 		user.setPassword(password);
 
-		user.setActive(true);
+		user.setActive(false);
 
 		mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
 

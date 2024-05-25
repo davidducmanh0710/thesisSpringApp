@@ -137,8 +137,9 @@ public class PaymentVNPAYApiController {
 
 
 	@GetMapping("/payment_return/") // xử lý dữ liệu trả về
-	public ResponseEntity<Map<String, String>> payment_return (@RequestParam Map<String, String> params) { 
+	public ResponseEntity<String> payment_return(@RequestParam Map<String, String> params) {
 		
+
 		String vnpResponseCode = params.get("vnp_ResponseCode");
 		Long amount = Long.parseLong(params.get("vnp_Amount")) / 100;
 		
@@ -154,20 +155,25 @@ public class PaymentVNPAYApiController {
 		paymentvnpaydetail.setUserId(user);
 		paymentvnpaydetailService.saveVnPay(paymentvnpaydetail);
 		
-		params = new HashMap<>();
-		if (vnpResponseCode.equals("00")) {
-			params.put("result", "Thành công");
-			params.put("statusResponseCode", vnpResponseCode);
-			params.put("username", username);
-			params.put("amount", amount.toString());
-		} else  {
-			params.put("result", "Lỗi");
-			params.put("statusResponseCode", vnpResponseCode);
-			params.put("username", username);
-			params.put("amount", amount.toString());
-		}
+//		params = new HashMap<>();
+//		if (vnpResponseCode.equals("00")) {
+//			params.put("result", "Thành công");
+//			params.put("statusResponseCode", vnpResponseCode);
+//			params.put("username", username);
+//			params.put("amount", amount.toString());
+//		} else  {
+//			params.put("result", "Lỗi");
+//			params.put("statusResponseCode", vnpResponseCode);
+//			params.put("username", username);
+//			params.put("amount", amount.toString());
+//		}
 
-		return new ResponseEntity<Map<String, String>>(params, HttpStatus.OK);
+		String uri = req.getRequestURI();
+		String queryString = req.getQueryString();
+
+		String fullUrl = req.getRequestURL() + (queryString != null ? "?" + queryString : "");
+
+		return new ResponseEntity<String>(fullUrl, HttpStatus.OK);
 	}
 	
 }

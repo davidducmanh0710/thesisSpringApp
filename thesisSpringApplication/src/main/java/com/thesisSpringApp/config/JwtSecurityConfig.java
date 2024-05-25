@@ -82,7 +82,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.POST, "/api/users/init-account/")
 				.access("hasRole('ROLE_GIANGVIEN') or hasRole('ROLE_SINHVIEN') or hasRole('ROLE_GIAOVU')")
 				.antMatchers(HttpMethod.GET, "/api/users/theses/")
-				.access("hasRole('ROLE_GIANGVIEN') or hasRole('ROLE_SINHVIEN')")
+				.access("hasRole('ROLE_SINHVIEN')")
 				.antMatchers(HttpMethod.POST, "/api/pdf/generate/")
 				.access("hasRole('ROLE_SINHVIEN')")
 				.antMatchers(HttpMethod.GET, "/api/users/lecturer/")
