@@ -1,54 +1,134 @@
-import { useEffect, useRef, useState } from "react";
-import { Button, Form } from "react-bootstrap";
-import API, { endpoints } from "../../configs/API";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Button, FloatingLabel, Form, Image } from "react-bootstrap";
+import { authAPI, endpoints } from "../../configs/API";
+import { UserContext } from "../../configs/Context";
+import "../Common/Common.css";
+import { useNavigate } from "react-router-dom";
 
 function InitAccount() {
+	const [user, userDispatch] = useContext(UserContext);
 	const [password, setPassword] = useState();
-	const avatar = useRef();
+	const [requiredPassword, setRequiredPassword] = useState();
+	const [avatar, setAvatar] = useState(null);
+	const avatarRef = useRef();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		document.title = "Kích hoạt tài khoản";
 	}, []);
 
-	const init = (event) => {
+	const handleChange = (event) => {
+		const file = event.target.files[0];
+		if (file) {
+			const reader = new FileReader();
+
+			reader.readAsDataURL(file);
+
+			reader.onload = (e) => {
+				setAvatar(e.target.result);
+			};
+		}
+		setAvatar(null);
+	};
+
+	const handleInit = async (event) => {
 		event.preventDefault();
 
-		const execute = async () => {
+		if (password === requiredPassword) {
 			let form = new FormData();
 			form.append("password", password);
-			form.append("avatar", avatar.current.files[0]);
 
-			let res = await API.post(endpoints["initAccount"](2), form);
+			const avatarFile = avatarRef.current.files[0];
+			if (avatarFile) {
+				form.append("avatar", avatarFile);
+			}
 
-			console.log(res.data);
-		};
+			console.log(form.get("avatar"));
 
-		execute();
+			let response = await authAPI().post(endpoints["initAccount"], form, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			});
+
+			if (response.status === 200) {
+				userDispatch({ type: "login", payload: response.data });
+				alert("Kích hoạt tài khoản thành công");
+				setPassword(null);
+				setRequiredPassword(null);
+				navigate("/");
+			}
+		} else {
+			alert("Mật khẩu không khớp");
+		}
 	};
 
 	return (
 		<>
-			<Form onSubmit={init}>
-				<Form.Group className="mb-3">
-					<Form.Label label="Thêm ảnh đại diện" />
-					<Form.Control type="file" ref={avatar} required />
-				</Form.Group>
+			<div className="w-50 box-shadow border-radius mx-auto my-5 p-5">
+				<h1 className="text text-center text-primary">KÍCH HOẠT TÀI KHOẢN</h1>
 
-				<Form.Group className="mb-3">
-					<Form.Label label="Mật khẩu" />
-					<Form.Control
-						type="password"
-						placeholder="Mật khẩu"
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-				</Form.Group>
+				<div className="d-flex justify-content-center">
+					<div>
+						<Image
+							src={avatar !== null ? avatar : user.user.avatar}
+							width="200"
+							height="200"
+							alt="Ảnh đại diện"
+							roundedCircle
+							className="my-4 mx-auto"
+							ref={avatarRef}
+						/>
+					</div>
 
-				<Form.Group className="mb-3">
-					<Button variant="info" type="submit" className="mt-3">
-						Kích hoạt tài khoản
-					</Button>
-				</Form.Group>
-			</Form>
+					<div className="d-flex align-items-center ms-4">
+						<Form.Group controlId="formFile" className="mb-3">
+							<Form.Label>Chọn ảnh</Form.Label>
+							<Form.Control
+								type="file"
+								accept=".jsp, .png"
+								ref={avatarRef}
+								onChange={(e) => handleChange(e)}
+								required
+							/>
+						</Form.Group>
+					</div>
+				</div>
+
+				<div className="mx-auto w-50">
+					<Form onSubmit={handleInit}>
+						<FloatingLabel
+							controlId="password"
+							label="Nhập mật khẩu mới"
+							className="mb-3">
+							<Form.Control
+								type="password"
+								placeholder="Nhập mật khẩu mới"
+								required
+								onChange={(e) => setPassword(e.target.value)}
+							/>
+						</FloatingLabel>
+
+						<FloatingLabel
+							controlId="requiredPassword"
+							label="Nhập lại mật khẩu mới"
+							className="mb-3">
+							<Form.Control
+								type="password"
+								placeholder="Nhập lại mật khẩu mới"
+								required
+								onChange={(e) => setRequiredPassword(e.target.value)}
+							/>
+						</FloatingLabel>
+
+						<Form.Group className="mb-3 d-flex justify-content-center">
+							<Button variant="info" type="submit" className="mt-3">
+								Kích hoạt tài khoản
+							</Button>
+						</Form.Group>
+					</Form>
+				</div>
+			</div>
 		</>
 	);
 }

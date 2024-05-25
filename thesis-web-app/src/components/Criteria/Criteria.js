@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
-import API, { endpoints } from "../../configs/API";
+import { useCallback, useContext, useEffect, useState } from "react";
+import API, { authAPI, endpoints } from "../../configs/API";
 import { Button, FloatingLabel, Form, Table } from "react-bootstrap";
+import { Alert } from "@mui/material";
+import { LoadingContext } from "../../configs/Context";
 
 function Criteria() {
+	const [loading, loadingDispatch] = useContext(LoadingContext);
 	const [criteria, setCriteria] = useState([]);
 	const [hidden, setHidden] = useState(true);
-	const [name, setName] = useState("");
+	const [name, setName] = useState(null);
 
 	const loadCriteria = useCallback(async () => {
 		const response = await API.get(endpoints["criteria"]);
@@ -14,32 +17,36 @@ function Criteria() {
 	}, []);
 
 	useEffect(() => {
+		loadingDispatch({ type: "loading" });
 		document.title = "Tiêu chí";
-
 		loadCriteria();
-	}, [loadCriteria]);
+		loadingDispatch({ type: "unloading" });
+	}, [loadCriteria, loadingDispatch]);
 
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
 
-	const addCriteria = () => {
-		const add = async () => {
-			const response = await API.post(endpoints["criteria"], {
+	const addCriteria = async () => {
+		loadingDispatch({ type: "loading" });
+
+		if (name === null || name.trim().length === 0) {
+			alert("Chưa nhập tên tiêu chí");
+		} else {
+			const response = await authAPI().post(endpoints["criteria"], {
 				name: name,
 			});
 
 			if (response.status === 201) {
-				setName("");
+				setName(null);
 				setHidden(true);
-				alert("Thêm tiêu chí thành công");
 				setCriteria(response.data);
 			} else {
 				alert("Thêm tiêu chí thất bại");
 			}
-		};
+		}
 
-		add();
+		loadingDispatch({ type: "unloading" });
 	};
 
 	return (
@@ -69,22 +76,36 @@ function Criteria() {
 				</Button>
 			</div>
 
-			<Table striped hover>
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Tên tiêu chí</th>
-					</tr>
-				</thead>
-				<tbody>
-					{criteria.map((c) => (
-						<tr>
-							<td>{c.id}</td>
-							<td>{c.name}</td>
-						</tr>
-					))}
-				</tbody>
-			</Table>
+			<div className="my-4">
+				{criteria.length < 1 ? (
+					<>
+						{loading && (
+							<Alert variant="filled" severity="info" className="w-50 mx-auto">
+								Hiện không có tiêu chí
+							</Alert>
+						)}
+					</>
+				) : (
+					<>
+						<Table striped hover>
+							<thead>
+								<tr>
+									<th>ID</th>
+									<th>Tên tiêu chí</th>
+								</tr>
+							</thead>
+							<tbody>
+								{criteria.map((c) => (
+									<tr>
+										<td>{c.id}</td>
+										<td>{c.name}</td>
+									</tr>
+								))}
+							</tbody>
+						</Table>
+					</>
+				)}
+			</div>
 		</>
 	);
 }
