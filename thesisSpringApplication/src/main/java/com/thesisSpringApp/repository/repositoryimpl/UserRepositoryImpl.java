@@ -3,6 +3,7 @@ package com.thesisSpringApp.repository.repositoryimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -104,7 +105,11 @@ public class UserRepositoryImpl implements UserRepository {
 		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("User.findByUsername");
 		query.setParameter("username", username);
-		return (User) query.getSingleResult();
+		try {
+			return (User) query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	@Override

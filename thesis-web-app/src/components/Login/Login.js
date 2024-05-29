@@ -34,7 +34,6 @@ function Login() {
 			});
 
 			if (response.status === 200) {
-				if (cookies.load("token")) cookies.remove("token");
 				cookies.save("token", response.data, { maxAge: 60 * 30 });
 			}
 
@@ -128,7 +127,7 @@ function Login() {
 										Đăng nhập
 									</Button>
 
-									<Link to="#">Forget password?</Link>
+									<Link to="/forget-password">Forget password?</Link>
 								</>
 							)}
 						</FloatingLabel>

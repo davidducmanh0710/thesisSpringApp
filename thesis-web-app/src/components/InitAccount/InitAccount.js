@@ -6,6 +6,7 @@ import "../Common/Common.css";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { CustomerSnackbar } from "../Common/Common";
+import cookies from "react-cookies";
 
 function InitAccount() {
 	const [user, userDispatch] = useContext(UserContext);
@@ -52,8 +53,6 @@ function InitAccount() {
 				form.append("avatar", avatarFile);
 			}
 
-			console.log(form.get("avatar"));
-
 			let response = await authAPI().post(endpoints["initAccount"], form, {
 				headers: {
 					"Content-Type": "multipart/form-data",
@@ -73,6 +72,7 @@ function InitAccount() {
 				}, 2000);
 
 				userDispatch({ type: "login", payload: response.data });
+				cookies.save("user", response.data, { maxAge: 60 * 30 });
 				setPassword(null);
 				setRequiredPassword(null);
 				setTimeout(() => {

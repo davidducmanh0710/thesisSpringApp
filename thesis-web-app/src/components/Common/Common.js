@@ -7,19 +7,19 @@ export const isAccountInit = (user) => {
 };
 
 export const isAcademicManager = (user) => {
-	if (user !== null && user.role.name === "ROLE_GIAOVU") return true;
+	if (user !== null) return user.role.name === "ROLE_GIAOVU";
 
 	return false;
 };
 
 export const isLecturer = (user) => {
-	if (user !== null && user.role.name === "ROLE_GIANGVIEN") return true;
+	if (user !== null) return user.role.name === "ROLE_GIANGVIEN";
 
 	return false;
 };
 
 export const isStudent = (user) => {
-	if (user !== null && user.role.name === "ROLE_SINHVIEN") return true;
+	if (user !== null) return user.role.name === "ROLE_SINHVIEN";
 
 	return false;
 };

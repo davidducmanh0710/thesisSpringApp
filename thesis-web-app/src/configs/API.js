@@ -25,7 +25,11 @@ export let endpoints = {
 	closeCommittee: (committeeId) => `/api/committees/${committeeId}/close/`,
 	printPDF: "/api/pdf/generate/",
 	payment: "/api/payment/",
-	paymentResult: "api/payment/payment_return/",
+	checkPayment: (orderId) => `/api/payment/check-payment/${orderId}/`,
+	changeAvatar: "/api/users/avatar/",
+	changePassword: "/api/users/password/",
+	forgetPassword: "/api/users/forget-password/",
+	replacePassword: "/api/users/replace-password/",
 };
 
 export const authAPI = () => {

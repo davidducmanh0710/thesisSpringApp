@@ -36,4 +36,6 @@ public interface UserService extends UserDetailsService {
 	List<User> getUsersByThesisId(int thesisId);
 
 	void deleteUser(User user);
+
+	String generateRandomString(int length);
 }

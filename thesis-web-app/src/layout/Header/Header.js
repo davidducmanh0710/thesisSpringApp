@@ -12,7 +12,11 @@ import { Link } from "react-router-dom";
 import "../Header/Header.css";
 import { useContext } from "react";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { isAcademicManager, isStudent } from "../../components/Common/Common";
+import {
+	isAcademicManager,
+	isLecturer,
+	isStudent,
+} from "../../components/Common/Common";
 import { LinearProgress } from "@mui/material";
 
 function Header() {
@@ -43,7 +47,7 @@ function Header() {
 								Trang chủ
 							</Link>
 
-							{!isStudent(user) && (
+							{(isAcademicManager(user) || isLecturer(user)) && (
 								<Link to="/committees" className="nav-link">
 									Hội đồng
 								</Link>

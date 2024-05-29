@@ -14,17 +14,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.thesisSpringApp.JwtComponents.JwtService;
+
+import javax.mail.MessagingException;
 
 @RestController
 @RequestMapping("/api/users")
@@ -38,13 +33,14 @@ public class UserApiController {
     private CommitteeUserService committeeUserService;
     private ThesisCommitteeRateService thesisCommitteeRateService;
     private ScoreService scoreService;
+    private OtpService otpService;
 
     @Autowired
     public UserApiController(UserService userService, PasswordEncoder passwordEncoder,
                              RoleService roleService, ThesisUserService thesisUserService,
                              CommitteeUserService committeeUserService, JwtService jwtService,
                              ThesisCommitteeRateService thesisCommitteeRateService,
-                             ScoreService scoreService) {
+                             ScoreService scoreService, OtpService otpService) {
 
         super();
         this.userService = userService;
@@ -55,6 +51,7 @@ public class UserApiController {
         this.committeeUserService = committeeUserService;
         this.thesisCommitteeRateService = thesisCommitteeRateService;
         this.scoreService = scoreService;
+        this.otpService = otpService;
     }
 
 	@PostMapping("/login/")
@@ -255,5 +252,109 @@ public class UserApiController {
         }
 
         return new ResponseEntity<>(theses, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/avatar/",
+            consumes = { MediaType.MULTIPART_FORM_DATA_VALUE },
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    @CrossOrigin
+    public ResponseEntity<CurrentUserDetailDto> changeAvatar(@RequestPart("avatar") MultipartFile files) {
+        User user = userService.getCurrentLoginUser();
+
+        if (files == null || files.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (user != null) {
+            user.setFile(files);
+            userService.setCloudinaryField(user);
+
+            CurrentUserDetailDto currentUserDetailDto = new CurrentUserDetailDto(user, user.getFacultyId(), user.getRoleId());
+
+            return new ResponseEntity<>(currentUserDetailDto, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping(value = "/password/",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @CrossOrigin
+    public ResponseEntity<?> changePassword(@RequestBody PasswordDTO password) {
+
+        if (password == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userService.getCurrentLoginUser();
+
+        if (user != null) {
+           if ( passwordEncoder.matches(password.getOldPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(password.getNewPassword()));
+                userService.saveUser(user);
+                return new ResponseEntity<>(HttpStatus.OK);
+           }
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // Chức năng Forget Password
+    @PostMapping(value = "/forget-password/", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @CrossOrigin
+    public ResponseEntity<?> sendOtpChangePassword(@RequestBody UsernameDTO username) throws MessagingException {
+        if (username == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userService.getUserByUsername(username.getUsername());
+
+        if (user != null) {
+            otpService.generateOrUpdateOtp(user);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/otp/")
+    @CrossOrigin
+    public ResponseEntity<?> checkOtp(@RequestBody OtpDTO otpDTO) {
+        if (otpDTO == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        User user = userService.getUserByUsername(otpDTO.getUsername());
+
+        if (user != null) {
+            if (otpService.validateOtp(user, otpDTO.getOtp_code())) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PatchMapping("/replace-password/")
+    @CrossOrigin
+    public ResponseEntity<?> replacePassword(@RequestBody ForgetPasswordDTO password) {
+        if (password == null)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+
+        User user = userService.getUserByUsername(password.getUsername());
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (otpService.validateOtp(user, password.getOtp_code())) {
+            user.setPassword(passwordEncoder.encode(password.getPassword()));
+            userService.saveUser(user);
+            otpService.deleteOtp(user);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

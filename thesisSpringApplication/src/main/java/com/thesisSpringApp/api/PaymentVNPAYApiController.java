@@ -1,5 +1,6 @@
 package com.thesisSpringApp.api;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -19,13 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.thesisSpringApp.Dto.PaymentInitDto;
 import com.thesisSpringApp.config.PaymentVnPayConfig;
@@ -77,8 +72,7 @@ public class PaymentVNPAYApiController {
 			vnp_Params.put("vnp_BankCode", bankCode); // nếu bankcode rỗng thì chọn ngân hàng
 		}
 		vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-		vnp_Params.put("vnp_OrderInfo",
-				"Thanh toan tien photo cho sinh vien co ma so : " + user.getUsername());
+		vnp_Params.put("vnp_OrderInfo", paymentInitDto.getThesisId() + " " + user.getUsername());
 		vnp_Params.put("vnp_OrderType", orderType);
 
 		String locate = req.getParameter("language");
@@ -88,7 +82,6 @@ public class PaymentVNPAYApiController {
 			vnp_Params.put("vnp_Locale", "vn");
 		}
 		vnp_Params.put("vnp_ReturnUrl", PaymentVnPayConfig.vnp_ReturnUrl); // url return sau khi
-																			// thanh toán
 		vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
 		Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
@@ -131,49 +124,43 @@ public class PaymentVNPAYApiController {
 		String paymentUrl = PaymentVnPayConfig.vnp_PayUrl + "?" + queryUrl; // trả về url cuối cùng
 																			// kèm params
 
-		return new ResponseEntity<String>(paymentUrl, HttpStatus.OK);	
+		return new ResponseEntity<	>(paymentUrl, HttpStatus.OK);
 	}
-	
-
 
 	@GetMapping("/payment_return/") // xử lý dữ liệu trả về
-	public ResponseEntity<String> payment_return(@RequestParam Map<String, String> params) {
-		
-
+	@CrossOrigin
+	public void payment_return(@RequestParam Map<String, String> params, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String vnpResponseCode = params.get("vnp_ResponseCode");
 		Long amount = Long.parseLong(params.get("vnp_Amount")) / 100;
-		
-		String username = paymentvnpaydetailService.extractLastWord(params.get("vnp_OrderInfo"));
+		Map<String, String> info = paymentvnpaydetailService.getInfo(params.get("vnp_OrderInfo"));
+		String username = info.get("username");
 		User user = userService.getUserByUsername(username);
-		
-		Paymentvnpaydetail paymentvnpaydetail = new Paymentvnpaydetail();
-		paymentvnpaydetail.setOrderId(params.get("vnp_TxnRef"));
-		paymentvnpaydetail.setAmount(amount);
-		paymentvnpaydetail.setOrderDesc(params.get("vnp_OrderInfo"));
-		paymentvnpaydetail.setVnpTransactionNo(params.get("vnp_TransactionNo"));
-		paymentvnpaydetail.setVnpResponseCode(params.get("vnp_ResponseCode"));
-		paymentvnpaydetail.setUserId(user);
-		paymentvnpaydetailService.saveVnPay(paymentvnpaydetail);
-		
-//		params = new HashMap<>();
-//		if (vnpResponseCode.equals("00")) {
-//			params.put("result", "Thành công");
-//			params.put("statusResponseCode", vnpResponseCode);
-//			params.put("username", username);
-//			params.put("amount", amount.toString());
-//		} else  {
-//			params.put("result", "Lỗi");
-//			params.put("statusResponseCode", vnpResponseCode);
-//			params.put("username", username);
-//			params.put("amount", amount.toString());
-//		}
+		int thesisId = Integer.parseInt(info.get("thesisId"));
 
-		String uri = req.getRequestURI();
-		String queryString = req.getQueryString();
-
-		String fullUrl = req.getRequestURL() + (queryString != null ? "?" + queryString : "");
-
-		return new ResponseEntity<String>(fullUrl, HttpStatus.OK);
+		if (vnpResponseCode.equals("00")) {
+			Paymentvnpaydetail paymentvnpaydetail = new Paymentvnpaydetail();
+			paymentvnpaydetail.setOrderId(params.get("vnp_TxnRef"));
+			paymentvnpaydetail.setAmount(amount);
+			paymentvnpaydetail.setOrderDesc(String.format("Thanh toán phí download file PDF khóa luận có mã %d của sinh vien %s", thesisId, username));
+			paymentvnpaydetail.setVnpTransactionNo(params.get("vnp_TransactionNo"));
+			paymentvnpaydetail.setVnpResponseCode(params.get("vnp_ResponseCode"));
+			paymentvnpaydetail.setUserId(user);
+			paymentvnpaydetailService.saveVnPay(paymentvnpaydetail);
+			response.sendRedirect(String.format("http://localhost:3000/theses/%d/payment/%s", thesisId, paymentvnpaydetail.getOrderId()));
+		} else  {
+			response.sendRedirect(String.format("http://localhost:3000/theses/%d/payment/fail", thesisId));
+		}
 	}
-	
+
+	@GetMapping("/check-payment/{orderId}/")
+	@CrossOrigin
+	public ResponseEntity<?> checkPayment(@PathVariable(value = "orderId") String orderId) {
+		User user = userService.getCurrentLoginUser();
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		boolean success = paymentvnpaydetailService.checkPayment(orderId, user);
+
+		return new ResponseEntity<>(success, HttpStatus.OK);
+	}
 }

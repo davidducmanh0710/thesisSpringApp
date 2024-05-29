@@ -71,7 +71,8 @@ public class UserServiceImpl implements UserService {
 		userRepository.saveUser(user);
 	}
 
-	public static String generateRandomString(int length) {
+	@Override
+	public String generateRandomString(int length) {
 		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		Random random = new Random();
 		StringBuilder stringBuilder = new StringBuilder(length);

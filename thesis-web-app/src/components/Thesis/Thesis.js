@@ -19,6 +19,7 @@ function Thesis() {
 			response = await authAPI().get(endpoints["thesesOfLecturer"]);
 		else if (isStudent(user))
 			response = await authAPI().get(endpoints["thesisOfUser"]);
+		else response = await API.get(endpoints["theses"]);
 
 		if (response) setTheses(response.data);
 	}, []);

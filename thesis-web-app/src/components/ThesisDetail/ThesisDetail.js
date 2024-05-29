@@ -3,6 +3,7 @@ import API, { authAPI, endpoints } from "../../configs/API";
 import { Button, Form } from "react-bootstrap";
 import Select from "react-select";
 import {
+	Link,
 	Outlet,
 	useNavigate,
 	useParams,
@@ -54,7 +55,7 @@ function ThesisDetail() {
 		loadThesis();
 		loadCommittees();
 		loadingDispatch({ type: "unloading" });
-	}, [loadThesis, loadCommittees, loadingDispatch]);
+	}, [loadThesis, loadCommittees, loadingDispatch, patch]);
 
 	const changeHidden = () => {
 		setHidden(!hidden);
@@ -121,18 +122,6 @@ function ThesisDetail() {
 
 	const handleNextScoring = () => {
 		navigate(`/theses/${thesisId}/score`);
-	};
-
-	const handlePrintPDF = async () => {
-		loadingDispatch({ type: "loading" });
-
-		const response = await authAPI().post(endpoints["payment"], {
-			amount: 10000,
-		});
-
-		window.open(response.data, "_blank");
-
-		loadingDispatch({ type: "unloading" });
 	};
 
 	return (
@@ -251,7 +240,7 @@ function ThesisDetail() {
 
 						{isLecturer(user) && (
 							<>
-								{patch.pathname !== `/theses/${thesis.thesis.id}/score` && (
+								{patch.pathname === `/theses/${thesis.thesis.id}` && (
 									<div className="mt-4" hidden={!hidden}>
 										<Button onClick={handleNextScoring} variant="success">
 											{checkScoring() ? "Chỉnh sửa điểm" : "Chấm điểm"}
@@ -264,9 +253,17 @@ function ThesisDetail() {
 						)}
 
 						{isStudent(user) && (
-							<div className="mt-4" onClick={() => handlePrintPDF()}>
-								<Button variant="primary">In file PDF</Button>
-							</div>
+							<>
+								{patch.pathname === `/theses/${thesis.thesis.id}` && (
+									<div className="mt-4">
+										<Link to="payment/0" className="btn btn-info">
+											In file PDF
+										</Link>
+									</div>
+								)}
+
+								<Outlet />
+							</>
 						)}
 					</div>
 				</>

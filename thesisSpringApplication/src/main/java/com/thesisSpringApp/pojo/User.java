@@ -8,19 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -53,53 +41,60 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
     @NamedQuery(name = "User.findByBirthday", query = "SELECT u FROM User u WHERE u.birthday = :birthday"),
     @NamedQuery(name = "User.findByActive", query = "SELECT u FROM User u WHERE u.active = :active")})
 public class User implements Serializable {
-
-
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+
     @Size(max = 255)
     @Column(name = "avatar")
     private String avatar;
+
     @Basic(optional = false)
 	// @NotNull
 	@Size(min = 1, max = 10, message = "{user.useruniversityid.minMaxLenErr}")
     @Column(name = "useruniversityid")
     private String useruniversityid;
+
     @Basic(optional = false)
 	// @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
+
     @Basic(optional = false)
 	// @NotNull
     @Size(min = 1, max = 255)
 	@JsonIgnore
     @Column(name = "password")
     private String password;
+
     @Size(max = 40)
     @Column(name = "firstName")
     private String firstName;
+
     @Size(max = 40)
     @Column(name = "lastName")
     private String lastName;
+
     @Size(max = 10)
     @Column(name = "gender")
     private String gender;
+
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
 	// @NotNull
     @Size(min = 1, max = 50)
     @Column(name = "email")
     private String email;
+
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
 	@Size(max = 10, message = "{user.phone.minMaxLenErr}")
     @Column(name = "phone")
     private String phone;
+
     @Basic(optional = false)
 	// @NotNull
     @Column(name = "birthday")
@@ -107,19 +102,24 @@ public class User implements Serializable {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Past(message = "{user.birthday.past}")
     private Date birthday;
+
     @Column(name = "active")
     private Boolean active;
+
     @OneToMany(mappedBy = "userId")
 	@JsonIgnore
     private List<ThesisUser> thesisUserList;
+
     @JoinColumn(name = "faculty_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
 	@JsonIgnore
     private Faculty facultyId;
+
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
 	@JsonIgnore
     private Role roleId;
+
     @OneToMany(mappedBy = "userId")
 	@JsonIgnore
     private List<CommitteeUser> committeeUserList;
@@ -127,6 +127,10 @@ public class User implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy = "userId")
 	private List<Paymentvnpaydetail> paymentvnpaydetailList;
+
+	@OneToOne(mappedBy = "userId")
+	@JsonIgnore
+	private Otp otpId;
 
 	@Transient
 	@JsonIgnore
@@ -316,5 +320,5 @@ public class User implements Serializable {
     public void setPaymentvnpaydetailList(List<Paymentvnpaydetail> paymentvnpaydetailList) {
         this.paymentvnpaydetailList = paymentvnpaydetailList;
     }
-    
+
 }

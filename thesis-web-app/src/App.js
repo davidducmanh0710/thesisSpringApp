@@ -15,10 +15,10 @@ import Student from "./components/Student/Student";
 import ThesisDetail from "./components/ThesisDetail/ThesisDetail";
 import Criteria from "./components/Criteria/Criteria";
 import Score from "./components/Score/Score";
+import Payment from "./components/Payment/Payment";
 import { useEffect, useReducer } from "react";
 import { LoadingReducer, UserReducer } from "./configs/Reducer";
 import { LoadingContext, UserContext } from "./configs/Context";
-import ChangeAvatarAndPassword from "./components/ChangeAvatarAndPassword/ChangeAvatarAndPassword";
 import {
 	isAcademicManager,
 	isAccountInit,
@@ -26,7 +26,8 @@ import {
 	isStudent,
 } from "./components/Common/Common";
 import cookies from "react-cookies";
-import { type } from "@testing-library/user-event/dist/type";
+import ChangePassword from "./components/ChangePassword/ChangePassword";
+import ForgetPassword from "./components/ForgetPassword/ForgetPassword";
 
 function App() {
 	const [user, userDispatch] = useReducer(UserReducer, null);
@@ -47,6 +48,7 @@ function App() {
 							<Container>
 								<Routes>
 									<Route path="/*" element={<Login />} />
+									<Route path="/forget-password" element={<ForgetPassword />} />
 								</Routes>
 							</Container>
 						</>
@@ -66,7 +68,7 @@ function App() {
 											<Route path="/user-detail" element={<UserDetail />} />
 											<Route
 												path="/user-detail/change"
-												element={<ChangeAvatarAndPassword />}
+												element={<ChangePassword />}
 											/>
 
 											{isAcademicManager(user) && (
@@ -97,7 +99,14 @@ function App() {
 
 											{isStudent(user) && (
 												<>
-													<Route path="/" />
+													<Route
+														path="/theses/:thesisId/"
+														element={<ThesisDetail />}>
+														<Route
+															path="payment/:orderId"
+															element={<Payment />}
+														/>
+													</Route>
 												</>
 											)}
 										</Routes>

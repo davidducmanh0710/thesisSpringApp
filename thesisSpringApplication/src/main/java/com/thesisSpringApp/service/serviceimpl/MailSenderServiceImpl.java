@@ -137,4 +137,17 @@ public class MailSenderServiceImpl implements MailSenderService {
 		javaMailSender.send(mimeMessage);
 	}
 
+	@Override
+	@Async
+	public void sendOtp(String otp, User user) throws MessagingException {
+		String subject = "Thư gửi mã OTP để thay đổi password";
+
+		MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+		helper.setTo(user.getEmail());
+		helper.setSubject(subject);
+		helper.setText("Mã OTP của bạn là: " + otp, true); // Set nội dung là HTML
+		javaMailSender.send(mimeMessage);
+	}
+
 }
