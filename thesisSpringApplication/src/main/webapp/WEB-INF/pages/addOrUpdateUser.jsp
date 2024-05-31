@@ -8,7 +8,7 @@
 
 <style>
 body {
-	padding-top: 70px; /* Để tránh bị navbar che phủ phần nội dung */
+	padding-top: 70px; 
 }
 
 .form-background {
