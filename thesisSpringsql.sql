@@ -109,6 +109,13 @@ create table `paymentvnpaydetail`(
     `vnp_ResponseCode` varchar(255),
     `user_id` INT,
     CONSTRAINT `FK_VNPAY_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
-)
+);
 
+create table `otp`(
+	`id` INT AUTO_INCREMENT PRIMARY KEY,
+	`user_id` INT ,
+	CONSTRAINT `FK_OTP_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
+    `otp_code` VARCHAR(255) not null ,
+    `expiry_time` DATETIME not null
+)
 
