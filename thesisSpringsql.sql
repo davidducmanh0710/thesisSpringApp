@@ -110,12 +110,14 @@ create table `paymentvnpaydetail`(
     `user_id` INT,
     CONSTRAINT `FK_VNPAY_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
 );
-
-create table `otp`(
-	`id` INT AUTO_INCREMENT PRIMARY KEY,
-	`user_id` INT ,
-	CONSTRAINT `FK_OTP_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-    `otp_code` VARCHAR(255) not null ,
-    `expiry_time` DATETIME not null
+USE `thesisspringapp`;
+CREATE TABLE `otp` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `otp_code` varchar(255) NOT NULL,
+  `expiry_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 )
 

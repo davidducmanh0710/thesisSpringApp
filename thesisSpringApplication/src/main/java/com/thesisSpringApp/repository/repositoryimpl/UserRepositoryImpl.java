@@ -117,7 +117,13 @@ public class UserRepositoryImpl implements UserRepository {
 		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("User.findByEmail");
 		query.setParameter("email", email);
-		return (User) query.getSingleResult();
+
+		List<User> users = query.getResultList();
+		if (users.isEmpty()) {
+			return null;
+		} else {
+			return users.get(0);
+		}
 	}
 
 	@Override
@@ -125,7 +131,27 @@ public class UserRepositoryImpl implements UserRepository {
 		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("User.findByUseruniversityid");
 		query.setParameter("useruniversityid", uId);
-		return (User) query.getSingleResult();
+
+		List<User> users = query.getResultList();
+		if (users.isEmpty()) {
+			return null;
+		} else {
+			return users.get(0);
+		}
+	}
+
+	@Override
+	public User getUserByPhone(String phone) {
+		Session session = factory.getObject().getCurrentSession();
+		Query query = session.getNamedQuery("User.findByPhone");
+		query.setParameter("phone", phone);
+
+		List<User> users = query.getResultList();
+		if (users.isEmpty()) {
+			return null;
+		} else {
+			return users.get(0);
+		}
 	}
 
 	@Override
@@ -149,5 +175,30 @@ public class UserRepositoryImpl implements UserRepository {
 		Session session = factory.getObject().getCurrentSession();
 		session.delete(user);
 	}
+
+	@Override
+	public boolean isUserExistsByEmail(String email) {
+		User user = this.getUserByEmail(email);
+		if (user != null)
+			return true;
+		return false;
+	}
+
+	@Override
+	public boolean isUserExistsByPhone(String phone) {
+		User user = this.getUserByPhone(phone);
+		if (user != null)
+			return true;
+		return false;
+	}
+
+	@Override
+	public boolean isUserExistsByUniversityId(String uid) {
+		User user = this.getUserByUniversityId(uid);
+		if (user != null)
+			return true;
+		return false;
+	}
+
 
 }

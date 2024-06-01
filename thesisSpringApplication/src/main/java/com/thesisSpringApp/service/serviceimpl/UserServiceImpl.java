@@ -171,5 +171,24 @@ public class UserServiceImpl implements UserService {
 		userRepository.deleteUser(user);
 	}
 
+	@Override
+	public User getUserByPhone(String phone) {
+		return userRepository.getUserByPhone(phone);
+	}
+
+	@Override
+	public boolean isUserExistsByEmail(String email) {
+		return userRepository.isUserExistsByEmail(email);
+	}
+
+	@Override
+	public boolean isUserExistsByPhone(String phone) {
+		return userRepository.isUserExistsByPhone(phone);
+	}
+
+	@Override
+	public boolean isUserExistsByUniversityId(String uid) {
+		return userRepository.isUserExistsByUniversityId(uid);
+	}
 
 }

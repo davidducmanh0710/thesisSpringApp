@@ -31,6 +31,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.thesisSpringApp.customAnnotation.UniqueValueField;
 
 /**
  *
@@ -66,19 +67,20 @@ public class User implements Serializable {
     private String avatar;
 
     @Basic(optional = false)
-	// @NotNull
+// @NotNull
+	@UniqueValueField(fieldName = "useruniversityid", message = "{user.uid.exists}")
 	@Size(min = 1, max = 10, message = "{user.useruniversityid.minMaxLenErr}")
     @Column(name = "useruniversityid")
     private String useruniversityid;
 
     @Basic(optional = false)
-	// @NotNull
+// @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "username")
     private String username;
 
     @Basic(optional = false)
-	// @NotNull
+// @NotNull
     @Size(min = 1, max = 255)
 	@JsonIgnore
     @Column(name = "password")
@@ -98,7 +100,8 @@ public class User implements Serializable {
 
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
-	// @NotNull
+// @NotNull
+	@UniqueValueField(fieldName = "email", message = "{user.email.exists}")
     @Size(min = 1, max = 50)
     @Column(name = "email")
     private String email;
@@ -106,10 +109,11 @@ public class User implements Serializable {
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
 	@Size(max = 10, message = "{user.phone.minMaxLenErr}")
     @Column(name = "phone")
+	@UniqueValueField(fieldName = "phone", message = "{user.phone.exists}")
     private String phone;
 
     @Basic(optional = false)
-	// @NotNull
+// @NotNull
     @Column(name = "birthday")
 //  @Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
