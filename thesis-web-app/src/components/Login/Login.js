@@ -54,6 +54,7 @@ function Login() {
 
 					userDispatch({ type: "login", payload: response.data });
 					cookies.save("user", response.data, { maxAge: 60 * 30 });
+
 					setUserName(null);
 					setPassword(null);
 

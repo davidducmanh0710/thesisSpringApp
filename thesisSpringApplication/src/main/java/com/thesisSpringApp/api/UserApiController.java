@@ -84,11 +84,21 @@ public class UserApiController {
 	}
 
 
-    @GetMapping("/all/")
-    public ResponseEntity<List<User>> getUsers() {
-        return new ResponseEntity<>(
-                this.userService.getAllUsers(),
-                HttpStatus.OK);
+    @GetMapping("/")
+    public ResponseEntity<List<UserDTO>> getUsers() {
+        List<User> users = userService.getAllUsers();
+
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setFullName(user.getLastName() + " " + user.getFirstName());
+            userDTO.setUserUniversityId(user.getUseruniversityid());
+            userDTO.setAvatar(user.getAvatar());
+
+            userDTOs.add(userDTO);
+        }
+
+        return new ResponseEntity<>(userDTOs, HttpStatus.OK);
     }
 
     @GetMapping("/role/get2RoleList/")

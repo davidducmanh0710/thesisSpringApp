@@ -73,8 +73,10 @@ function InitAccount() {
 
 				userDispatch({ type: "login", payload: response.data });
 				cookies.save("user", response.data, { maxAge: 60 * 30 });
+
 				setPassword(null);
 				setRequiredPassword(null);
+
 				setTimeout(() => {
 					navigate("/");
 				}, 1000);

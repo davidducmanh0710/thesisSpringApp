@@ -28,6 +28,7 @@ import {
 import cookies from "react-cookies";
 import ChangePassword from "./components/ChangePassword/ChangePassword";
 import ForgetPassword from "./components/ForgetPassword/ForgetPassword";
+import ChatBox from "./components/ChatBox/ChatBox";
 
 function App() {
 	const [user, userDispatch] = useReducer(UserReducer, null);
@@ -70,6 +71,8 @@ function App() {
 												path="/user-detail/change"
 												element={<ChangePassword />}
 											/>
+
+											<Route path="/chat-box" element={<ChatBox />} />
 
 											{isAcademicManager(user) && (
 												<>

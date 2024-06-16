@@ -38,7 +38,7 @@ function AddCommittee() {
 			response.data.map((l) => {
 				return {
 					value: l.id,
-					label: `${l.lastName} ${l.firstName}`,
+					label: `${l.lastName} ${l.firstName} - ${l.useruniversityid}`,
 				};
 			})
 		);

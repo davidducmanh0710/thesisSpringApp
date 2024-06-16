@@ -17,6 +17,7 @@ export let endpoints = {
 	noneThesisStudents: `/api/users/students/noneThesis/`,
 	criteria: `/api/criteria/`,
 	login: "/api/users/login/",
+	users: "/api/users/",
 	currentUser: "/api/users/current-user/",
 	thesisOfUser: "/api/users/theses/",
 	committeesOfUser: "/api/users/committees/",
@@ -29,6 +30,7 @@ export let endpoints = {
 	changeAvatar: "/api/users/avatar/",
 	changePassword: "/api/users/password/",
 	forgetPassword: "/api/users/forget-password/",
+	checkOtp: "/api/users/otp/",
 	replacePassword: "/api/users/replace-password/",
 };
 

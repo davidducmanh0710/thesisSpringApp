@@ -93,7 +93,6 @@ function ForgetPassword() {
 			showSnackbar("Chưa nhập mã OTP", "error");
 		} else {
 			try {
-				console.log(otp);
 				const response = await API.post(endpoints["checkOtp"], {
 					otp_code: otp,
 					username: username,

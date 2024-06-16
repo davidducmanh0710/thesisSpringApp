@@ -121,6 +121,12 @@ function Header() {
 											</Link>
 										</Dropdown.Item>
 
+										<Dropdown.Item>
+											<Link className="dropdown-item" to="chat-box">
+												Chat
+											</Link>
+										</Dropdown.Item>
+
 										<NavDropdown.Divider />
 
 										<NavDropdown.Item>

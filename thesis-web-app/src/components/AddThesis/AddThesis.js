@@ -21,11 +21,14 @@ function AddThesis() {
 	});
 
 	const loadStudents = useCallback(async () => {
-		const response = await API.get(endpoints["noneThesisStudents"]);
+		const response = await API.get(endpoints["students"]);
 
 		setStudents(
 			response.data.map((s) => {
-				return { value: s.id, label: `${s.lastName} ${s.firstName}` };
+				return {
+					value: s.id,
+					label: `${s.lastName} ${s.firstName} - ${s.useruniversityid}`,
+				};
 			})
 		);
 	}, []);
@@ -35,7 +38,10 @@ function AddThesis() {
 
 		setLecturers(
 			response.data.map((l) => {
-				return { value: l.id, label: `${l.lastName} ${l.firstName}` };
+				return {
+					value: l.id,
+					label: `${l.lastName} ${l.firstName} - ${l.useruniversityid}`,
+				};
 			})
 		);
 	}, []);
