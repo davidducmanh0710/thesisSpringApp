@@ -102,6 +102,9 @@ public class AdminController {
 			BindingResult result)
 			throws MessagingException {
 
+		if (result.hasErrors())
+			return "addOrUpdateUser";
+
 		Role role = roleService.getRoleById(user.getRoleId().getId());
 		Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());
 

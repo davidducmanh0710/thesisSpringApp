@@ -5,15 +5,20 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
-import com.thesisSpringApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.thesisSpringApp.Dto.CloseCommitteeDTO;
 import com.thesisSpringApp.Dto.CommitteeDetailDTO;
 import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
 import com.thesisSpringApp.Dto.CommitteeUserDto;
@@ -24,11 +29,22 @@ import com.thesisSpringApp.pojo.Score;
 import com.thesisSpringApp.pojo.Thesis;
 import com.thesisSpringApp.pojo.ThesisCommitteeRate;
 import com.thesisSpringApp.pojo.ThesisStatus;
+import com.thesisSpringApp.pojo.ThesisUser;
 import com.thesisSpringApp.pojo.User;
-import com.thesisSpringApp.repository.CommitteeUserRepository;
+import com.thesisSpringApp.service.CommitteeService;
+import com.thesisSpringApp.service.CommitteeUserService;
+import com.thesisSpringApp.service.CriteriaService;
+import com.thesisSpringApp.service.MailSenderService;
+import com.thesisSpringApp.service.ScoreService;
+import com.thesisSpringApp.service.ThesisCommitteeRateService;
+import com.thesisSpringApp.service.ThesisService;
+import com.thesisSpringApp.service.ThesisStatusService;
+import com.thesisSpringApp.service.ThesisUserService;
+import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/committees/")
+@CrossOrigin
 public class CommitteeApiController {
 
 	private CommitteeService committeeService;
@@ -41,13 +57,14 @@ public class CommitteeApiController {
 	private ScoreService scoreService;
 	private ThesisStatusService thesisStatusService;
 	private CriteriaService criteriaService;
+	private ThesisUserService thesisUserService;
 
 	@Autowired
 	public CommitteeApiController(CommitteeService committeeService, UserService userService,
 		CommitteeUserService committeeUserService, MailSenderService mailSenderService,
   		Environment env, ThesisService thesisService, ThesisCommitteeRateService thesisCommitteeRateService,
   		ScoreService scoreService, ThesisStatusService thesisStatusService,
-	  	CriteriaService criteriaService) {
+			CriteriaService criteriaService, ThesisUserService thesisUserService) {
 		super();
 		this.committeeService = committeeService;
 		this.userService = userService;
@@ -59,6 +76,7 @@ public class CommitteeApiController {
 		this.scoreService = scoreService;
 		this.thesisStatusService = thesisStatusService;
 		this.criteriaService = criteriaService;
+		this.thesisUserService = thesisUserService;
 	}
 
 	@PostMapping(path = "/", consumes = {
@@ -87,7 +105,8 @@ public class CommitteeApiController {
 			User user = userService.getUserById(c.getUserId());
 
 			if (c.getRoleName().equals("Phản biện"))
-//				mailSenderService.sendEmail(env.getProperty("spring.mail.username"), user);
+				mailSenderService.sendEmailForLecture(env.getProperty("spring.mail.username"),
+						user, committee);
 				System.out.println("Đã gửi mail");
 
 			cmU.setUserId(user);
@@ -145,7 +164,7 @@ public class CommitteeApiController {
 	@PatchMapping("/{committeeId}/close/")
 	@CrossOrigin
 	public ResponseEntity<List<CommitteeDetailDTO>> closeCommittee(
-			@PathVariable(value = "committeeId") int committeeId) {
+			@PathVariable(value = "committeeId") int committeeId) throws MessagingException {
 
 		if (committeeId < 1) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -155,11 +174,13 @@ public class CommitteeApiController {
 		committee.setActive(!committee.getActive());
 
 		if (!committee.getActive()) {
-			List<ThesisCommitteeRate> thesisCommitteeRateList = thesisCommitteeRateService.getThesisCommitteeRatesByCommitteeId(committee.getId());
+			List<ThesisCommitteeRate> thesisCommitteeRateList = thesisCommitteeRateService
+					.getThesisCommitteeRatesByCommitteeId(committee.getId());
 			for (ThesisCommitteeRate t : thesisCommitteeRateList) {
+				Thesis thesis = t.getThesisId();
+
 				// Xem khóa luận đã được chấm chưa
 				if (!t.getStatusId().getId().equals(3)) {
-					Thesis thesis = t.getThesisId();
 					List<Score> scores = scoreService.getScoresByThesisId(thesis.getId());
 					int committeeUserCount = committeeUserService.getAllUsersOfCommittee(committee.getId()).size();
 					int criteriaCount = criteriaService.getCriteriaList().size();
@@ -180,15 +201,22 @@ public class CommitteeApiController {
 					t.setStatusId(thesisStatus);
 					thesisCommitteeRateService.saveAndUpdateThesisCommitteeRate(t);
 
-					// Thông báo qua email cho sinh viên
-
 				}
+				// Thông báo qua email cho sinh viên
+				List<ThesisUser> thesisUsers = thesisUserService.getUserByThesis(thesis);
+				for (ThesisUser tus : thesisUsers)
+					if (tus.getUserId().getRoleId().getName().equals("ROLE_SINHVIEN"))
+						mailSenderService.sendEmailForPupils(
+								env.getProperty("spring.mail.username"),
+								tus.getUserId(), thesis);
+
 			}
 		}
 
 		committeeService.saveCommittee(committee);
 
 		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail();
+		
 
 		return new ResponseEntity<>(committeeList, HttpStatus.OK);
 	}

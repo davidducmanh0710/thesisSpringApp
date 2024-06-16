@@ -38,4 +38,12 @@ public interface UserService extends UserDetailsService {
 	void deleteUser(User user);
 
 	String generateRandomString(int length);
+
+	User getUserByPhone(String phone);
+
+	boolean isUserExistsByEmail(String value);
+
+	boolean isUserExistsByPhone(String value);
+
+	boolean isUserExistsByUniversityId(String value);
 }

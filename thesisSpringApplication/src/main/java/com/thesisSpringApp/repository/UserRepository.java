@@ -28,4 +28,12 @@ public interface UserRepository {
 	List<User> getUsersByThesisId(int thesisId);
 
 	void deleteUser(User user);
+
+	User getUserByPhone(String phone);
+
+	boolean isUserExistsByEmail(String email);
+
+	boolean isUserExistsByPhone(String phone);
+
+	boolean isUserExistsByUniversityId(String uid);
 }

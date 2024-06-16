@@ -109,6 +109,15 @@ create table `paymentvnpaydetail`(
     `vnp_ResponseCode` varchar(255),
     `user_id` INT,
     CONSTRAINT `FK_VNPAY_USER` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+);
+USE `thesisspringapp`;
+CREATE TABLE `otp` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `otp_code` varchar(255) NOT NULL,
+  `expiry_time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 )
-
 

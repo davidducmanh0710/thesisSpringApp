@@ -19,7 +19,7 @@
 		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav ms-auto">
 				<li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">Users</a></li>
+				<li class="nav-item"><a class="nav-link" href="${adminUrl}">Users</a></li>
 				<li class="nav-item"><a class="nav-link" href="${statsUrl}">Stats</a></li>
 				
 

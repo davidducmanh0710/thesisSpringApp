@@ -75,7 +75,7 @@ public class StatsRepositoryImpl implements StatsRepository {
 				"inner join u.facultyId f " +
 				"inner join u.thesisUserList tu " +
 				"inner join tu.thesisId t " +
-				"where year(t.createDate) = :year " +
+				"where year(t.createDate) = :year and u.roleId.id = 2" +
 				"group by f.name";
 
 

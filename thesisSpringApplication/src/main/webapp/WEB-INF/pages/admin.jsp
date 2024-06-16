@@ -1,7 +1,14 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<div class="container mt-4">
+<style>
+body {
+	padding-top: 70px; 
+}
+
+</style>
+
+<div class="container">
 	<div>
 		<c:url value="/admin/addUser" var="addUserUrl" />
 		<c:url value="/admin/updateUser" var="updateUserUrl" />
