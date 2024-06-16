@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { UserContext } from "../../configs/Context";
+import { LoadingContext, UserContext } from "../../configs/Context";
 import { Col, Row } from "react-bootstrap";
 import "./ChatBox.css";
 import "../Common/Common.css";
@@ -15,9 +15,11 @@ import {
 	where,
 } from "firebase/firestore";
 import { db } from "../../configs/firebase";
+import { type } from "@testing-library/user-event/dist/type";
 
 function ChatBox() {
 	const [user] = useContext(UserContext);
+	const [, loadingDispatch] = useContext(LoadingContext);
 	const [users, setUsers] = useState([]);
 	const [receiver, setReceiver] = useState(null);
 	const [message, setMessage] = useState("");
@@ -25,6 +27,7 @@ function ChatBox() {
 	const [collection1, setCollection1] = useState([]);
 	const [collection2, setCollection2] = useState([]);
 	const scroll = useRef();
+	const [hidden, setHidden] = useState(true);
 
 	const loadUsers = useCallback(async () => {
 		const response = await API.get(endpoints["users"]);
@@ -89,14 +92,24 @@ function ChatBox() {
 			(a, b) => a.createdDate - b.createdDate
 		);
 		setMessages(sortedMessages);
+		loadingDispatch({ type: "unloading" });
 	}, [collection1, collection2]);
 
+	useEffect(() => {
+		scroll.current.scrollTo({
+			top: scroll.current.scrollHeight,
+			behavior: "smooth",
+		});
+	}, [messages]);
+
 	const getReceiver = (fullName, userUniversity, avatar) => {
+		loadingDispatch({ type: "loading" });
 		setReceiver({
 			fullName: fullName,
 			userUniversityId: userUniversity,
 			avatar: avatar,
 		});
+		setHidden(false);
 	};
 
 	const sendMessage = async () => {
@@ -119,7 +132,10 @@ function ChatBox() {
 		);
 
 		setMessage("");
-		scroll.current.scrollIntoView({ behavior: "smooth" });
+		scroll.current.scrollTo({
+			top: scroll.current.scrollHeight,
+			behavior: "smooth",
+		});
 	};
 
 	return (
@@ -127,7 +143,7 @@ function ChatBox() {
 			<Row className="h-chatbox box-shadow chat-box m-4 p-4">
 				<Col md={3} className="h-100">
 					<div className="py-2 px-3 box-shadow br d-flex">
-						<Avatar alt="Remy Sharp" src={user.user.avatar} />
+						<Avatar alt="Hình ảnh" src={user.user.avatar} />
 						<div className="d-flex align-self-center ms-3 fs-5">
 							{user.user.lastName + " " + user.user.firstName}
 						</div>
@@ -166,7 +182,7 @@ function ChatBox() {
 						</div>
 					)}
 
-					<div className="content p-2 my-4">
+					<div className="content p-2 my-4" ref={scroll}>
 						{messages.map((m) => (
 							<div
 								key={Math.random()}
@@ -186,10 +202,10 @@ function ChatBox() {
 								</div>
 							</div>
 						))}
-						<span ref={scroll}></span>
+						{/* <span ref={scroll}></span> */}
 					</div>
 
-					<Row className="footer">
+					<Row className="footer" hidden={hidden}>
 						<Col md={10}>
 							<TextField
 								id="outlined-basic"
