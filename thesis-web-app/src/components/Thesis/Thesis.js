@@ -5,24 +5,33 @@ import { Link } from "react-router-dom";
 import API, { authAPI, endpoints } from "../../configs/API";
 import { LoadingContext, UserContext } from "../../configs/Context";
 import { isAcademicManager, isLecturer, isStudent } from "../Common/Common";
-import { Alert } from "@mui/material";
+import { Alert, Pagination } from "@mui/material";
 
 function Thesis() {
 	const [theses, setTheses] = useState([]);
 	const [user] = useContext(UserContext);
-	const [loading, loadingDispatch] = useContext(LoadingContext);
+	const [, loadingDispatch] = useContext(LoadingContext);
+	const [page, setPage] = useState(1);
+	const [totalPage, setTotalPage] = useState(1);
 
 	const loadTheses = useCallback(async () => {
 		let response;
-		if (isAcademicManager(user)) response = await API.get(endpoints["theses"]);
-		else if (isLecturer(user))
-			response = await authAPI().get(endpoints["thesesOfLecturer"]);
-		else if (isStudent(user))
-			response = await authAPI().get(endpoints["thesisOfUser"]);
-		else response = await API.get(endpoints["theses"]);
+		if (isAcademicManager(user)) {
+			const url = `${endpoints["theses"]}?page=${page}`;
+			response = await API.get(url);
+			if (response.status === 200) {
+				setTheses(response.data.result);
+				setTotalPage(response.data.totalPages);
+			}
+		} else {
+			if (isLecturer(user))
+				response = await authAPI().get(endpoints["thesesOfLecturer"]);
+			else if (isStudent(user))
+				response = await authAPI().get(endpoints["thesisOfUser"]);
 
-		if (response) setTheses(response.data);
-	}, []);
+			if (response.status === 200) setTheses(response.data);
+		}
+	}, [page]);
 
 	useEffect(() => {
 		loadingDispatch({ type: "loading" });
@@ -34,12 +43,20 @@ function Thesis() {
 	return (
 		<>
 			{isAcademicManager(user) && (
-				<Link to="add-thesis" className="btn btn-success mt-4">
-					Thêm khóa luận
-				</Link>
+				<>
+					<Link to="add-thesis" className="btn btn-success mt-4">
+						Thêm khóa luận
+					</Link>
+					<Pagination
+						count={totalPage}
+						color="primary"
+						className="mt-4"
+						onChange={(event, value) => setPage(value)}
+					/>
+				</>
 			)}
 
-			<Row className="my-4">
+			<Row className="my-2">
 				{theses.length < 1 ? (
 					<>
 						<Alert variant="filled" severity="info" className="w-50 mx-auto">

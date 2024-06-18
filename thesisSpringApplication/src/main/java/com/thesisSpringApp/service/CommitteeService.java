@@ -1,19 +1,20 @@
 package com.thesisSpringApp.service;
 
 import com.thesisSpringApp.pojo.Committee;
-import com.thesisSpringApp.pojo.CommitteeUser;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CommitteeService {
 	void saveCommittee(Committee committee);
 
 	Committee getCommitteeById(int id);
 
-	List<Committee> getAllCommittee();
+	List<Committee> getAllCommittee(Map<String, String> params);
 
-	List<Committee> getCommiteesForThesis();
+	List<Committee> getCommitteesForThesis();
 
 	Committee getCommitteeOfThesis(int thesisId);
 
+	int totalCommitteePages();
 }

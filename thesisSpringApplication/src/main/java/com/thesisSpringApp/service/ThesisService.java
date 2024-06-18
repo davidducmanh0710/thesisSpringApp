@@ -1,6 +1,7 @@
 package com.thesisSpringApp.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.thesisSpringApp.pojo.Thesis;
 
@@ -9,7 +10,7 @@ public interface ThesisService {
 
 	Thesis getThesisById(int id);
 
-	List<Thesis> getAllThesis();
+	List<Thesis> getAllThesis(Map<String, String> params);
 
-
+	int totalPages();
 }

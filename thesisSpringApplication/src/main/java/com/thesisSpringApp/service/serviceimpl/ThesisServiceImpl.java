@@ -1,20 +1,28 @@
 package com.thesisSpringApp.service.serviceimpl;
 
-import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.thesisSpringApp.pojo.Thesis;
 import com.thesisSpringApp.repository.ThesisRepository;
 import com.thesisSpringApp.service.ThesisService;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
+@PropertySource("classpath:config.properties")
 public class ThesisServiceImpl implements ThesisService {
 
 	@Autowired
 	private ThesisRepository thesisRepository;
+	@Autowired
+	private Environment env;
 
 	@Override
 	public void saveAndUpdateThesis(Thesis thesis) {
@@ -37,9 +45,14 @@ public class ThesisServiceImpl implements ThesisService {
 	}
 
 	@Override
-	public List<Thesis> getAllThesis() {
-		return this.thesisRepository.getAllThesis();
+	public List<Thesis> getAllThesis(Map<String, String> params) {
+		return this.thesisRepository.getAllThesis(params);
 	}
 
+	@Override
+	public int totalPages() {
+		Map<String, String> params = new HashMap<>();
 
+		return (int) Math.ceil((double) thesisRepository.getAllThesis(params).size() / Integer.parseInt(env.getProperty("theses.pageSize").toString()));
+	}
 }

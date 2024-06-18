@@ -1,28 +1,20 @@
 package com.thesisSpringApp.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import com.thesisSpringApp.Dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.thesisSpringApp.Dto.CommitteeDetailDTO;
-import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
-import com.thesisSpringApp.Dto.CommitteeUserDto;
-import com.thesisSpringApp.Dto.NewCommitteeDto;
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
 import com.thesisSpringApp.pojo.Score;
@@ -119,8 +111,8 @@ public class CommitteeApiController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
-	public List<CommitteeDetailDTO> responseCommitteeDetail() {
-		List<Committee> committees = this.committeeService.getAllCommittee();
+	public List<CommitteeDetailDTO> responseCommitteeDetail(Map<String,String> params) {
+		List<Committee> committees = this.committeeService.getAllCommittee(params);
 
 		List<CommitteeDetailDTO> committeeList = new ArrayList<>();
 
@@ -148,15 +140,24 @@ public class CommitteeApiController {
 
 	@GetMapping("/")
 	@CrossOrigin
-	public ResponseEntity<List<CommitteeDetailDTO>> list() {
-		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail();
+	public ResponseEntity<CommitteePageDTO> list(@RequestParam Map<String, String> params) {
+		CommitteePageDTO committeePageDTO = new CommitteePageDTO();
+		committeePageDTO.setTotalPages(committeeService.totalCommitteePages());
 
-		return new ResponseEntity<>(committeeList, HttpStatus.OK);
+		String page = params.get("page");
+		if (page == null || page.isEmpty()) {
+			params.put("page", "1");
+		}
+
+		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail(params);
+		committeePageDTO.setResult(committeeList);
+
+		return new ResponseEntity<>(committeePageDTO, HttpStatus.OK);
 	}
 
 	@GetMapping("/active/")
 	public ResponseEntity<List<Committee>> listCommitteeForThesis() {
-		List<Committee> committees = committeeService.getCommiteesForThesis();
+		List<Committee> committees = committeeService.getCommitteesForThesis();
 
 		return new ResponseEntity<>(committees, HttpStatus.OK);
 	}
@@ -215,7 +216,8 @@ public class CommitteeApiController {
 
 		committeeService.saveCommittee(committee);
 
-		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail();
+		Map<String, String> params = new HashMap<>();
+		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail(params);
 		
 
 		return new ResponseEntity<>(committeeList, HttpStatus.OK);

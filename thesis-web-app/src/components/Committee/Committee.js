@@ -9,7 +9,7 @@ import {
 	isLecturer,
 } from "../Common/Common";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { Alert } from "@mui/material";
+import { Alert, Pagination } from "@mui/material";
 
 function Committee() {
 	const [committees, setCommittees] = useState([]);
@@ -20,20 +20,31 @@ function Committee() {
 		message: "Thành công",
 		severity: "success",
 	});
+	const [page, setPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
 
 	const loadCommittee = useCallback(async () => {
 		try {
 			let response;
-			if (isAcademicManager(user))
-				response = await API.get(endpoints["committees"]);
-			if (isLecturer(user))
-				response = await authAPI().get(endpoints["committeesOfUser"]);
+			if (isAcademicManager(user)) {
+				const url = `${endpoints["committees"]}?page=${page}`;
+				response = await API.get(url);
+				if (response.status === 200) {
+					setCommittees(response.data.result);
+					setTotalPages(response.data.totalPages);
+				}
+			}
 
-			setCommittees(response.data);
+			if (isLecturer(user)) {
+				response = await authAPI().get(endpoints["committeesOfUser"]);
+				if (response.status === 200) {
+					setCommittees(response.data);
+				}
+			}
 		} catch (ex) {
 			console.log(ex);
 		}
-	}, [user]);
+	}, [page]);
 
 	useEffect(() => {
 		loadingDispatch({ type: "loading" });
@@ -89,9 +100,17 @@ function Committee() {
 			/>
 
 			{isAcademicManager(user) && (
-				<Link to="/add-committee" className="btn btn-success mt-4">
-					Thêm hội đồng
-				</Link>
+				<>
+					<Link to="/add-committee" className="btn btn-success mt-4">
+						Thêm hội đồng
+					</Link>
+					<Pagination
+						count={totalPages}
+						color="primary"
+						className="mt-4"
+						onChange={(event, value) => setPage(value)}
+					/>
+				</>
 			)}
 
 			<Row className="my-4">

@@ -2,21 +2,14 @@ package com.thesisSpringApp.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.thesisSpringApp.Dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
@@ -91,10 +84,19 @@ public class ThesisApiController {
 
 	@GetMapping("/")
 	@CrossOrigin
-	public ResponseEntity<List<Thesis>> list() {
-		List<Thesis> theses = this.thesisService.getAllThesis();
+	public ResponseEntity<ThesesPageDTO> list(@RequestParam Map<String, String> params) {
+		ThesesPageDTO thesesPageDTO = new ThesesPageDTO();
+		thesesPageDTO.setTotalPages(thesisService.totalPages());
 
-		return new ResponseEntity<>(theses, HttpStatus.OK);
+		String page = params.get("page");
+		if (page == null || page.isEmpty()) {
+			params.put("page", "1");
+		}
+
+		List<Thesis> theses = this.thesisService.getAllThesis(params);
+		thesesPageDTO.setResult(theses);
+
+		return new ResponseEntity<>(thesesPageDTO, HttpStatus.OK);
 	}
 
 	public ThesisDetailDTO responseThesisDetail(Thesis thesis) {
