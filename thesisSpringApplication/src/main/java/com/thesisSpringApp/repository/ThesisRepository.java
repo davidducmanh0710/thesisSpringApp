@@ -12,4 +12,6 @@ public interface ThesisRepository {
 
 	List<Thesis> getAllThesis(Map<String, String> params);
 
+	void deleteThesisById(int id);
+
 }

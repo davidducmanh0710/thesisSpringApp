@@ -7,6 +7,7 @@ package com.thesisSpringApp.pojo;
 import java.io.Serializable;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,13 +39,16 @@ public class ThesisCommitteeRate implements Serializable {
     @Column(name = "id")
     private Integer id;
     @JoinColumn(name = "committee_id", referencedColumnName = "id")
-    @ManyToOne
+	@ManyToOne(cascade = { CascadeType.DETACH,
+			CascadeType.MERGE, CascadeType.REFRESH })
     private Committee committeeId;
     @JoinColumn(name = "thesis_id", referencedColumnName = "id")
-    @ManyToOne
+	@ManyToOne(cascade = { CascadeType.DETACH,
+			CascadeType.MERGE, CascadeType.REFRESH })
     private Thesis thesisId;
     @JoinColumn(name = "status_id", referencedColumnName = "id")
-    @ManyToOne
+	@ManyToOne(cascade = { CascadeType.DETACH,
+			CascadeType.MERGE, CascadeType.REFRESH })
     private ThesisStatus statusId;
 
     public ThesisCommitteeRate() {

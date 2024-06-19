@@ -13,4 +13,7 @@ public interface ThesisService {
 	List<Thesis> getAllThesis(Map<String, String> params);
 
 	int totalPages();
+
+	void deleteThesisById(int id);
+
 }

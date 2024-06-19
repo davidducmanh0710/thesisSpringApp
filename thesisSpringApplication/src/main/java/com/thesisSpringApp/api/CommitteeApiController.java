@@ -7,14 +7,27 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
-import com.thesisSpringApp.Dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.thesisSpringApp.Dto.CommitteeDetailDTO;
+import com.thesisSpringApp.Dto.CommitteePageDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDto;
+import com.thesisSpringApp.Dto.NewCommitteeDto;
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
 import com.thesisSpringApp.pojo.Score;
@@ -35,7 +48,7 @@ import com.thesisSpringApp.service.ThesisUserService;
 import com.thesisSpringApp.service.UserService;
 
 @RestController
-@RequestMapping("/api/committees/")
+@RequestMapping("/api/committees")
 @CrossOrigin
 public class CommitteeApiController {
 
@@ -136,6 +149,16 @@ public class CommitteeApiController {
 		}
 
 		return committeeList;
+	}
+
+	@DeleteMapping(path = "/{committeeId}/")
+	@CrossOrigin
+	public ResponseEntity<Committee> deleteCommittee(
+			@PathVariable(value = "committeeId") int committeeId) {
+
+		committeeService.deleteCommitteeById(committeeId);
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
 	@GetMapping("/")

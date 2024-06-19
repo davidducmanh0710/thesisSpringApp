@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,27 +37,35 @@ public class AdminController {
 	private FacultyService facultyService;
 	private ThesisService thesisService;
 	private StatsService statsService;
+	private Environment env;
 
 	@Autowired
 	public AdminController(UserService userService, RoleService roleService,
-			FacultyService facultyService, ThesisService thesisService, StatsService statsService) {
+			FacultyService facultyService, ThesisService thesisService, StatsService statsService,
+			Environment env) {
 		super();
 		this.userService = userService;
 		this.roleService = roleService;
 		this.facultyService = facultyService;
 		this.thesisService = thesisService;
 		this.statsService = statsService;
+		this.env = env;
 	}
 
 	@ModelAttribute("formatterColumn")
 	public FormatterColumn formatterColumnFunct() {
-		return new FormatterColumn(this.roleService); // nhớ inject vào mới xài đc
+		return new FormatterColumn(this.roleService);
 	}
 
 	@GetMapping("/admin")
-	public String adminIndexView(Model model) {
-		List<User> users = userService.getAllUsers();
+	public String adminIndexView(Model model, @RequestParam Map<String, String> params) {
+		String p = params.getOrDefault("page", "1");
+		int totalPage = (int) Math.ceil((double) userService.countAllUser()
+				/ Long.valueOf(env.getProperty("admin.pageSize")));
+		List<User> users = userService.getAllUsersPaginator(p);
 		model.addAttribute("users", users);
+		model.addAttribute("totalPage", totalPage);
+		model.addAttribute("page", p);
 		return "admin";
 	}
 

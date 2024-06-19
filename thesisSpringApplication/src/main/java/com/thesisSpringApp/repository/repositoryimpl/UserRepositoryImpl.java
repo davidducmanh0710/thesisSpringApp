@@ -12,6 +12,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +36,10 @@ public class UserRepositoryImpl implements UserRepository {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private Environment env;
+
+
 	@Override
 	public boolean authUser(String username, String password) {
 		User user = this.getUserByUsername(username);
@@ -52,11 +57,41 @@ public class UserRepositoryImpl implements UserRepository {
 					"User not found with username: " + authentication.getName());
 	}
 
+	@Override
+	public Long countAllUser() {
+		Session session = factory.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root rUser = criteriaQuery.from(User.class);
+
+		criteriaQuery.select(criteriaBuilder.count(rUser));
+		Query query = session.createQuery(criteriaQuery);
+
+		return (Long) query.getSingleResult();
+
+	}
+
 
 	@Override
 	public List<User> getAllUsers() {
 		Session session = factory.getObject().getCurrentSession();
 		Query query = session.getNamedQuery("User.findAll");
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<User> getAllUsersPaginator(String p) {
+		Session session = factory.getObject().getCurrentSession();
+		Query query = session.getNamedQuery("User.findAll");
+
+		if (p != null) {
+			int pageSize = Integer.parseInt(env.getProperty("admin.pageSize").toString());
+			int start = (Integer.parseInt(p) - 1) * pageSize;
+			query.setFirstResult(start);
+			query.setMaxResults(pageSize);
+		}
+
 		return query.getResultList();
 	}
 

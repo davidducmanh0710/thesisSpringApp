@@ -46,4 +46,8 @@ public interface UserService extends UserDetailsService {
 	boolean isUserExistsByPhone(String value);
 
 	boolean isUserExistsByUniversityId(String value);
+
+	List<User> getAllUsersPaginator(String p);
+
+	Long countAllUser();
 }

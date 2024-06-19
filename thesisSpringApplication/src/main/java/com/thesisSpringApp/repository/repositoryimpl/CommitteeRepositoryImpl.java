@@ -1,12 +1,13 @@
 package com.thesisSpringApp.repository.repositoryimpl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import com.thesisSpringApp.pojo.CommitteeUser;
-import com.thesisSpringApp.pojo.Thesis;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -16,11 +17,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.thesisSpringApp.pojo.Committee;
+import com.thesisSpringApp.pojo.CommitteeUser;
+import com.thesisSpringApp.pojo.Score;
+import com.thesisSpringApp.pojo.ThesisCommitteeRate;
 import com.thesisSpringApp.repository.CommitteeRepository;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.thesisSpringApp.service.CommitteeService;
+import com.thesisSpringApp.service.CommitteeUserService;
+import com.thesisSpringApp.service.ScoreService;
+import com.thesisSpringApp.service.ThesisCommitteeRateService;
 
 @Repository
 @Transactional
@@ -31,6 +35,14 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 	private LocalSessionFactoryBean factory;
 	@Autowired
 	private Environment env;
+	@Autowired
+	private CommitteeService committeeService;
+	@Autowired
+	private CommitteeUserService committeeUserService;
+	@Autowired
+	private ThesisCommitteeRateService thesisCommitteeRateService;
+	@Autowired
+	private ScoreService scoreService;
 
 	@Override
 	public void saveCommittee(Committee committee) {
@@ -71,5 +83,30 @@ public class CommitteeRepositoryImpl implements CommitteeRepository {
 		}
 
 		return (List<Committee>) query.getResultList();
+	}
+
+	@Override
+	public void deleteCommitteeById(int id) {
+		Session session = factory.getObject().getCurrentSession();
+		Committee committee = this.committeeService.getCommitteeById(id);
+		if (committee != null) {
+			List<CommitteeUser> committeeUsers = this.committeeUserService
+					.getAllUsersOfCommittee(id);
+			if (committeeUsers != null)
+				for (int i = 0; i < committeeUsers.size(); i++)
+					session.delete(committeeUsers.get(i));
+			List<ThesisCommitteeRate> thesisCommitteeRate = this.thesisCommitteeRateService
+					.getThesisCommitteeRatesByCommitteeId(id);
+			if (thesisCommitteeRate != null)
+				for (int i = 0; i < thesisCommitteeRate.size(); i++)
+					session.delete(thesisCommitteeRate.get(i));
+			List<Score> scores = this.scoreService.getScoreOfCommitteeUserId(id);
+			if (scores != null)
+				for (int i = 0; i < scores.size(); i++)
+					session.delete(scores.get(i));
+
+			session.delete(committee);
+		}
+
 	}
 }

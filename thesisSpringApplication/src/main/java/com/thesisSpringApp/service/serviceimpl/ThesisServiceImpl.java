@@ -1,6 +1,11 @@
 package com.thesisSpringApp.service.serviceimpl;
 
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -9,11 +14,6 @@ import org.springframework.stereotype.Service;
 import com.thesisSpringApp.pojo.Thesis;
 import com.thesisSpringApp.repository.ThesisRepository;
 import com.thesisSpringApp.service.ThesisService;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @PropertySource("classpath:config.properties")
@@ -55,4 +55,10 @@ public class ThesisServiceImpl implements ThesisService {
 
 		return (int) Math.ceil((double) thesisRepository.getAllThesis(params).size() / Integer.parseInt(env.getProperty("theses.pageSize").toString()));
 	}
+
+	@Override
+	public void deleteThesisById(int id) {
+		thesisRepository.deleteThesisById(id);
+	}
+
 }

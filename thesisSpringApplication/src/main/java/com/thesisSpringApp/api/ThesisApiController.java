@@ -4,13 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.thesisSpringApp.Dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.thesisSpringApp.Dto.CriteriaDTO;
+import com.thesisSpringApp.Dto.ScoreDTO;
+import com.thesisSpringApp.Dto.ScoreDetailDTO;
+import com.thesisSpringApp.Dto.ThesesPageDTO;
+import com.thesisSpringApp.Dto.ThesisCommitteeDTO;
+import com.thesisSpringApp.Dto.ThesisDTO;
+import com.thesisSpringApp.Dto.ThesisDetailDTO;
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
 import com.thesisSpringApp.pojo.Criteria;
@@ -148,6 +164,16 @@ public class ThesisApiController {
 		return new ResponseEntity<>(thesisDetailDTO, HttpStatus.OK);
 	}
 
+	@DeleteMapping(path = "/{thesisId}/")
+	@CrossOrigin
+	public ResponseEntity<Thesis> deleteThesisId(
+			@PathVariable(value = "thesisId") int thesisId) {
+		Thesis thesis = thesisService.getThesisById(thesisId);
+		thesisService.deleteThesisById(thesisId);
+
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 	@PatchMapping(path = "/committee/", consumes = {
 			MediaType.APPLICATION_JSON_VALUE })
 	@CrossOrigin
@@ -204,4 +230,5 @@ public class ThesisApiController {
 			scoreService.saveAndUpdateScore(score);
 		}
 	}
+
 }
