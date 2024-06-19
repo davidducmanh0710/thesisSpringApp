@@ -1,6 +1,5 @@
 package com.thesisSpringApp.repository.repositoryimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,18 +16,37 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.thesisSpringApp.pojo.Score;
 import com.thesisSpringApp.pojo.Thesis;
+import com.thesisSpringApp.pojo.ThesisCommitteeRate;
+import com.thesisSpringApp.pojo.ThesisUser;
 import com.thesisSpringApp.repository.ThesisRepository;
+import com.thesisSpringApp.service.ScoreService;
+import com.thesisSpringApp.service.ThesisCommitteeRateService;
+import com.thesisSpringApp.service.ThesisUserService;
 
 @Repository
 @Transactional
 @PropertySource("classpath:config.properties")
 public class ThesisRepositoryImpl implements ThesisRepository {
 
-	@Autowired
 	private LocalSessionFactoryBean factory;
-	@Autowired
 	private Environment env;
+	private ThesisUserService thesisUserService;
+	private ThesisCommitteeRateService committeeRateService;
+	private ScoreService scoreService;
+
+	@Autowired
+	public ThesisRepositoryImpl(LocalSessionFactoryBean factory, Environment env,
+			ThesisUserService thesisUserService, ThesisCommitteeRateService committeeRateService,
+			ScoreService scoreService) {
+		super();
+		this.factory = factory;
+		this.env = env;
+		this.thesisUserService = thesisUserService;
+		this.committeeRateService = committeeRateService;
+		this.scoreService = scoreService;
+	}
 
 	@Override
 	public void saveAndUpdateThesis(Thesis thesis) {
@@ -38,6 +56,7 @@ public class ThesisRepositoryImpl implements ThesisRepository {
 		else
 			session.save(thesis);
 	}
+
 
 	@Override
 	public Thesis getThesisById(int id) {
@@ -71,5 +90,26 @@ public class ThesisRepositoryImpl implements ThesisRepository {
 		return (List<Thesis>) query.getResultList();
 	}
 
+	@Override
+	public void deleteThesisById(int id) {
+		Thesis thesis = this.getThesisById(id);
+		Session session = factory.getObject().getCurrentSession();
+		if (thesis != null) {
+			List<ThesisUser> thesisUser = thesisUserService.getUserByThesis(thesis);
+			if (thesisUser != null)
+				for (int i = 0; i < thesisUser.size(); i++)
+					session.delete(thesisUser.get(i));
+			ThesisCommitteeRate thesisCommitteeRate = this.committeeRateService
+					.getThesisCommitteeRateByThesisId(id);
+			if (thesisCommitteeRate != null)
+				session.delete(thesisCommitteeRate);
+			List<Score> scores = scoreService.getScoresByThesisId(id);
+			if (scores != null)
+				for (int i = 0; i < scores.size(); i++)
+					session.delete(scores.get(i));
+
+		}
+		session.delete(thesis);
+	}
 
 }

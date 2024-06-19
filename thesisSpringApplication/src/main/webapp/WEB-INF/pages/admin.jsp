@@ -3,13 +3,13 @@
 
 <style>
 body {
-	padding-top: 70px; 
+	padding-top: 70px;
 }
-
 </style>
 
 <div class="container">
 	<div>
+	    <c:url value="/admin" var="pageUrl" />
 		<c:url value="/admin/addUser" var="addUserUrl" />
 		<c:url value="/admin/updateUser" var="updateUserUrl" />
 		
@@ -42,14 +42,23 @@ body {
 
 
 					<td><a href="<c:url value="/admin/updateUser/${u.id}" />"
-						class="btn btn-primary mt-1 mb-1">Update</a>
-						<a onclick="confirmDeleteProduct()" href="<c:url value="/admin/deleteUser/${u.id}" />"
+						class="btn btn-primary mt-1 mb-1">Update</a> <a
+						onclick="confirmDeleteProduct()"
+						href="<c:url value="/admin/deleteUser/${u.id}" />"
 						class="btn btn-danger mt-1 mb-1">Delete</a></td>
 				</tr>
 			</c:forEach>
 
+
 		</tbody>
 	</table>
+	<ul class="pagination">
+		<li class="page-item"><a class="page-link" href="${pageUrl}?page=${page-1}">Previous</a></li>
+		<c:forEach begin="1" end="${totalPage}" var="t">
+			<li class="page-item"><a class="page-link" href="${pageUrl}?page=${t}">${t}</a></li>		
+		</c:forEach>
+		<li class="page-item"><a class="page-link" href="${pageUrl}?page=${page+1}">Next</a></li>
+	</ul>
 </div>
 
 <script>

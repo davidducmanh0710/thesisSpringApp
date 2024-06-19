@@ -1,10 +1,8 @@
 package com.thesisSpringApp.service;
 
-import com.thesisSpringApp.pojo.CommitteeUser;
-import com.thesisSpringApp.pojo.Score;
-import com.thesisSpringApp.pojo.Thesis;
-
 import java.util.List;
+
+import com.thesisSpringApp.pojo.Score;
 
 public interface ScoreService {
     void saveAndUpdateScore(Score score);
@@ -14,4 +12,7 @@ public interface ScoreService {
     List<Score> getScoresByThesisId(int thesisId);
 
     boolean isScoring(int thesisId, int committeeUserId);
+
+	List<Score> getScoreOfCommitteeUserId(int committeeUserId);
+
 }

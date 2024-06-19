@@ -67,6 +67,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public List<User> getAllUsersPaginator(String p) {
+		return userRepository.getAllUsersPaginator(p);
+	}
+
+	@Override
+	public Long countAllUser() {
+		return userRepository.countAllUser();
+	}
+
+	@Override
 	public void saveUser(User user) {
 		userRepository.saveUser(user);
 	}
@@ -190,5 +200,6 @@ public class UserServiceImpl implements UserService {
 	public boolean isUserExistsByUniversityId(String uid) {
 		return userRepository.isUserExistsByUniversityId(uid);
 	}
+
 
 }

@@ -36,4 +36,8 @@ public interface UserRepository {
 	boolean isUserExistsByPhone(String phone);
 
 	boolean isUserExistsByUniversityId(String uid);
+
+	List<User> getAllUsersPaginator(String p);
+
+	Long countAllUser();
 }

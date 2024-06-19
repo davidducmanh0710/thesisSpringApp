@@ -1,12 +1,7 @@
 package com.thesisSpringApp.repository.repositoryimpl;
 
-import com.thesisSpringApp.pojo.Score;
-import com.thesisSpringApp.repository.ScoreRepository;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -14,8 +9,15 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.thesisSpringApp.pojo.Score;
+import com.thesisSpringApp.repository.ScoreRepository;
 
 @Repository
 @Transactional
@@ -98,4 +100,25 @@ public class ScoreRepositoryImpl implements ScoreRepository {
 
         return (List<Score>) query.getResultList();
     }
+
+	@Override
+	public List<Score> getScoreOfCommitteeUserId(int committeeUserId) {
+		Session session = factory.getObject().getCurrentSession();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<Score> criteriaQuery = criteriaBuilder.createQuery(Score.class);
+		Root<Score> root = criteriaQuery.from(Score.class);
+
+		criteriaQuery.select(root);
+
+		List<Predicate> predicates = new ArrayList<>();
+		if (committeeUserId > 0) {
+			predicates.add(criteriaBuilder.equal(root.get("committeeUserId"), committeeUserId));
+		}
+
+		criteriaQuery.where(criteriaBuilder.and(predicates.toArray(Predicate[]::new)));
+
+		Query query = session.createQuery(criteriaQuery);
+
+		return (List<Score>) query.getResultList();
+	}
 }

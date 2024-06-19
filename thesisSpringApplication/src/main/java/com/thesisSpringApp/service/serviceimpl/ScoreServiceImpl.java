@@ -1,12 +1,13 @@
 package com.thesisSpringApp.service.serviceimpl;
 
-import com.thesisSpringApp.pojo.Score;
-import com.thesisSpringApp.repository.ScoreRepository;
-import com.thesisSpringApp.service.ScoreService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.thesisSpringApp.pojo.Score;
+import com.thesisSpringApp.repository.ScoreRepository;
+import com.thesisSpringApp.service.ScoreService;
 
 @Service
 public class ScoreServiceImpl implements ScoreService {
@@ -39,4 +40,9 @@ public class ScoreServiceImpl implements ScoreService {
 
         return true;
     }
+
+	@Override
+	public List<Score> getScoreOfCommitteeUserId(int committeeUserId) {
+		return scoreRepository.getScoreOfCommitteeUserId(committeeUserId);
+	}
 }
