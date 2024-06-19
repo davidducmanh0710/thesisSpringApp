@@ -23,7 +23,7 @@ export let endpoints = {
 	committeesOfUser: "/api/users/committees/",
 	thesesOfLecturer: "/api/users/lecturer/theses/",
 	score: "/api/theses/scores/",
-	closeCommittee: (committeeId) => `/api/committees/${committeeId}/close/`,
+	committeeDetail: (committeeId) => `/api/committees/${committeeId}/`,
 	printPDF: "/api/pdf/generate/",
 	payment: "/api/payment/",
 	checkPayment: (orderId) => `/api/payment/check-payment/${orderId}/`,

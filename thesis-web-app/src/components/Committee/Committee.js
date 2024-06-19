@@ -9,7 +9,13 @@ import {
 	isLecturer,
 } from "../Common/Common";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { Alert, Pagination } from "@mui/material";
+import {
+	Alert,
+	Dialog,
+	DialogActions,
+	DialogTitle,
+	Pagination,
+} from "@mui/material";
 
 function Committee() {
 	const [committees, setCommittees] = useState([]);
@@ -22,6 +28,8 @@ function Committee() {
 	});
 	const [page, setPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
+	const [openDialog, setOpenDialog] = useState(false);
+	const [committeeId, setCommitteeId] = useState();
 
 	const loadCommittee = useCallback(async () => {
 		try {
@@ -58,7 +66,7 @@ function Committee() {
 
 		try {
 			const response = await authAPI().patch(
-				endpoints["closeCommittee"](committeeId)
+				endpoints["committeeDetail"](committeeId)
 			);
 
 			if (response.status === 200) {
@@ -91,6 +99,53 @@ function Committee() {
 		loadingDispatch({ type: "unloading" });
 	};
 
+	const handleDeleteCommittee = async (committeeId) => {
+		loadingDispatch({ type: "loading" });
+
+		try {
+			const response = await authAPI().delete(
+				endpoints["committeeDetail"](committeeId)
+			);
+
+			if (response.status === 204) {
+				setData({
+					message: "Thành công",
+					severity: "success",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				loadCommittee();
+			}
+		} catch {
+			setData({
+				message: "Thất bại",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
+		}
+
+		loadingDispatch({ type: "unloading" });
+	};
+
+	const handleCloseDialog = () => {
+		setOpenDialog(false);
+	};
+
+	const handleSuccessDialog = () => {
+		setOpenDialog(false);
+		handleDeleteCommittee(committeeId);
+	};
+
 	return (
 		<>
 			<CustomerSnackbar
@@ -101,6 +156,24 @@ function Committee() {
 
 			{isAcademicManager(user) && (
 				<>
+					<Dialog
+						open={openDialog}
+						onClose={handleCloseDialog}
+						aria-labelledby="alert-dialog-title"
+						aria-describedby="alert-dialog-description">
+						<DialogTitle id="alert-dialog-title">
+							<Alert severity="warning">
+								Bạn có chắc chắn xóa hội đồng không?
+							</Alert>
+						</DialogTitle>
+						<DialogActions>
+							<Button onClick={handleSuccessDialog}>Đồng ý</Button>
+							<Button variant="danger" onClick={handleCloseDialog} autoFocus>
+								Hủy
+							</Button>
+						</DialogActions>
+					</Dialog>
+
 					<Link to="/add-committee" className="btn btn-success mt-4">
 						Thêm hội đồng
 					</Link>
@@ -146,13 +219,13 @@ function Committee() {
 									</Row>
 
 									{isAcademicManager(user) && (
-										<>
+										<div className="ms-auto">
 											{committee.active ? (
 												<>
 													<Button
 														onClick={() => handleCloseCommittee(committee.id)}
-														variant="danger"
-														className="my-2 ms-auto">
+														variant="success"
+														className="my-2">
 														Đóng hội đồng
 													</Button>
 												</>
@@ -161,12 +234,21 @@ function Committee() {
 													<Button
 														onClick={() => handleCloseCommittee(committee.id)}
 														variant="primary"
-														className="my-2 ms-auto">
+														className="my-2">
 														Mở hội đồng
 													</Button>
 												</>
 											)}
-										</>
+											<Button
+												onClick={() => {
+													setCommitteeId(committee.id);
+													setOpenDialog(true);
+												}}
+												variant="danger"
+												className="my-2 ms-3">
+												Xóa
+											</Button>
+										</div>
 									)}
 								</Stack>
 							</Col>
