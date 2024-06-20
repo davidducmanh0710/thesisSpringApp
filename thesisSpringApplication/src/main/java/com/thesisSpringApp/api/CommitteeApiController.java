@@ -206,7 +206,8 @@ public class CommitteeApiController {
 				// Xem khóa luận đã được chấm chưa
 				if (!t.getStatusId().getId().equals(3)) {
 					List<Score> scores = scoreService.getScoresByThesisId(thesis.getId());
-					int committeeUserCount = committeeUserService.getAllUsersOfCommittee(committee.getId()).size();
+					int committeeUserCount = committeeUserService
+							.getAllUsersOfCommittee(committee.getId()).size();
 					int criteriaCount = criteriaService.getCriteriaList().size();
 
 					// Tính điểm

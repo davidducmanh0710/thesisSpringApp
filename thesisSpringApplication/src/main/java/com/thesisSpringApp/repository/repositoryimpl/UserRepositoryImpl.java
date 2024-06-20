@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.Validator;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class UserRepositoryImpl implements UserRepository {
 
 	@Autowired
 	private Environment env;
+
+	@Autowired
+	private Validator validator;
 
 
 	@Override
@@ -234,6 +238,7 @@ public class UserRepositoryImpl implements UserRepository {
 			return true;
 		return false;
 	}
+
 
 
 }

@@ -4,25 +4,33 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.thesisSpringApp.customAnnotation.UniqueValueField;
 import com.thesisSpringApp.service.UserService;
 
-
+@Component
 public class UniqueValueFiledValidatorImpl implements ConstraintValidator<UniqueValueField, String> {
 
 	@Autowired
-	private UserService userService;
+	public UserService userService;
+
 
 	private String fieldName;
 
 	@Override
 	public void initialize(UniqueValueField constraintAnnotation) {
 		this.fieldName = constraintAnnotation.fieldName();
+		userService = ServiceUtils.getUserService();
 	}
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
+
+
+		if (value == null || value.isEmpty() || value.equals(""))
+			return true;
+
 
 		boolean isUnique = false;
 		switch (fieldName) {

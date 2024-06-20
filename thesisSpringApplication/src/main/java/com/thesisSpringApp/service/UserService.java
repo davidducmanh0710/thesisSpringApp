@@ -50,4 +50,5 @@ public interface UserService extends UserDetailsService {
 	List<User> getAllUsersPaginator(String p);
 
 	Long countAllUser();
+
 }

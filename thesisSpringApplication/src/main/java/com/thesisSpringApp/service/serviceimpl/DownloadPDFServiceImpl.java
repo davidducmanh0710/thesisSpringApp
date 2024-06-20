@@ -5,6 +5,8 @@ import java.io.File;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import com.itextpdf.io.exceptions.IOException;
@@ -32,42 +34,44 @@ import com.thesisSpringApp.service.ThesisService;
 import com.thesisSpringApp.service.ThesisUserService;
 
 @Service
+@PropertySource("classpath:config.properties")
 public class DownloadPDFServiceImpl implements DownloadPDFService {
-
-	public static File fontvuArialFile = new File(
-			"D:/workspace/thesisSpringApp/thesisSpringApplication/src/main/webapp/resources/fonts/vuArial.ttf");
-	public static File fontvuArialBoldFile = new File(
-			"D:/workspace/thesisSpringApp/thesisSpringApplication/src/main/webapp/resources/fonts/vuArialBold.ttf");
 
 	private ThesisService thesisService;
 	private CommitteeService committeeService;
 	private ThesisUserService thesisUserService;
 	private CommitteeUserService committeeUserService;
 	private ScoreService scoreService;
+	private Environment env;
 
 	@Autowired
 	public DownloadPDFServiceImpl(ThesisService thesisService,
 			CommitteeService committeeService,
 			ThesisUserService thesisUserService, CommitteeUserService committeeUserService,
-			ScoreService scoreService) {
+			ScoreService scoreService, Environment environment) {
 		super();
 		this.thesisService = thesisService;
 		this.committeeService = committeeService;
 		this.thesisUserService = thesisUserService;
 		this.committeeUserService = committeeUserService;
 		this.scoreService = scoreService;
+		this.env = environment;
 	}
+
 
 	@Override
 	public byte[] generatePdf(PDFInitDto pdfInitDto) throws IOException, java.io.IOException {
+
+		File fontvuArialFile = new File(env.getProperty("spring.fonts.fontvuArialFile"));
+		File fontvuArialBoldFile = new File(
+				env.getProperty("spring.fonts.fontvuArialBoldFile"));
+
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 		PdfWriter writer = new PdfWriter(byteArrayOutputStream);
 		com.itextpdf.kernel.pdf.PdfDocument pdfDoc = new com.itextpdf.kernel.pdf.PdfDocument(
 				writer);
 		Document document = new Document(pdfDoc);
 		PdfFont boldFont = PdfFontFactory.createFont("Helvetica-Bold");
-//		PdfFont font = PdfFontFactory.createFont(StandardFonts.TIMES_ROMAN,
-//				PdfEncodings.UTF8);
 
 		PdfFont vuArialfont = PdfFontFactory.createFont(
 				fontvuArialFile.getAbsolutePath(),
