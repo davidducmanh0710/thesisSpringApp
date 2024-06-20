@@ -185,7 +185,7 @@ public class CommitteeApiController {
 		return new ResponseEntity<>(committees, HttpStatus.OK);
 	}
 
-	@PatchMapping("/{committeeId}/close/")
+	@PatchMapping("/{committeeId}/")
 	@CrossOrigin
 	public ResponseEntity<List<CommitteeDetailDTO>> closeCommittee(
 			@PathVariable(value = "committeeId") int committeeId) throws MessagingException {

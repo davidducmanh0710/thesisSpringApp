@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { Col, Row } from "react-bootstrap";
+import { Accordion, Col, Row } from "react-bootstrap";
 import "./ChatBox.css";
 import "../Common/Common.css";
 import { Avatar, Button, TextField } from "@mui/material";
@@ -15,12 +15,15 @@ import {
 	where,
 } from "firebase/firestore";
 import { db } from "../../configs/firebase";
-import { type } from "@testing-library/user-event/dist/type";
 
 function ChatBox() {
 	const [user] = useContext(UserContext);
 	const [, loadingDispatch] = useContext(LoadingContext);
-	const [users, setUsers] = useState([]);
+	const [receivers, setReceivers] = useState({
+		academicManagers: [],
+		lecturers: [],
+		students: [],
+	});
 	const [receiver, setReceiver] = useState(null);
 	const [message, setMessage] = useState("");
 	const [messages, setMessages] = useState([]);
@@ -32,11 +35,12 @@ function ChatBox() {
 	const loadUsers = useCallback(async () => {
 		const response = await API.get(endpoints["users"]);
 		if (response.status === 200) {
-			setUsers(
-				response.data.filter(
+			setReceivers({
+				...response.data,
+				students: response.data.students.filter(
 					(u) => u.userUniversityId !== user.user.useruniversityid
-				)
-			);
+				),
+			});
 		}
 	}, []);
 
@@ -98,7 +102,6 @@ function ChatBox() {
 	useEffect(() => {
 		scroll.current.scrollTo({
 			top: scroll.current.scrollHeight,
-			behavior: "smooth",
 		});
 	}, [messages]);
 
@@ -134,7 +137,6 @@ function ChatBox() {
 		setMessage("");
 		scroll.current.scrollTo({
 			top: scroll.current.scrollHeight,
-			behavior: "smooth",
 		});
 	};
 
@@ -149,26 +151,75 @@ function ChatBox() {
 						</div>
 					</div>
 
-					{users.size !== 0 && (
-						<div className="mt-4 list">
-							{users.map((u) => (
-								<div
-									className="receiver"
-									key={u.userUniversityId}
-									onClick={() =>
-										getReceiver(u.fullName, u.userUniversityId, u.avatar)
-									}>
-									<hr />
-									<div className="ps-2 d-flex">
-										<Avatar alt="Remy Sharp" src={u.avatar} />
-										<div className="d-flex align-self-center ms-3 fs-5">
-											{u.fullName}
+					{receivers && (
+						<Accordion className="mt-4">
+							<Accordion.Item eventKey="0">
+								<Accordion.Header>Giáo vụ</Accordion.Header>
+								<Accordion.Body className="list">
+									{receivers.academicManagers.map((u) => (
+										<div className="py-2">
+											<div
+												className="receiver box-shadow border-radius p-2 d-flex"
+												id={u.userUniversityId}
+												key={u.userUniversityId}
+												onClick={() => {
+													getReceiver(u.fullName, u.userUniversityId, u.avatar);
+													window.location.hash = u.userUniversityId;
+												}}>
+												<Avatar alt="Remy Sharp" src={u.avatar} />
+												<div className="d-flex align-self-center ms-3 fs-5">
+													{u.fullName}
+												</div>
+											</div>
 										</div>
-									</div>
-									<hr />
-								</div>
-							))}
-						</div>
+									))}
+								</Accordion.Body>
+							</Accordion.Item>
+							<Accordion.Item eventKey="1">
+								<Accordion.Header>Giảng viên</Accordion.Header>
+								<Accordion.Body className="list">
+									{receivers.lecturers.map((u) => (
+										<div className="py-2">
+											<div
+												className="receiver box-shadow border-radius p-2 d-flex"
+												key={u.userUniversityId}
+												id={u.userUniversityId}
+												onClick={() => {
+													getReceiver(u.fullName, u.userUniversityId, u.avatar);
+													window.location.hash = u.userUniversityId;
+												}}>
+												<Avatar alt="Hình ảnh" src={u.avatar} />
+												<div className="d-flex align-self-center ms-3 fs-5">
+													{u.fullName}
+												</div>
+											</div>
+										</div>
+									))}
+								</Accordion.Body>
+							</Accordion.Item>
+							<Accordion.Item eventKey="2">
+								<Accordion.Header>Sinh viên</Accordion.Header>
+								<Accordion.Body className="list">
+									{receivers.students.map((u) => (
+										<div className="py-2">
+											<div
+												className="receiver box-shadow border-radius p-2 d-flex"
+												key={u.userUniversityId}
+												id={u.userUniversityId}
+												onClick={() => {
+													getReceiver(u.fullName, u.userUniversityId, u.avatar);
+													window.location.hash = u.userUniversityId;
+												}}>
+												<Avatar alt="Hình ảnh" src={u.avatar} />
+												<div className="d-flex align-self-center ms-3 fs-5">
+													{u.fullName}
+												</div>
+											</div>
+										</div>
+									))}
+								</Accordion.Body>
+							</Accordion.Item>
+						</Accordion>
 					)}
 				</Col>
 
@@ -202,7 +253,6 @@ function ChatBox() {
 								</div>
 							</div>
 						))}
-						{/* <span ref={scroll}></span> */}
 					</div>
 
 					<Row className="footer" hidden={hidden}>

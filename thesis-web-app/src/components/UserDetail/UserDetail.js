@@ -26,8 +26,6 @@ function UserDetail() {
 		severity: "success",
 	});
 
-	console.log(cookies.load("order_id"));
-
 	useEffect(() => {
 		document.title = "Thông tin cá nhân";
 	}, []);

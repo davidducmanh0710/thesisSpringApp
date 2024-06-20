@@ -11,11 +11,15 @@
 }
 
 .list {
-    height: 80%;
+    max-height: 320px;
     overflow: hidden auto;
 }
 
 .receiver:hover {
+    background-color: #f0f0f0;
+}
+
+.receiver:target {
     background-color: #f0f0f0;
 }
 

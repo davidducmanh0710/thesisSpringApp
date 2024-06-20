@@ -114,20 +114,33 @@ public class UserApiController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<UserDTO>> getUsers() {
+    public ResponseEntity<UsersDTO> getUsers() {
         List<User> users = userService.getAllUsers();
 
-        List<UserDTO> userDTOs = new ArrayList<>();
+        UsersDTO usersDTO = new UsersDTO();
+        usersDTO.setAcademicManagers(new ArrayList<>());
+        usersDTO.setLecturers(new ArrayList<>());
+        usersDTO.setStudents(new ArrayList<>());
         for (User user : users) {
             UserDTO userDTO = new UserDTO();
             userDTO.setFullName(user.getLastName() + " " + user.getFirstName());
             userDTO.setUserUniversityId(user.getUseruniversityid());
             userDTO.setAvatar(user.getAvatar());
 
-            userDTOs.add(userDTO);
+            switch (user.getRoleId().getName()) {
+                case "ROLE_GIAOVU":
+                    usersDTO.getAcademicManagers().add(userDTO);
+                    break;
+                case "ROLE_GIANGVIEN":
+                    usersDTO.getLecturers().add(userDTO);
+                    break;
+                case "ROLE_SINHVIEN":
+                    usersDTO.getStudents().add(userDTO);
+                    break;
+            }
         }
 
-        return new ResponseEntity<>(userDTOs, HttpStatus.OK);
+        return new ResponseEntity<>(usersDTO, HttpStatus.OK);
     }
 
     @GetMapping("/role/get2RoleList/")

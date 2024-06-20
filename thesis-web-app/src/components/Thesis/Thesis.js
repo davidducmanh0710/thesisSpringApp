@@ -4,8 +4,19 @@ import { Button, Col, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import API, { authAPI, endpoints } from "../../configs/API";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import { isAcademicManager, isLecturer, isStudent } from "../Common/Common";
-import { Alert, Pagination } from "@mui/material";
+import {
+	CustomerSnackbar,
+	isAcademicManager,
+	isLecturer,
+	isStudent,
+} from "../Common/Common";
+import {
+	Alert,
+	Dialog,
+	DialogActions,
+	DialogTitle,
+	Pagination,
+} from "@mui/material";
 
 function Thesis() {
 	const [theses, setTheses] = useState([]);
@@ -13,6 +24,13 @@ function Thesis() {
 	const [, loadingDispatch] = useContext(LoadingContext);
 	const [page, setPage] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
+	const [openDialog, setOpenDialog] = useState(false);
+	const [thesisId, setThesisId] = useState();
+	const [open, setOpen] = useState(false);
+	const [data, setData] = useState({
+		message: "Xóa khóa luận thành công",
+		severity: "success",
+	});
 
 	const loadTheses = useCallback(async () => {
 		let response;
@@ -40,8 +58,61 @@ function Thesis() {
 		loadingDispatch({ type: "unloading" });
 	}, [loadTheses, loadingDispatch]);
 
+	const handleDeleteThesis = async (thesisId) => {
+		loadingDispatch({ type: "loading" });
+
+		try {
+			const response = await authAPI().delete(
+				endpoints["thesisDetail"](thesisId)
+			);
+
+			if (response.status === 204) {
+				setData({
+					message: "Xóa khóa luận thành công",
+					severity: "success",
+				});
+
+				setOpen(true);
+
+				setTimeout(() => {
+					setOpen(false);
+				}, 2000);
+
+				loadTheses();
+			}
+		} catch {
+			setData({
+				message: "Xóa khóa luận thất bại",
+				severity: "error",
+			});
+
+			setOpen(true);
+
+			setTimeout(() => {
+				setOpen(false);
+			}, 2000);
+		}
+
+		loadingDispatch({ type: "unloading" });
+	};
+
+	const handleCloseDialog = () => {
+		setOpenDialog(false);
+	};
+
+	const handleSuccessDialog = () => {
+		setOpenDialog(false);
+		handleDeleteThesis(thesisId);
+	};
+
 	return (
 		<>
+			<CustomerSnackbar
+				open={open}
+				message={data.message}
+				severity={data.severity}
+			/>
+
 			{isAcademicManager(user) && (
 				<>
 					<Link to="add-thesis" className="btn btn-success mt-4">
@@ -53,6 +124,23 @@ function Thesis() {
 						className="mt-4"
 						onChange={(event, value) => setPage(value)}
 					/>
+					<Dialog
+						open={openDialog}
+						onClose={handleCloseDialog}
+						aria-labelledby="alert-dialog-title"
+						aria-describedby="alert-dialog-description">
+						<DialogTitle id="alert-dialog-title">
+							<Alert severity="warning">
+								Bạn có chắc chắn xóa khóa luận không?
+							</Alert>
+						</DialogTitle>
+						<DialogActions>
+							<Button onClick={handleSuccessDialog}>Đồng ý</Button>
+							<Button variant="danger" onClick={handleCloseDialog} autoFocus>
+								Hủy
+							</Button>
+						</DialogActions>
+					</Dialog>
 				</>
 			)}
 
@@ -108,7 +196,14 @@ function Thesis() {
 													Xem chi tiết
 												</Link>
 												{isAcademicManager(user) && (
-													<Button variant="danger">Xóa</Button>
+													<Button
+														variant="danger"
+														onClick={() => {
+															setThesisId(thesis.id);
+															setOpenDialog(true);
+														}}>
+														Xóa
+													</Button>
 												)}
 											</Stack>
 										</Col>
