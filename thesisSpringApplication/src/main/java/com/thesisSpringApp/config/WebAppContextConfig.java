@@ -38,6 +38,7 @@ import com.thesisSpringApp.formatters.RoleFormatter;
 		"com.thesisSpringApp.service",
 		"com.thesisSpringApp.api",
 		"com.thesisSpringApp.config",
+		"com.thesisSpringApp.customAnnotation"
 })
 public class WebAppContextConfig implements WebMvcConfigurer {
 
@@ -102,12 +103,10 @@ public class WebAppContextConfig implements WebMvcConfigurer {
 	public Validator getValidator() {
 		return validator();
 	}
-	
+
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addFormatter(new RoleFormatter());
 		registry.addFormatter(new FacultyFormatter());
 	}
-
-
 }
