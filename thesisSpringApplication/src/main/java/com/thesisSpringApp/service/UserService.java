@@ -51,6 +51,4 @@ public interface UserService extends UserDetailsService {
 
 	Long countAllUser();
 
-	void updateUserPassword(User user, String newPassword);
-
 }

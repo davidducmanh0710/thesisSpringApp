@@ -2,9 +2,12 @@ package com.thesisSpringApp.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.MessagingException;
+import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
+import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.thesisSpringApp.customAnnotation.validationGroups.UniqueFieldsGroups.CreateGroup;
 import com.thesisSpringApp.formatters.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
 import com.thesisSpringApp.pojo.Role;
@@ -38,6 +42,9 @@ public class AdminController {
 	private ThesisService thesisService;
 	private StatsService statsService;
 	private Environment env;
+
+	@Autowired
+	private Validator validator;
 
 	@Autowired
 	public AdminController(UserService userService, RoleService roleService,
@@ -111,8 +118,17 @@ public class AdminController {
 			BindingResult result)
 			throws MessagingException {
 
-		if (result.hasErrors())
+		Set<ConstraintViolation<User>> violations = validator.validate(user,
+				CreateGroup.class);
+		if (violations.isEmpty()) {
+			userService.saveUser(user);
+		} else {
+			for (ConstraintViolation<User> violation : violations)
+				model.addAttribute("errMsg", violation.getMessage());
+
 			return "addOrUpdateUser";
+		}
+
 
 		Role role = roleService.getRoleById(user.getRoleId().getId());
 		Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());

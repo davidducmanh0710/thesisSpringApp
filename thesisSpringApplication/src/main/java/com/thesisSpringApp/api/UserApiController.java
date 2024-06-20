@@ -34,6 +34,7 @@ import com.thesisSpringApp.Dto.UserDTO;
 import com.thesisSpringApp.Dto.UserListsByRoleDTO;
 import com.thesisSpringApp.Dto.UserLoginDto;
 import com.thesisSpringApp.Dto.UsernameDTO;
+import com.thesisSpringApp.Dto.UsersDTO;
 import com.thesisSpringApp.JwtComponents.JwtService;
 import com.thesisSpringApp.pojo.Committee;
 import com.thesisSpringApp.pojo.CommitteeUser;
@@ -116,6 +117,7 @@ public class UserApiController {
     @GetMapping("/")
     public ResponseEntity<UsersDTO> getUsers() {
         List<User> users = userService.getAllUsers();
+
 
         UsersDTO usersDTO = new UsersDTO();
         usersDTO.setAcademicManagers(new ArrayList<>());
@@ -400,7 +402,8 @@ public class UserApiController {
         }
 
         if (otpService.validateOtp(user, password.getOtp_code())) {
-			userService.updateUserPassword(user, passwordEncoder.encode(password.getPassword()));
+			user.setPassword(passwordEncoder.encode(password.getPassword()));
+			userService.saveUser(user);
             otpService.deleteOtp(user);
 
             return new ResponseEntity<>(HttpStatus.OK);

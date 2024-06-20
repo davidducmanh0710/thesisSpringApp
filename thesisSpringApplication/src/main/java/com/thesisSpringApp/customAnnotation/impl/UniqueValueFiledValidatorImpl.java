@@ -13,7 +13,7 @@ import com.thesisSpringApp.service.UserService;
 public class UniqueValueFiledValidatorImpl implements ConstraintValidator<UniqueValueField, String> {
 
 	@Autowired
-	private UserService userService;
+	public UserService userService;
 
 
 	private String fieldName;
@@ -27,28 +27,26 @@ public class UniqueValueFiledValidatorImpl implements ConstraintValidator<Unique
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 
-		System.out.println(value);
 
 		if (value == null || value.isEmpty() || value.equals(""))
 			return true;
 
-		UserService u = this.userService;
 
 		boolean isUnique = false;
 		switch (fieldName) {
 		case "email":
-			isUnique = !u.isUserExistsByEmail(value);
+			isUnique = !userService.isUserExistsByEmail(value);
 			break;
 		case "phone":
-			isUnique = !u.isUserExistsByPhone(value);
+			isUnique = !userService.isUserExistsByPhone(value);
 			break;
 		case "useruniversityid":
-			isUnique = !u.isUserExistsByUniversityId(value);
+			isUnique = !userService.isUserExistsByUniversityId(value);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown field name: " + fieldName);
 		}
 
-		return value != null && isUnique;
+		return isUnique;
 	}
 }
