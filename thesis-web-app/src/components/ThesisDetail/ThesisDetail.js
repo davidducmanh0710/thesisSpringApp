@@ -57,31 +57,30 @@ function ThesisDetail() {
 		loadingDispatch({ type: "unloading" });
 	}, [loadThesis, loadCommittees, loadingDispatch, patch]);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
 
 	const addCommittee = async () => {
 		loadingDispatch({ type: "loading" });
-
 		if (committee === null || thesis.thesis.score > 0) {
-			if (committee === null)
-				setData({
-					message: "Chưa chọn hội đồng",
-					severity: "error",
-				});
+			if (committee === null) showSnackbar("Vui lòng chọn hội đồng", "error");
 
 			if (thesis.thesis.score > 0)
-				setData({
-					message: "Khóa luận đã được chấm điểm",
-					severity: "error",
-				});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+				showSnackbar("Khóa luận đã được chấm điểm", "error");
 		} else {
 			const response = await authAPI().patch(
 				endpoints["addOrUpdateCommitteeForThesis"],
@@ -92,23 +91,12 @@ function ThesisDetail() {
 			);
 
 			if (response.status === 200) {
-				setData({
-					message: "Thêm hội đồng vào khóa luận thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Thêm hội đồng vào khóa luận thành công", "success");
 				setThesis(response.data);
 				loadCommittees();
 				setHidden(true);
 			}
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 

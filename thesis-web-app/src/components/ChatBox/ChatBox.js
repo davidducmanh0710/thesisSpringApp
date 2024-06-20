@@ -45,6 +45,7 @@ function ChatBox() {
 	}, []);
 
 	useEffect(() => {
+		document.title = "Chat";
 		loadUsers();
 	}, [loadUsers]);
 

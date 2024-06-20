@@ -373,7 +373,7 @@ public class UserApiController {
         if (otpService.validateOtp(user, password.getOtp_code())) {
             user.setPassword(passwordEncoder.encode(password.getPassword()));
             userService.saveUser(user);
-            otpService.deleteOtp(user);
+//            otpService.deleteOtp(user);
 
             return new ResponseEntity<>(HttpStatus.OK);
         }

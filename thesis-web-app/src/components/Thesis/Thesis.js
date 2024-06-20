@@ -58,41 +58,33 @@ function Thesis() {
 		loadingDispatch({ type: "unloading" });
 	}, [loadTheses, loadingDispatch]);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const handleDeleteThesis = async (thesisId) => {
 		loadingDispatch({ type: "loading" });
-
 		try {
 			const response = await authAPI().delete(
 				endpoints["thesisDetail"](thesisId)
 			);
 
 			if (response.status === 204) {
-				setData({
-					message: "Xóa khóa luận thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Xóa khóa luận thành công", "success");
 				loadTheses();
 			}
 		} catch {
-			setData({
-				message: "Xóa khóa luận thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Xóa khóa luận thất bại", "error");
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 

@@ -23,7 +23,7 @@
 				<li class="nav-item"><a class="nav-link" href="${statsUrl}">Stats</a></li>
 				
 
-				<li class="nav-item"><a class="nav-link" href="/thesisSpringApplication/logout">Logout</a></li>
+				<li class="nav-item"><a class="nav-link" href="/thesisSpringApplication_war/logout">Logout</a></li>
 			</ul>
 		</div>
 	</div>

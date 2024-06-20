@@ -24,6 +24,19 @@ function Login() {
 		document.title = "Đăng nhập";
 	}, []);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const login = async (event) => {
 		event.preventDefault();
 		setLoading(true);
@@ -41,16 +54,7 @@ function Login() {
 				const response = await authAPI().get(endpoints["currentUser"]);
 
 				if (response.status === 200) {
-					setData({
-						message: "Đăng nhập thành công",
-						severity: "success",
-					});
-
-					setOpen(true);
-
-					setTimeout(() => {
-						setOpen(false);
-					}, 2000);
+					showSnackbar("Đăng nhập thành công", "success");
 
 					userDispatch({ type: "login", payload: response.data });
 					cookies.save("user", response.data, { maxAge: 60 * 30 });
@@ -64,16 +68,7 @@ function Login() {
 				}
 			}, 200);
 		} catch {
-			setData({
-				message: "Tài khoản hoặc mật khẩu không đúng!",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Tài khoản hoặc mật khẩu không đúng!", "error");
 		}
 		setLoading(false);
 	};

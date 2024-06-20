@@ -8,20 +8,17 @@ import {
 	NavDropdown,
 	Navbar,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../Header/Header.css";
 import { useContext } from "react";
 import { LoadingContext, UserContext } from "../../configs/Context";
-import {
-	isAcademicManager,
-	isLecturer,
-	isStudent,
-} from "../../components/Common/Common";
+import { isAcademicManager, isLecturer } from "../../components/Common/Common";
 import { LinearProgress } from "@mui/material";
 
 function Header() {
 	const [user, userDispatch] = useContext(UserContext);
 	const [loading, loadingDispatch] = useContext(LoadingContext);
+	const navigate = useNavigate();
 
 	const logout = () => {
 		loadingDispatch({ type: "loading" });
@@ -29,6 +26,8 @@ function Header() {
 			userDispatch({ type: "logout" });
 		}
 		loadingDispatch({ type: "unloading" });
+
+		navigate("/");
 	};
 
 	return (

@@ -54,6 +54,19 @@ function AddThesis() {
 		loadingDispatch({ type: "unloading" });
 	}, [loadStudents, loadLecturers, loadingDispatch]);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const isOptionSelected = (_, selectValue) => {
 		return selectValue.length > 1;
 	};
@@ -72,35 +85,15 @@ function AddThesis() {
 			});
 
 			if (response.status === 201) {
-				setData({
-					message: "Thêm khóa luận thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Thêm khóa luận thành công", "success");
 				setTimeout(() => {
 					navigate("/");
 				}, 1000);
 				loadStudents();
 			}
 		} catch {
-			setData({
-				message: "Thêm khóa luận thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Thêm khóa luận thất bại", "error");
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 

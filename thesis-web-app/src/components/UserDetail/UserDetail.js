@@ -30,6 +30,19 @@ function UserDetail() {
 		document.title = "Thông tin cá nhân";
 	}, []);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const change = (event) => {
 		const file = event.target.files[0];
 		if (file) {
@@ -59,31 +72,12 @@ function UserDetail() {
 			});
 
 			if (response.status === 200) {
-				setData({
-					message: "Thay đổi ảnh đại diện thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Thay đổi ảnh đại diện thành công", "success");
 				userDispatch({ type: "login", payload: response.data });
 				cookies.save("user", response.data, { maxAge: 60 * 30 });
 			}
 		} catch {
-			setData({
-				message: "Thay đổi ảnh đại diện thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Thay đổi ảnh đại diện thất bại", "error");
 		}
 		loadingDispatch({ type: "unloading" });
 	};

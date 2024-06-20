@@ -61,79 +61,50 @@ function Committee() {
 		loadingDispatch({ type: "unloading" });
 	}, [loadCommittee, loadingDispatch]);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const handleCloseCommittee = async (committeeId) => {
 		loadingDispatch({ type: "loading" });
-
 		try {
 			const response = await authAPI().patch(
 				endpoints["committeeDetail"](committeeId)
 			);
 
 			if (response.status === 200) {
-				setData({
-					message: "Thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Thành công", "success");
 				setCommittees(response.data);
 			}
 		} catch {
-			setData({
-				message: "Thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Thất bại", "error");
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 
 	const handleDeleteCommittee = async (committeeId) => {
 		loadingDispatch({ type: "loading" });
-
 		try {
 			const response = await authAPI().delete(
 				endpoints["committeeDetail"](committeeId)
 			);
 
 			if (response.status === 204) {
-				setData({
-					message: "Thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Xóa hội đồng thành công", "success");
 				loadCommittee();
 			}
 		} catch {
-			setData({
-				message: "Thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Xóa hội đồng thất bại", "error");
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 

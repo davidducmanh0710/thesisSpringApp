@@ -26,13 +26,24 @@ function InitAccount() {
 		document.title = "Kích hoạt tài khoản";
 	}, []);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const handleChange = (event) => {
 		const file = event.target.files[0];
 		if (file) {
 			const reader = new FileReader();
-
 			reader.readAsDataURL(file);
-
 			reader.onload = (e) => {
 				setAvatar(e.target.result);
 			};
@@ -60,16 +71,7 @@ function InitAccount() {
 			});
 
 			if (response.status === 200) {
-				setData({
-					message: "Kích hoạt tài khoản thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
+				showSnackbar("Kích hoạt tài khoản thành công", "success");
 
 				userDispatch({ type: "login", payload: response.data });
 				cookies.save("user", response.data, { maxAge: 60 * 30 });
@@ -82,16 +84,7 @@ function InitAccount() {
 				}, 1000);
 			}
 		} else {
-			setData({
-				message: "Mật khẩu không khớp",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Mật khẩu không khớp", "error");
 		}
 		setLoading(false);
 	};
