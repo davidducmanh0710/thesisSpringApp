@@ -38,7 +38,7 @@ import com.thesisSpringApp.formatters.RoleFormatter;
 		"com.thesisSpringApp.service",
 		"com.thesisSpringApp.api",
 		"com.thesisSpringApp.config",
-
+		"com.thesisSpringApp.customAnnotation"
 })
 public class WebAppContextConfig implements WebMvcConfigurer {
 

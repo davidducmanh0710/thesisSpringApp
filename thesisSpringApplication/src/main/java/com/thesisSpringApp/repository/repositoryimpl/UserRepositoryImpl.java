@@ -235,5 +235,13 @@ public class UserRepositoryImpl implements UserRepository {
 		return false;
 	}
 
+	@Override
+	public void updateUserPassword(User user, String newPassword) {
+		Session session = factory.getObject().getCurrentSession();
+
+		user.setPassword(newPassword);
+		session.save(user);
+	}
+
 
 }

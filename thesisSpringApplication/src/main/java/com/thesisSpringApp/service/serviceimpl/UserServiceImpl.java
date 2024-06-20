@@ -201,5 +201,9 @@ public class UserServiceImpl implements UserService {
 		return userRepository.isUserExistsByUniversityId(uid);
 	}
 
+	@Override
+	public void updateUserPassword(User user, String newPassword) {
+		userRepository.updateUserPassword(user, newPassword);
+	}
 
 }

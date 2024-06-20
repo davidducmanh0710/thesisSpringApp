@@ -3,9 +3,8 @@ package com.thesisSpringApp.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.thesisSpringApp.Dto.*;
-import com.thesisSpringApp.pojo.*;
-import com.thesisSpringApp.service.*;
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,12 +13,42 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.thesisSpringApp.Dto.CommitteeDetailDTO;
+import com.thesisSpringApp.Dto.CommitteeUserDetailDTO;
+import com.thesisSpringApp.Dto.CurrentUserDetailDto;
+import com.thesisSpringApp.Dto.ForgetPasswordDTO;
+import com.thesisSpringApp.Dto.OtpDTO;
+import com.thesisSpringApp.Dto.PasswordDTO;
+import com.thesisSpringApp.Dto.UserDTO;
+import com.thesisSpringApp.Dto.UserListsByRoleDTO;
+import com.thesisSpringApp.Dto.UserLoginDto;
+import com.thesisSpringApp.Dto.UsernameDTO;
 import com.thesisSpringApp.JwtComponents.JwtService;
-
-import javax.mail.MessagingException;
+import com.thesisSpringApp.pojo.Committee;
+import com.thesisSpringApp.pojo.CommitteeUser;
+import com.thesisSpringApp.pojo.Role;
+import com.thesisSpringApp.pojo.Thesis;
+import com.thesisSpringApp.pojo.ThesisCommitteeRate;
+import com.thesisSpringApp.pojo.ThesisUser;
+import com.thesisSpringApp.pojo.User;
+import com.thesisSpringApp.service.CommitteeUserService;
+import com.thesisSpringApp.service.OtpService;
+import com.thesisSpringApp.service.RoleService;
+import com.thesisSpringApp.service.ScoreService;
+import com.thesisSpringApp.service.ThesisCommitteeRateService;
+import com.thesisSpringApp.service.ThesisUserService;
+import com.thesisSpringApp.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -358,8 +387,7 @@ public class UserApiController {
         }
 
         if (otpService.validateOtp(user, password.getOtp_code())) {
-            user.setPassword(passwordEncoder.encode(password.getPassword()));
-            userService.saveUser(user);
+			userService.updateUserPassword(user, passwordEncoder.encode(password.getPassword()));
             otpService.deleteOtp(user);
 
             return new ResponseEntity<>(HttpStatus.OK);

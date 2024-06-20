@@ -29,7 +29,6 @@ import com.thesisSpringApp.filter.RestAuthenticationEntryPoint;
 		"com.thesisSpringApp.controller",
 		"com.thesisSpringApp.repository",
 		"com.thesisSpringApp.service",
-//		"com.thesisSpringApp.api",
 		"com.thesisSpringApp.config",
 		"com.thesisSpringApp.JwtComponents",
 })

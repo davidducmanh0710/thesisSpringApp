@@ -8,6 +8,7 @@
 	<div class="container-fluid">
 		<c:url value="/admin/" var="adminUrl" />
 		<c:url value="/admin/stats" var="statsUrl" />
+		<c:url value="/logout" var="logoutUrl" />
 		
 
 		<a class="navbar-brand" href="${adminUrl}">Admin Dashboard</a>
@@ -23,7 +24,7 @@
 				<li class="nav-item"><a class="nav-link" href="${statsUrl}">Stats</a></li>
 				
 
-				<li class="nav-item"><a class="nav-link" href="/thesisSpringApplication/logout">Logout</a></li>
+				<li class="nav-item"><a class="nav-link" href="${logoutUrl}">Logout</a></li>
 			</ul>
 		</div>
 	</div>

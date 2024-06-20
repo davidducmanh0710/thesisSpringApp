@@ -40,4 +40,6 @@ public interface UserRepository {
 	List<User> getAllUsersPaginator(String p);
 
 	Long countAllUser();
+
+	void updateUserPassword(User user, String newPassword);
 }

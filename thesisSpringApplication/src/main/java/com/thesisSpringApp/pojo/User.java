@@ -31,7 +31,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.thesisSpringApp.customAnnotation.UniqueValueField;
 
 /**
  *
@@ -68,7 +67,7 @@ public class User implements Serializable {
 
     @Basic(optional = false)
 // @NotNull
-	@UniqueValueField(fieldName = "useruniversityid", message = "{user.uid.exists}")
+//	@UniqueValueField(fieldName = "useruniversityid", message = "{user.uid.exists}")
 	@Size(min = 1, max = 10, message = "{user.useruniversityid.minMaxLenErr}")
     @Column(name = "useruniversityid")
     private String useruniversityid;
@@ -101,7 +100,7 @@ public class User implements Serializable {
     // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
     @Basic(optional = false)
 // @NotNull
-	@UniqueValueField(fieldName = "email", message = "{user.email.exists}")
+//	@UniqueValueField(fieldName = "email", message = "{user.email.exists}")
     @Size(min = 1, max = 50)
     @Column(name = "email")
     private String email;
@@ -109,7 +108,7 @@ public class User implements Serializable {
     // @Pattern(regexp="^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message="Invalid phone/fax format, should be as xxx-xxx-xxxx")//if the field contains phone or fax number consider using this annotation to enforce field validation
 	@Size(max = 10, message = "{user.phone.minMaxLenErr}")
     @Column(name = "phone")
-	@UniqueValueField(fieldName = "phone", message = "{user.phone.exists}")
+//	@UniqueValueField(fieldName = "phone", message = "{user.phone.exists}")
     private String phone;
 
     @Basic(optional = false)
