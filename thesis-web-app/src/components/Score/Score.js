@@ -82,9 +82,21 @@ function Score() {
 		}
 	};
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const handleScore = async () => {
 		loadingDispatch({ type: "loading" });
-
 		try {
 			const score = {
 				thesisId: thesisId,
@@ -98,34 +110,15 @@ function Score() {
 			const response = await authAPI().post(endpoints["score"], score);
 
 			if (response.status === 201) {
-				setData({
-					message: "Thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
+				showSnackbar("Thành công", "success");
 
 				setTimeout(() => {
 					navigate(`/theses/${thesis.thesis.id}`);
 				}, 1000);
 			}
 		} catch {
-			setData({
-				message: "Thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Thất bại", "error");
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 

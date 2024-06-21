@@ -29,24 +29,27 @@ function Criteria() {
 		loadingDispatch({ type: "unloading" });
 	}, [loadCriteria, loadingDispatch]);
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const changeHidden = () => {
 		setHidden(!hidden);
 	};
 
 	const addCriteria = async () => {
 		loadingDispatch({ type: "loading" });
-
 		if (name === null || name.trim().length === 0) {
-			setData({
-				message: "Chưa nhập tên tiêu chí",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Chưa nhập tên tiêu chí", "error");
 		} else {
 			try {
 				const response = await authAPI().post(endpoints["criteria"], {
@@ -54,35 +57,15 @@ function Criteria() {
 				});
 
 				if (response.status === 201) {
-					setData({
-						message: "Thêm tiêu chí thành công",
-						severity: "success",
-					});
-
-					setOpen(true);
-
-					setTimeout(() => {
-						setOpen(false);
-					}, 2000);
-
+					showSnackbar("Thêm tiêu chí thành công", "success");
 					setName("");
 					setHidden(true);
 					setCriteria(response.data);
 				}
 			} catch {
-				setData({
-					message: "Thêm tiêu chí thất bại",
-					severity: "error",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
+				showSnackbar("Thêm tiêu chí thất bại", "error");
 			}
 		}
-
 		loadingDispatch({ type: "unloading" });
 	};
 

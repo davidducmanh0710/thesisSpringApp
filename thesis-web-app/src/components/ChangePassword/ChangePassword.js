@@ -17,22 +17,26 @@ function ChangePassword() {
 	});
 	const navigate = useNavigate();
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		loadingDispatch({ type: "loading" });
 
 		try {
 			if (newPassword !== requiredPassword) {
-				setData({
-					message: "Nhập lại password mới không chính xác",
-					severity: "error",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
+				showSnackbar("Nhập lại password mới không chính xác", "error");
 			} else {
 				const response = await authAPI().patch(endpoints["changePassword"], {
 					oldPassword: oldPassword,
@@ -40,17 +44,7 @@ function ChangePassword() {
 				});
 
 				if (response.status === 200) {
-					setData({
-						message: "Thay đổi password thành công",
-						severity: "success",
-					});
-
-					setOpen(true);
-
-					setTimeout(() => {
-						setOpen(false);
-					}, 2000);
-
+					showSnackbar("Thay đổi password thành công", "success");
 					setOldPassword("");
 					setNewPassword("");
 					setRequiredPassword("");
@@ -61,16 +55,7 @@ function ChangePassword() {
 				}
 			}
 		} catch {
-			setData({
-				message: "Password cũ không chính xác",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Password cũ không chính xác", "error");
 		}
 
 		loadingDispatch({ type: "unloading" });
@@ -79,16 +64,7 @@ function ChangePassword() {
 	const handleChange = (e, func) => {
 		if (e.target.value.trim().length === 0) {
 			func("");
-			setData({
-				message: "Không được nhập khoảng trắng vào password",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Không được nhập khoảng trắng vào password", "error");
 		} else {
 			func(e.target.value.trim());
 		}

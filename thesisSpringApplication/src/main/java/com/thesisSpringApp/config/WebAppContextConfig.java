@@ -103,12 +103,10 @@ public class WebAppContextConfig implements WebMvcConfigurer {
 	public Validator getValidator() {
 		return validator();
 	}
-	
+
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
 		registry.addFormatter(new RoleFormatter());
 		registry.addFormatter(new FacultyFormatter());
 	}
-
-
 }

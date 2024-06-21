@@ -133,6 +133,19 @@ function AddCommittee() {
 		};
 	};
 
+	const showSnackbar = (message, severity) => {
+		setData({
+			message: message,
+			severity: severity,
+		});
+
+		setOpen(true);
+
+		setTimeout(() => {
+			setOpen(false);
+		}, 2000);
+	};
+
 	const addCommittee = async (event) => {
 		event.preventDefault();
 		loadingDispatch({ type: "loading" });
@@ -169,32 +182,13 @@ function AddCommittee() {
 			const response = await authAPI().post(endpoints["committees"], committee);
 
 			if (response.status === 201) {
-				setData({
-					message: "Thêm hội đồng thành công",
-					severity: "success",
-				});
-
-				setOpen(true);
-
-				setTimeout(() => {
-					setOpen(false);
-				}, 2000);
-
+				showSnackbar("Thêm hội đồng thành công", "success");
 				setTimeout(() => {
 					navigate("/committees");
 				}, 1000);
 			}
 		} catch {
-			setData({
-				message: "Thêm hội đồng thất bại",
-				severity: "error",
-			});
-
-			setOpen(true);
-
-			setTimeout(() => {
-				setOpen(false);
-			}, 2000);
+			showSnackbar("Thêm hội đồng thất bại", "error");
 		}
 		loadingDispatch({ type: "unloading" });
 	};
