@@ -67,6 +67,8 @@ public class AdminController {
 	@GetMapping("/admin")
 	public String adminIndexView(Model model, @RequestParam Map<String, String> params) {
 		String p = params.getOrDefault("page", "1");
+		if (Integer.parseInt(p) < 1)
+			p = "1";
 		int totalPage = (int) Math.ceil((double) userService.countAllUser()
 				/ Long.valueOf(env.getProperty("admin.pageSize")));
 		List<User> users = userService.getAllUsersPaginator(p);
@@ -120,9 +122,8 @@ public class AdminController {
 
 		Set<ConstraintViolation<User>> violations = validator.validate(user,
 				CreateGroup.class);
-		if (violations.isEmpty()) {
-			userService.saveUser(user);
-		} else {
+		if (!violations.isEmpty() || result.hasErrors()) {
+
 			for (ConstraintViolation<User> violation : violations)
 				model.addAttribute("errMsg", violation.getMessage());
 
