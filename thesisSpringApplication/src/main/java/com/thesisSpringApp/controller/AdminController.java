@@ -120,14 +120,23 @@ public class AdminController {
 			BindingResult result)
 			throws MessagingException {
 
-		Set<ConstraintViolation<User>> violations = validator.validate(user,
-				CreateGroup.class);
-		if (!violations.isEmpty() || result.hasErrors()) {
+		Boolean isOwner = false;
 
-			for (ConstraintViolation<User> violation : violations)
-				model.addAttribute("errMsg", violation.getMessage());
-
-			return "addOrUpdateUser";
+		if (user.getId() != null) {
+			User currentUser = userService.getUserById(user.getId());
+			isOwner = currentUser.getUseruniversityid().equals(user.getUseruniversityid())
+					&& currentUser.getEmail().equals(user.getEmail())
+					&& currentUser.getPhone().equals(user.getPhone());
+		} else {
+			Set<ConstraintViolation<User>> violations = validator.validate(user,
+					CreateGroup.class);
+			if (!violations.isEmpty() || result.hasErrors()) {
+	
+				for (ConstraintViolation<User> violation : violations)
+					model.addAttribute("errMsg", violation.getMessage());
+	
+				return "addOrUpdateUser";
+			}
 		}
 
 
@@ -144,7 +153,19 @@ public class AdminController {
 			} catch (Exception ex) {
 				model.addAttribute("errMsg", ex.toString());
 			}
-		} else if (!result.hasErrors() && user.getId() > 0) {
+		} else if (!result.hasErrors() && user.getId() > 0 && !isOwner) {
+
+			Set<ConstraintViolation<User>> violations = validator.validate(user,
+					CreateGroup.class);
+			if (!violations.isEmpty()) {
+
+				for (ConstraintViolation<User> violation : violations)
+					model.addAttribute("errMsg", violation.getMessage());
+
+				return "addOrUpdateUser";
+			}
+
+		} else if (!result.hasErrors() && user.getId() > 0 && isOwner) {
 
 			User updateUser = userService.getUserById(user.getId());
 			updateUser.setFacultyId(faculty);
