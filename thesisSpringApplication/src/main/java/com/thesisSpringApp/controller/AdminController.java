@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.thesisSpringApp.customAnnotation.impl.UniqueValueFiledValidatorImpl;
 import com.thesisSpringApp.customAnnotation.validationGroups.UniqueFieldsGroups.CreateGroup;
 import com.thesisSpringApp.formatters.FormatterColumn;
 import com.thesisSpringApp.pojo.Faculty;
@@ -29,7 +30,6 @@ import com.thesisSpringApp.pojo.User;
 import com.thesisSpringApp.service.FacultyService;
 import com.thesisSpringApp.service.RoleService;
 import com.thesisSpringApp.service.StatsService;
-import com.thesisSpringApp.service.ThesisService;
 import com.thesisSpringApp.service.UserService;
 
 @Controller
@@ -39,24 +39,24 @@ public class AdminController {
 	private UserService userService;
 	private RoleService roleService;
 	private FacultyService facultyService;
-	private ThesisService thesisService;
 	private StatsService statsService;
 	private Environment env;
-
-	@Autowired
 	private Validator validator;
+	private UniqueValueFiledValidatorImpl uvf;
+
 
 	@Autowired
 	public AdminController(UserService userService, RoleService roleService,
-			FacultyService facultyService, ThesisService thesisService, StatsService statsService,
-			Environment env) {
+			FacultyService facultyService, StatsService statsService, Environment env,
+			Validator validator, UniqueValueFiledValidatorImpl uvf) {
 		super();
 		this.userService = userService;
 		this.roleService = roleService;
 		this.facultyService = facultyService;
-		this.thesisService = thesisService;
 		this.statsService = statsService;
 		this.env = env;
+		this.validator = validator;
+		this.uvf = uvf;
 	}
 
 	@ModelAttribute("formatterColumn")
@@ -119,7 +119,7 @@ public class AdminController {
 	public String adminAddUser(Model model, @ModelAttribute(value = "user") @Valid User user,
 			BindingResult result)
 			throws MessagingException {
-
+		uvf.setUserId(user.getId());
 		Set<ConstraintViolation<User>> violations = validator.validate(user,
 				CreateGroup.class);
 		if (!violations.isEmpty() || result.hasErrors()) {
@@ -130,10 +130,8 @@ public class AdminController {
 			return "addOrUpdateUser";
 		}
 
-
 		Role role = roleService.getRoleById(user.getRoleId().getId());
 		Faculty faculty = facultyService.findFacultyById(user.getFacultyId().getId());
-
 
 		if (!result.hasErrors() && user.getId() == null) {
 			try {
