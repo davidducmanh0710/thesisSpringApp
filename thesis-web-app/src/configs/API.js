@@ -1,7 +1,7 @@
 import axios from "axios";
 import cookies from "react-cookies";
 
-const SERVER_CONTEXT = "thesisSpringApplication_war";
+const SERVER_CONTEXT = "thesisSpringApplication";
 const SERVER = "http://localhost:8080";
 
 export let endpoints = {

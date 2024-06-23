@@ -1,11 +1,13 @@
 package com.thesisSpringApp.repository.repositoryimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
@@ -78,6 +80,13 @@ public class ThesisRepositoryImpl implements ThesisRepository {
 		criteriaQuery.select(root);
 		criteriaQuery.orderBy(criteriaBuilder.desc(root.get("updateDate")));
 
+		List<Predicate> predicates = new ArrayList<>();
+		String search = params.get("search");
+		if (search != null && !search.isEmpty()) {
+			predicates.add(criteriaBuilder.like(root.get("name"), String.format("%%%s%%", search)));
+		}
+
+		criteriaQuery.where(predicates.toArray(Predicate[]::new));
 		Query query = session.createQuery(criteriaQuery);
 
 		String page = params.get("page");

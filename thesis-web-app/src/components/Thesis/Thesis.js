@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import "./Thesis.css";
 import { Button, Col, Row, Stack } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import API, { authAPI, endpoints } from "../../configs/API";
 import { LoadingContext, UserContext } from "../../configs/Context";
 import {
@@ -31,11 +31,16 @@ function Thesis() {
 		message: "Xóa khóa luận thành công",
 		severity: "success",
 	});
+	const [params] = useSearchParams();
 
 	const loadTheses = useCallback(async () => {
 		let response;
 		if (isAcademicManager(user)) {
-			const url = `${endpoints["theses"]}?page=${page}`;
+			let url = `${endpoints["theses"]}?page=${page}`;
+
+			let search = params.get("search");
+			if (search) url = `${url}&search=${search}`;
+
 			response = await API.get(url);
 			if (response.status === 200) {
 				setTheses(response.data.result);
@@ -49,7 +54,7 @@ function Thesis() {
 
 			if (response.status === 200) setTheses(response.data);
 		}
-	}, [page]);
+	}, [page, params]);
 
 	useEffect(() => {
 		loadingDispatch({ type: "loading" });
@@ -173,7 +178,7 @@ function Thesis() {
 												<h6>
 													Điểm:{" "}
 													{thesis.score !== null
-														? thesis.score
+														? thesis.score.toFixed(2)
 														: "Đang trong quá trình chấm điểm"}
 												</h6>
 											)}

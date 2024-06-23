@@ -215,7 +215,7 @@ public class CommitteeApiController {
 					for (Score s : scores) {
 						score += s.getScore();
 					}
-					score = score / (committeeUserCount * criteriaCount);
+					score = (float) Math.ceil((score / (committeeUserCount * criteriaCount)) * 100) / 100;
 
 					// Lưu các thay đổi
 					thesis.setScore(score);
@@ -234,15 +234,12 @@ public class CommitteeApiController {
 						mailSenderService.sendEmailForPupils(
 								env.getProperty("spring.mail.username"),
 								tus.getUserId(), thesis);
-
 			}
 		}
-
 		committeeService.saveCommittee(committee);
 
 		Map<String, String> params = new HashMap<>();
 		List<CommitteeDetailDTO> committeeList = responseCommitteeDetail(params);
-		
 
 		return new ResponseEntity<>(committeeList, HttpStatus.OK);
 	}

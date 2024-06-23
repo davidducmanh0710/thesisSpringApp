@@ -10,7 +10,7 @@ import {
 } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../Header/Header.css";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { LoadingContext, UserContext } from "../../configs/Context";
 import { isAcademicManager, isLecturer } from "../../components/Common/Common";
 import { LinearProgress } from "@mui/material";
@@ -19,6 +19,7 @@ function Header() {
 	const [user, userDispatch] = useContext(UserContext);
 	const [loading, loadingDispatch] = useContext(LoadingContext);
 	const navigate = useNavigate();
+	const [search, setSearch] = useState();
 
 	const logout = () => {
 		loadingDispatch({ type: "loading" });
@@ -30,9 +31,14 @@ function Header() {
 		navigate("/");
 	};
 
+	const handleSearch = (event) => {
+		event.preventDefault();
+		navigate(`/?search=${search}`);
+	};
+
 	return (
 		<>
-			<Navbar expand="lg" className="bg-body-tertiary">
+			<Navbar expand="lg" className="bg-body-tertiary header">
 				<Container>
 					<Link to="/" className="navbar-brand">
 						QUẢN LÝ KHÓA LUẬN
@@ -67,30 +73,20 @@ function Header() {
 									</Link>
 								</>
 							)}
-
-							{/* <NavDropdown title="Link" id="navbarScrollingDropdown">
-								<NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-
-								<NavDropdown.Item href="#action4">
-									Another action
-								</NavDropdown.Item>
-
-								<NavDropdown.Divider />
-
-								<NavDropdown.Item href="#action5">
-									Something else here
-								</NavDropdown.Item>
-							</NavDropdown> */}
 						</Nav>
 
-						<Form className="d-flex">
+						<Form className="d-flex" onSubmit={handleSearch}>
 							<Form.Control
 								type="search"
 								placeholder="Tìm kiếm"
 								className="me-2"
 								aria-label="Search"
+								value={search}
+								onChange={(e) => setSearch(e.target.value)}
 							/>
-							<Button variant="outline-success">Search</Button>
+							<Button variant="outline-success" type="submit">
+								Search
+							</Button>
 						</Form>
 
 						{user === null ? (

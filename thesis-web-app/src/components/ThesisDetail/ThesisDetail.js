@@ -145,7 +145,7 @@ function ThesisDetail() {
 							Sinh viên thực hiện:{" "}
 							{thesis.students.map((student) => (
 								<span key={student.id}>
-									{student.lastName} {student.firstName}
+									{student.lastName} {student.firstName},{" "}
 								</span>
 							))}
 						</div>
@@ -153,7 +153,7 @@ function ThesisDetail() {
 							Giảng viên hướng dẫn:{" "}
 							{thesis.lecturers.map((lecturer) => (
 								<span key={lecturer.id}>
-									{lecturer.lastName} {lecturer.firstName}
+									{lecturer.lastName} {lecturer.firstName},{" "}
 								</span>
 							))}
 						</div>
