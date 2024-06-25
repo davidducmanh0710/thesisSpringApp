@@ -1,8 +1,7 @@
 import axios from "axios";
 import cookies from "react-cookies";
 
-const SERVER_CONTEXT = "thesisSpringApplication";
-const SERVER = "http://localhost:8080";
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 export let endpoints = {
 	initAccount: "/api/users/init-account/",
@@ -36,7 +35,7 @@ export let endpoints = {
 
 export const authAPI = () => {
 	return axios.create({
-		baseURL: `${SERVER}/${SERVER_CONTEXT}`,
+		baseURL: `${BASE_URL}`,
 		headers: {
 			Authorization: cookies.load("token"),
 		},
@@ -44,5 +43,5 @@ export const authAPI = () => {
 };
 
 export default axios.create({
-	baseURL: `${SERVER}/${SERVER_CONTEXT}`,
+	baseURL: `${BASE_URL}`,
 });
