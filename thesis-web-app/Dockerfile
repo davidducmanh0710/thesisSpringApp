@@ -1,4 +1,4 @@
-FROM node:20.9.0
+FROM node:20.12.0
 
 WORKDIR /thesis-web-app/
 COPY src/ /thesis-web-app/src
