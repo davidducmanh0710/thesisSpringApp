@@ -35,14 +35,34 @@ function ChatBox() {
 	const loadUsers = useCallback(async () => {
 		const response = await API.get(endpoints["users"]);
 		if (response.status === 200) {
-			setReceivers({
-				...response.data,
-				students: response.data.students.filter(
-					(u) => u.userUniversityId !== user.user.useruniversityid
-				),
-			});
+			switch (user.role.name) {
+				case "ROLE_GIAOVU":
+					setReceivers({
+						...response.data,
+						academicManagers: response.data.academicManagers.filter(
+							(u) => u.userUniversityId !== user.user.useruniversityid
+						),
+					});
+					break;
+				case "ROLE_GIANGVIEN":
+					setReceivers({
+						...response.data,
+						lecturers: response.data.lecturers.filter(
+							(u) => u.userUniversityId !== user.user.useruniversityid
+						),
+					});
+					break;
+				default:
+					setReceivers({
+						...response.data,
+						students: response.data.students.filter(
+							(u) => u.userUniversityId !== user.user.useruniversityid
+						),
+					});
+					break;
+			}
 		}
-	}, []);
+	}, [user]);
 
 	useEffect(() => {
 		document.title = "Chat";
@@ -89,7 +109,7 @@ function ChatBox() {
 			unsubscribe2();
 			setMessages([]);
 		};
-	}, [receiver]);
+	}, [receiver, user]);
 
 	useEffect(() => {
 		const fetchedMessages = [...collection1, ...collection2];
@@ -98,7 +118,7 @@ function ChatBox() {
 		);
 		setMessages(sortedMessages);
 		loadingDispatch({ type: "unloading" });
-	}, [collection1, collection2]);
+	}, [collection1, collection2, loadingDispatch]);
 
 	useEffect(() => {
 		scroll.current.scrollTo({
@@ -158,11 +178,10 @@ function ChatBox() {
 								<Accordion.Header>Giáo vụ</Accordion.Header>
 								<Accordion.Body className="list">
 									{receivers.academicManagers.map((u) => (
-										<div className="py-2">
+										<div key={u.userUniversityId} className="py-2">
 											<div
 												className="receiver box-shadow border-radius p-2 d-flex"
 												id={u.userUniversityId}
-												key={u.userUniversityId}
 												onClick={() => {
 													getReceiver(u.fullName, u.userUniversityId, u.avatar);
 													window.location.hash = u.userUniversityId;
@@ -180,10 +199,9 @@ function ChatBox() {
 								<Accordion.Header>Giảng viên</Accordion.Header>
 								<Accordion.Body className="list">
 									{receivers.lecturers.map((u) => (
-										<div className="py-2">
+										<div key={u.userUniversityId} className="py-2">
 											<div
 												className="receiver box-shadow border-radius p-2 d-flex"
-												key={u.userUniversityId}
 												id={u.userUniversityId}
 												onClick={() => {
 													getReceiver(u.fullName, u.userUniversityId, u.avatar);
@@ -202,10 +220,9 @@ function ChatBox() {
 								<Accordion.Header>Sinh viên</Accordion.Header>
 								<Accordion.Body className="list">
 									{receivers.students.map((u) => (
-										<div className="py-2">
+										<div key={u.userUniversityId} className="py-2">
 											<div
 												className="receiver box-shadow border-radius p-2 d-flex"
-												key={u.userUniversityId}
 												id={u.userUniversityId}
 												onClick={() => {
 													getReceiver(u.fullName, u.userUniversityId, u.avatar);
