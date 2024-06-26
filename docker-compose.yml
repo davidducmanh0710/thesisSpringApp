@@ -21,10 +21,15 @@ services:
     build: 
       context: ./thesisSpringApplication
     image: ngovanlau/thesis-management-springmvc
+    restart: always
     environment:
       HIBERNATE_CONNECTION_URL: jdbc:mysql://mysql:3306/thesisspringapp
       HIBERNATE_CONNECTION_USERNAME: root
       HIBERNATE_CONNECTION_PASSWORD: 12345
+      TZ: Asia/Ho_Chi_Minh
+      vnp_ReturnUrl: http://localhost:8080/api/payment/payment_return/
+      spring_fonts_fontvuArialFile: webapps/ROOT/resources/fonts/vuArial.ttf
+      spring_fonts_fontvuArialBoldFile: webapps/ROOT/resources/fonts/vuArialBold.ttf
     ports:
       - "8080:8080"
     depends_on:
@@ -35,6 +40,7 @@ services:
   reactjs:
     build:
       context: ./thesis-web-app
+    restart: always
     image: ngovanlau/thesis-management-reactjs
     environment: 
       REACT_APP_BASE_URL: http://localhost:8080
