@@ -41,7 +41,7 @@ function Score() {
 					});
 				});
 		}
-	}, [thesisId]);
+	}, [thesisId, user]);
 
 	const loadCriteria = useCallback(async () => {
 		const response = await API.get(endpoints["criteria"]);

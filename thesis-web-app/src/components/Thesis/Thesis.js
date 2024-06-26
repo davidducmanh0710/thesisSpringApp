@@ -54,7 +54,7 @@ function Thesis() {
 
 			if (response.status === 200) setTheses(response.data);
 		}
-	}, [page, params]);
+	}, [page, params, user]);
 
 	useEffect(() => {
 		loadingDispatch({ type: "loading" });

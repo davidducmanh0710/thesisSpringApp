@@ -32,6 +32,7 @@ function Committee() {
 	const [committeeId, setCommitteeId] = useState();
 
 	const loadCommittee = useCallback(async () => {
+		console.log(Math.random());
 		try {
 			let response;
 			if (isAcademicManager(user)) {
@@ -52,7 +53,7 @@ function Committee() {
 		} catch (ex) {
 			console.log(ex);
 		}
-	}, [page]);
+	}, [page, user]);
 
 	useEffect(() => {
 		loadingDispatch({ type: "loading" });
